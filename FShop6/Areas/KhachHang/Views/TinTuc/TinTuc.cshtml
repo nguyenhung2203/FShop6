@@ -1,0 +1,66 @@
+﻿@{
+    Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
+    ViewData["Title"] = "Chi tiết tin tức";
+}
+<main class="main">
+    <section class="breadcrumb">
+        <ul class="breadcrumb__list flex container">
+            <li><a href="index.html" class="breadcrumb__link">Trang chủ</a></li>
+            <li><span class="breadcrumb__link">></span></li>
+            <li><span class="breadcrumb__link">Tin tức</span></li>
+        </ul>
+    </section>
+
+    <section class="news-page container section--lg">
+        <div class="news-page__container grid">
+            <div class="news-page__main">
+                <div class="featured-post">
+                    <a href="news-detail.html" class="featured-post__image">
+                        <img src="https://via.placeholder.com/800x500/f36f21/ffffff?text=Tin+Moi+Nhat" alt="Bài viết nổi bật">
+                    </a>
+                    <div class="featured-post__content">
+                        <a href="news-detail.html"><h2 class="featured-post__title">FPT Polytechnic Tây Nguyên: Lễ Tôn Vinh “Ong Vàng” Học Kỳ Spring 2025</h2></a>
+                        <p class="featured-post__description">Buổi lễ đã vinh danh những cá nhân và tập thể có thành tích học tập và hoạt động phong trào xuất sắc, thắp lên ngọn lửa đam mê và tinh thần "học hết mình, chơi tới bến" của sinh viên...</p>
+                        <div class="author-info">
+                            <span>Đăng bởi <strong>Phòng CTSV</strong></span> |
+                            <span>15/07/2025</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="post-list">
+                    <div class="post-card">
+                        <a href="news-detail.html" class="post-card__image"><img src="https://via.placeholder.com/400x250/555555/ffffff?text=Ao+Polo" alt="Post"></a>
+                        <div class="post-card__content">
+                            <span class="product__category">Đời sống sinh viên</span>
+                            <a href="news-detail.html"><h3 class="post-card__title">5 mẹo phối đồ cực chất với áo Polo FPT</h3></a>
+                            <div class="author-info">
+                                <span>Đăng bởi <strong>Evara Team</strong></span> |
+                                <span>14/07/2025</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-card">
+                        <a href="news-detail.html" class="post-card__image"><img src="https://via.placeholder.com/400x250/007bff/ffffff?text=Vovinam" alt="Post"></a>
+                        <div class="post-card__content">
+                            <span class="product__category">Thể thao</span>
+                            <a href="news-detail.html"><h3 class="post-card__title">CLB Vovinam FPT Polytechnic Tây Nguyên tuyển thành viên mới</h3></a>
+                            <div class="author-info">
+                                <span>Đăng bởi <strong>CLB Vovinam</strong></span> |
+                                <span>12/07/2025</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="news-page__sidebar">
+                <div class="sidebar__widget">
+                    <h4 class="widget__title">Bài viết gần đây</h4>
+                    <ul class="widget__list recent-posts">
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </section>
+</main>

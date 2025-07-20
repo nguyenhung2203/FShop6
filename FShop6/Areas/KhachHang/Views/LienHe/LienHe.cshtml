@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
+    ViewData["Title"] = "Liên hệ";
+}
+<main class="main">
+    <section class="breadcrumb">
+        <ul class="breadcrumb__list flex container">
+            <li><a href="index.html" class="breadcrumb__link">Trang chủ</a></li>
+            <li><span class="breadcrumb__link">></span></li>
+            <li><span class="breadcrumb__link">Liên hệ</span></li>
+        </ul>
+    </section>
+
+    <section class="contact container section--lg">
+        <div class="contact__container grid">
+            <div class="contact__form">
+                <h3 class="section__title">Gửi Lời Nhắn Cho Chúng Tôi</h3>
+                <p class="contact__description">Chúng tôi luôn sẵn lòng lắng nghe bạn. Vui lòng điền vào form dưới đây.</p>
+                <form action="" id="contact-form" class="form grid">
+                    <div class="form__group grid">
+                        <input type="text" placeholder="Tên của bạn" class="form__input">
+                        <input type="email" placeholder="Email của bạn" class="form__input">
+                    </div>
+                    <textarea class="form__input textarea" placeholder="Nội dung lời nhắn"></textarea>
+                    <div class="form__btn">
+                        <button type="submit" class="btn">Gửi Lời Nhắn</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="contact__content">
+                <div class="contact__content-item">
+                    <h3 class="section__title">Liên Hệ Trực Tiếp</h3>
+                    <div class="contact__info">
+                        <div class="contact__info-item">
+                            <i class="fi fi-rs-marker contact__info-icon"></i>
+                            <div>
+                                <h4 class="contact__info-title">Địa chỉ</h4>
+                                <p class="contact__info-description">300, 6 Đường Hà Huy Tập, Tổ Dân phố 8, Buôn Ma Thuột, Đắk Lắk</p>
+                            </div>
+                        </div>
+                        <div class="contact__info-item">
+                            <i class="fi fi-rs-envelope contact__info-icon"></i>
+                            <div>
+                                <h4 class="contact__info-title">Email</h4>
+                                <p class="contact__info-description">hungnqpk04040@gmail.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact__content-item">
+                    <h3 class="section__title">Bản đồ</h3>
+                    <div class="map__container">
+                        <iframe src="https://maps.google.com/maps?q=FPT%20Polytechnic%20T%C3%A2y%20Nguy%C3%AAn&t=&z=17&ie=UTF8&iwloc=&output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

@@ -1,0 +1,76 @@
+﻿<header class="header">
+    <div class="header__top">
+        <div class="header__container container">
+            <div class="header__slogan">
+                <p>FShop6 - Chất từ giảng đường FPT</p>
+            </div>
+
+            <div class="topbar-message">
+                <span>📞 Hotline hỗ trợ: 0328 131 562 (8h - 21h hàng ngày)</span>
+            </div>
+
+            <div class="action-item" id="account-menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span id="account-text">Tài khoản</span>
+                <div class="account-dropdown" id="account-dropdown-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav container">
+        <a asp-controller="Home" asp-action="Index" class="nav__logo">
+            <img class="nav__logo-img" src="~/KhachHang/images/logo.png" alt="logo website" />
+        </a>
+        <div class="nav__menu" id="nav-menu">
+            <div class="nav__menu-top">
+                <a asp-controller="Home" asp-action="Index" class="nav__menu-logo">
+                    <img src="~/KhachHang/images/logo.png" alt="">
+                </a>
+                <div class="nav__close" id="nav-close">
+                    <i class="fi fi-rs-cross-small"></i>
+                </div>
+            </div>
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a asp-controller="Home" asp-action="Index" class="nav__link">Trang chủ</a>
+                </li>
+                <li class="nav__item">
+                    <a asp-controller="Shop" asp-action="Index" class="nav__link">Sản phẩm</a>
+                </li>
+                <li class="nav__item">
+                    <a asp-controller="News" asp-action="Index" class="nav__link">Tin tức</a>
+                </li>
+                <li class="nav__item">
+                    <a asp-controller="Contact" asp-action="Index" class="nav__link">Liên hệ</a>
+                </li>
+                <li class="nav__item">
+                    <a asp-controller="About" asp-action="Index" class="nav__link">Giới thiệu</a>
+                </li>
+            </ul>
+            <div class="header__search">
+                <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form__input" />
+                <button class="search__btn">
+                    <img src="~/KhachHang/images/search.png" alt="icon tìm kiếm" />
+                </button>
+            </div>
+        </div>
+
+        <div class="header__user-actions">
+            <a asp-controller="Wishlist" asp-action="Index" class="header__action-btn" title="Yêu thích">
+                <i class="fi fi-rs-heart"></i><span class="count">0</span>
+            </a>
+            <a asp-controller="Cart" asp-action="Index" class="header__action-btn" title="Giỏ hàng">
+                <i class="fi fi-rs-shopping-bag-add"></i><span class="count">0</span>
+            </a>
+            <div class="header__action-btn nav__toggle" id="nav-toggle">
+                <img src="~/assets/img/menu-burger.svg" alt="">
+            </div>
+        </div>
+    </nav>
+    <script src="~/KhachHang/js/main.js"></script>
+</header>

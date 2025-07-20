@@ -1,0 +1,63 @@
+﻿<footer class="footer container">
+    <div class="footer__container grid">
+        <div class="footer__content">
+            <a asp-controller="Home" asp-action="Index" class="footer__logo">
+                <img src="~/KhachHang/images/logo.png" alt="F6 Shop Logo" class="footer__logo-img" />
+            </a>
+            <h4 class="footer__subtitle">Liên hệ</h4>
+            <p class="footer__description">
+                <span>Địa chỉ:</span> FPT Polytechnic Tây Nguyên, 300/6 Hà Huy Tập, P. Tân Lợi, TP. BMT
+            </p>
+            <p class="footer__description">
+                <span>Điện thoại:</span> 0328.131.562
+            </p>
+            <p class="footer__description">
+                <span>Email:</span> hungnqpk@gmail.com
+            </p>
+            <div class="footer__social">
+                <h4 class="footer__subtitle">Kết nối với chúng tôi</h4>
+                <div class="footer__links flex">
+                    <a href="https://www.facebook.com/qhun26022024">
+                        <img src="~/KhachHang/images/icon-facebook.svg" alt="Facebook" class="footer__social-icon" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer__content">
+            <h3 class="footer__title">Về FShop6</h3>
+            <ul class="footer__links">
+                <li><a asp-controller="About" asp-action="Index" class="footer__link">Câu chuyện của chúng tôi</a></li>
+                <li><a asp-controller="Faq" asp-action="Index" class="footer__link">FAQ</a></li>
+                <li><a asp-controller="Contact" asp-action="Index" class="footer__link">Liên hệ</a></li>
+            </ul>
+        </div>
+
+        <div class="footer__content">
+            <h3 class="footer__title">Tài khoản của tôi</h3>
+            <ul class="footer__links">
+                <li><a asp-controller="Account" asp-action="Login" class="footer__link">Đăng nhập</a></li>
+                <li><a asp-controller="Cart" asp-action="Index" class="footer__link">Giỏ hàng</a></li>
+                <li><a asp-controller="Wishlist" asp-action="Index" class="footer__link">Yêu thích</a></li>
+                <li><a asp-controller="Account" asp-action="Orders" class="footer__link">Lịch sử đơn hàng</a></li>
+            </ul>
+        </div>
+
+        <div class="footer__content">
+            <h3 class="footer__title">Fanpage FPT Polytechnic</h3>
+            <div class="footer__fanpage">
+                <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D100076801946587&tabs=IFrame&width=340&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
+                        width="340" height="130" style="border:none;overflow:hidden" scrolling="no"
+                        frameborder="0" allowfullscreen="true"
+                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer__bottom">
+        <p class="copyright">
+            &copy; 2025 FShop6 - FPT Polytechnic. Đã đăng ký bản quyền.
+        </p>
+        <span class="designer">Phát triển bởi nhóm F6</span>
+    </div>
+</footer>

@@ -1,0 +1,38 @@
+﻿<main class="main">
+    <section class="login-register section--lg">
+        <div class="login-register__container container">
+            <div class="login">
+                </a>
+
+                <div id="step-get-otp">
+                    <h3 class="section__title">Đặt Lại Mật Khẩu</h3>
+                    <form id="form-otp" class="form grid">
+                        <input type="email" id="email-input" placeholder="Nhập email của bạn" class="form__input" required>
+
+                        <div class="form__group--otp">
+                            <input type="text" id="otp-input" placeholder="Nhập mã OTP" class="form__input" required>
+                            <button type="button" id="get-otp-btn" class="btn btn--sm btn--outline">Lấy mã</button>
+                        </div>
+
+                        <div class="form__btn">
+                            <button type="submit" class="btn">Xác Nhận</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="step-reset-password" class="hidden">
+                    <h3 class="section__title">Tạo Mật Khẩu Mới</h3>
+                    <form id="form-new-password" class="form grid">
+                        <input type="password" id="new-password" placeholder="Mật khẩu mới (ít nhất 6 ký tự)" class="form__input" required minlength="6">
+                        <input type="password" id="confirm-new-password" placeholder="Xác nhận mật khẩu mới" class="form__input" required>
+                        <div class="form__btn">
+                            <button type="submit" class="btn">Lưu Mật Khẩu</button>
+                        </div>
+                    </form>
+                </div>
+
+                <p class="form__switch">Nhớ mật khẩu rồi? <a href="login.html">Quay lại đăng nhập</a></p>
+            </div>
+        </div>
+    </section>
+</main>

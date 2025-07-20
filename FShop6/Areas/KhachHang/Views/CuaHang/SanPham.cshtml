@@ -1,0 +1,54 @@
+﻿@{
+    Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
+    ViewData["Title"] = "Sản phẩm";
+}
+<main class="main">
+    <section class="breadcrumb">
+        <ul class="breadcrumb__list flex container">
+            <li><a href="index.html" class="breadcrumb__link">Trang chủ</a></li>
+            <li><span class="breadcrumb__link">></span></li>
+            <li><span class="breadcrumb__link">Sản phẩm</span></li>
+        </ul>
+    </section>
+
+    <section class="shop-page container section--lg">
+        <div class="shop__container">
+            <aside class="shop__sidebar">
+                <div class="sidebar__widget">
+                    <h3 class="widget__title">Danh Mục</h3>
+                    <ul class="widget__content filter__list" id="category-filter">
+                    </ul>
+                </div>
+
+                <div class="sidebar__widget">
+                    <h3 class="widget__title">Lọc Theo Giá</h3>
+                    <div class="widget__content">
+                        <div class="price-range">
+                            <input type="range" min="0" max="500000" value="500000" class="price-range__slider" id="price-range-slider">
+                            <span class="price-range__value" id="price-range-value">Lên đến 500,000đ</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="shop__products">
+                <div class="shop__header">
+                    <select class="sort-select form__input" id="sort-by">
+                        <option value="default">Sắp xếp mặc định</option>
+                        <option value="price-asc">Giá: Thấp đến Cao</option>
+                        <option value="price-desc">Giá: Cao đến Thấp</option>
+                        <option value="name-asc">Tên: A-Z</option>
+                        <option value="name-desc">Tên: Z-A</option>
+                        <option value="newest">Mới nhất</option>
+                        <option value="oldest">Cũ nhất</option>
+                    </select>
+                </div>
+                <div class="products__container grid" id="shop-products-grid">
+                </div>
+                <div class="pagination" id="pagination">
+                    <!-- Nút phân trang sẽ được render ở đây -->
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

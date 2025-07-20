@@ -1,0 +1,54 @@
+﻿@{
+    Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
+    ViewData["Title"] = "Thanh toán";
+}
+<main class="main">
+    <section class="checkout section--lg">
+        <div class="checkout__container container grid">
+            <div class="checkout__group">
+                <h3 class="section__title">Thông Tin Thanh Toán</h3>
+                <form id="checkout-form" class="form grid">
+                    <input type="text" placeholder="Họ và tên" class="form__input" required />
+                    <input type="tel" placeholder="Số điện thoại" class="form__input" required />
+                    <input type="text" placeholder="Địa chỉ nhận hàng" class="form__input" required />
+                </form>
+            </div>
+
+            <div class="checkout__group">
+                <h3 class="section__title">Đơn Hàng Của Bạn</h3>
+                <table class="order__table" id="order-summary-table"></table>
+
+                <div class="payment__methods">
+                    <h3 class="checkout__title payment__title">Phương Thức Thanh Toán</h3>
+                    <div class="payment__option flex">
+                        <input type="radio" name="payment" value="cod" id="cod" checked class="payment__input" />
+                        <label for="cod" class="payment__label">Thanh toán khi nhận hàng (COD)</label>
+                    </div>
+                    <div class="payment__option flex">
+                        <input type="radio" name="payment" value="bank" id="bank" class="payment__input" />
+                        <label for="bank" class="payment__label">Chuyển khoản ngân hàng</label>
+                    </div>
+                </div>
+
+                <button type="submit" form="checkout-form" class="btn btn--md">Đặt Hàng</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="bank-info-modal" class="modal-bank-info hidden">
+        <div class="modal-bank-info__overlay"></div>
+        <div class="modal-bank-info__content">
+            <h4>Thông tin chuyển khoản</h4>
+            <div class="modal-bank-info__details">
+                <img src="assets/img/qrcode.jpeg" alt="QR chuyển khoản" class="modal-bank-info__qr">
+                <div>
+                    <p><strong>Ngân hàng:</strong> <span>TPBank</span></p>
+                    <p><strong>Số tài khoản:</strong> <span>123456789</span></p>
+                    <p><strong>Chủ tài khoản:</strong> Nguyễn Văn A</p>
+                    <p><strong>Nội dung:</strong> <span>SDT_Hoten</span></p>
+                </div>
+            </div>
+            <button id="confirm-transfer-btn" class="btn">Tôi đã chuyển khoản</button>
+        </div>
+    </div>
+</main>

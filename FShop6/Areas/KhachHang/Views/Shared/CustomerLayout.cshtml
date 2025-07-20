@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--=============== FLATICON ===============-->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css" />
+
+    <!--=============== SWIPER CSS ===============-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="~/KhachHang/css/styles.css" asp-append-version="true" />
+
+    <title>@ViewData["Title"] - FShop6</title>
+</head>
+<body>
+    <!--=============== HEADER ===============-->
+    @Html.Partial("Header")
+
+    <!--=============== MAIN ===============-->
+    <main class="main">
+        @RenderBody()
+    </main>
+
+    <!--=============== FOOTER ===============-->
+    @Html.Partial("Footer")
+
+    <!--=============== SCRIPT ===============-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="~/KhachHang/js/address-form.js"></script>
+    <script src="~/KhachHang/js/include.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="~/assets/js/main.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
