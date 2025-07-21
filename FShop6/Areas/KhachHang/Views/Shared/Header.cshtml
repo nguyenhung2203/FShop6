@@ -23,12 +23,12 @@
     </div>
 
     <nav class="nav container">
-        <a asp-controller="Home" asp-action="Index" class="nav__logo">
+        <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="nav__logo">
             <img class="nav__logo-img" src="~/KhachHang/images/logo.png" alt="logo website" />
         </a>
         <div class="nav__menu" id="nav-menu">
             <div class="nav__menu-top">
-                <a asp-controller="Home" asp-action="Index" class="nav__menu-logo">
+                <ahref ="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="nav__menu-logo">
                     <img src="~/KhachHang/images/logo.png" alt="">
                 </a>
                 <div class="nav__close" id="nav-close">
@@ -37,10 +37,10 @@
             </div>
             <ul class="nav__list">
                 <li class="nav__item">
-                    <a asp-controller="Home" asp-action="Index" class="nav__link">Trang chủ</a>
+                    <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="nav__link">Trang chủ</a>
                 </li>
                 <li class="nav__item">
-                    <a asp-controller="Shop" asp-action="Index" class="nav__link">Sản phẩm</a>
+                    <a href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang" })" class="nav__link">Sản phẩm</a>
                 </li>
                 <li class="nav__item">
                     <a asp-controller="News" asp-action="Index" class="nav__link">Tin tức</a>
@@ -61,7 +61,7 @@
         </div>
 
         <div class="header__user-actions">
-            <a asp-controller="Wishlist" asp-action="Index" class="header__action-btn" title="Yêu thích">
+            <a asp-controller="TaiKhoan" asp-action="SanPhamYeuThich" class="header__action-btn" title="Yêu thích">
                 <i class="fi fi-rs-heart"></i><span class="count">0</span>
             </a>
             <a asp-controller="Cart" asp-action="Index" class="header__action-btn" title="Giỏ hàng">
@@ -72,5 +72,4 @@
             </div>
         </div>
     </nav>
-    <script src="~/KhachHang/js/main.js"></script>
 </header>

@@ -1,0 +1,74 @@
+﻿@{
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Tin Tức";
+}
+<main>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="index.html">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item active">Tin tức</li>
+            </ol>
+            <!-- News Management Form -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <i class="fa fa-newspaper-o"></i>
+                    Quản lý tin tức
+                </div>
+                <div class="card-body">
+                    <form id="newsForm">
+                        <div class="form-group">
+                            <label for="newsTitle"><i class="fa fa-header"></i> Tiêu đề</label>
+                            <input type="text" class="form-control" id="newsTitle" placeholder="Nhập tiêu đề tin tức" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newsDescription"><i class="fa fa-align-left"></i> Mô tả ngắn</label>
+                            <input type="text" class="form-control" id="newsDescription" placeholder="Nhập mô tả ngắn" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newsContent"><i class="fa fa-align-left"></i> Nội dung</label>
+                            <textarea class="form-control" id="newsContent" rows="5" placeholder="Nhập nội dung tin tức" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="newsImage"><i class="fa fa-picture-o"></i> Hình ảnh đại diện</label>
+                            <input type="file" class="form-control-file" id="newsImage">
+                        </div>
+                        <div class="form-group">
+                            <label for="newsStatus"><i class="fa fa-eye"></i> Trạng thái</label>
+                            <select class="form-control" id="newsStatus">
+                                <option value="1">Hiển thị</option>
+                                <option value="0">Ẩn</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="newsCreated"><i class="fa fa-calendar"></i> Thời gian tạo</label>
+                            <input type="text" class="form-control" id="newsCreated" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="newsUpdated"><i class="fa fa-calendar-check-o"></i> Ngày cập nhật</label>
+                            <input type="text" class="form-control" id="newsUpdated" readonly>
+                        </div>
+                        <div class="form-group text-right">
+                            <button type="submit" class="btn btn-success mr-2">
+                                <i class="fa fa-plus"></i> Thêm
+                            </button>
+                            <button type="button" class="btn btn-warning mr-2" id="editNewsBtn">
+                                <i class="fa fa-pencil"></i> Sửa
+                            </button>
+                            <button type="button" class="btn btn-danger" id="deleteNewsBtn">
+                                <i class="fa fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer small text-muted">Quản lý tin tức cho website bán hàng</div>
+            </div>
+        </div>
+        <br><br><br>
+        <!-- Sticky Footer -->
+
+    </div>
+</main>

@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="~/Admin/css/bootstrap.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/Admin/css/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" asp-append-version="true">
+    <link href="~/Admin/css/font-awesome.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/Admin/css/styles.css" rel="stylesheet" asp-append-version="true">
+
+
+    <title>@ViewData["Title"] - FShop6</title>
+</head>
+<body>
+    <!--=============== HEADER ===============-->
+    @Html.Partial("Header")
+
+    <!--=============== MAIN ===============-->
+    @RenderBody()
+
+    <!--=============== FOOTER ===============-->
+
+    <!--=============== SCRIPT ===============-->
+    <script src="~/Admin/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/chart-area-demo-6months.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/chart-area-demo.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/chart-bar-demo.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/chart-pie-demo-3months.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/chart-pie-demo-6months.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/chart-pie-demo.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/chart.min.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/datatables-demo.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/dataTables.bootstrap4.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/jquery.dataTables.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/jquery.easing.min.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/popper.min.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/rc-pos.min.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

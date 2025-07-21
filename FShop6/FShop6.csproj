@@ -7,19 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
     <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\Views\TrangChu\" />
-    <Folder Include="Areas\Admin\Views\CaiDat\" />
-    <Folder Include="Areas\Admin\Views\TinTuc\" />
-    <Folder Include="Areas\Admin\Views\ThongKe\" />
-    <Folder Include="Areas\Admin\Views\QuanLyDonHang\" />
-    <Folder Include="Areas\Admin\Views\QuanLyDanhMuc\" />
-    <Folder Include="Areas\Admin\Views\QuanLyKhachHang\" />
-    <Folder Include="Areas\Admin\Views\QuanLyTaiKhoan\" />
-    <Folder Include="Areas\Admin\Views\QuanLySanPham\" />
-    <Folder Include="Areas\Admin\Views\TaiKhoan\" />
-    <Folder Include="Areas\Admin\Views\Shared\" />
     <Folder Include="Areas\KhachHang\Models\" />
     <Folder Include="Data\" />
     <Folder Include="CauHinh\" />
@@ -28,6 +16,7 @@
     <Folder Include="wwwroot\Admin\css\" />
     <Folder Include="wwwroot\Admin\js\" />
     <Folder Include="wwwroot\Admin\images\" />
+    <Folder Include="wwwroot\Admin\fonts\" />
     <Folder Include="wwwroot\KhachHang\images\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>

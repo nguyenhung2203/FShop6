@@ -1,0 +1,72 @@
+﻿@{
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Quản lý tài khoản ";
+}
+<main>
+    <!-- Phần nội dung chính của trang Quản lý tài khoản -->
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="index.html">Trang chủ</a>
+            </li>
+            <li class="breadcrumb-item active">Quản lý tài khoản </li>
+        </ol>
+
+        <!-- Quản lý tài khoản admin -->
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <i class="fa fa-user"></i>
+                Quản lý tài khoản
+                <a href="#" class="text-white" data-toggle="modal" data-target="#addAdminModal">
+                    <span class="float-right">
+                        <i class="fa fa-plus"></i>
+                        Thêm tài khoản mới
+                    </span>
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="adminTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Tên đăng nhập</th>
+                                <th>Họ và tên</th>
+                                <th>Email</th>
+                                <th>Quyền hạn</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ví dụ dữ liệu -->
+                            <tr>
+                                <td>admin01</td>
+                                <td>Nguyễn Văn A</td>
+                                <td>admin01@example.com</td>
+                                <td>Quản trị viên</td>
+                                <td><span class="badge badge-success">Hoạt động</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editAdminModal"><i class="fa fa-pencil"></i> Sửa</button>
+                                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteAdminModal"><i class="fa fa-trash"></i> Xóa</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>admin02</td>
+                                <td>Trần Thị B</td>
+                                <td>admin02@example.com</td>
+                                <td>Nhân viên</td>
+                                <td><span class="badge badge-secondary">Khóa</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editAdminModal"><i class="fa fa-pencil"></i> Sửa</button>
+                                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteAdminModal"><i class="fa fa-trash"></i> Xóa</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer small text-muted">Cập nhật hôm qua lúc 11:59 PM</div>
+        </div>
+    </div>
+</main>

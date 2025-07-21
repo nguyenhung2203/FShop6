@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-namespace FShop6.Areas.KhachHang.Controllers
+
+namespace FShop6.Areas.Admin.Controllers
 {
-    [Area("KhachHang")]
+    [Area("Admin")]
     public class TrangChuController : Controller
     {
         public IActionResult Index()

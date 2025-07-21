@@ -1,0 +1,218 @@
+﻿@{
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Quản lý khách hàng";
+}
+<main>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="index.html">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item active">Quản lý khách hàng</li>
+            </ol>
+            <!-- Quản lý khách hàng -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <i class="fa fa-users"></i>
+                    Quản lý khách hàng
+                    <a href="#" class="text-white" data-toggle="modal" data-target="#addCustomerModal">
+                        <span class="float-right">
+                            <i class="fa fa-plus"></i>
+                            Thêm khách hàng mới
+                        </span>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="customerTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Mã người dùng</th>
+                                    <th>Mã vai trò</th>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Trạng thái</th>
+                                    <th>Vai trò</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Ví dụ dữ liệu -->
+                                <tr>
+                                    <td>KH001</td>
+                                    <td>VT01</td>
+                                    <td>Nguyễn Văn C</td>
+                                    <td>customer01@example.com</td>
+                                    <td>0901234567</td>
+                                    <td>123 Đường A, Quận B</td>
+                                    <td><span class="badge badge-success">Hoạt động</span></td>
+                                    <td>Khách hàng</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editCustomerModal"><i class="fa fa-pencil"></i> Sửa</button>
+                                        <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCustomerModal"><i class="fa fa-trash"></i> Xóa</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>KH002</td>
+                                    <td>VT02</td>
+                                    <td>Trần Thị D</td>
+                                    <td>customer02@example.com</td>
+                                    <td>0912345678</td>
+                                    <td>456 Đường X, Quận Y</td>
+                                    <td><span class="badge badge-secondary">Khóa</span></td>
+                                    <td>Quản trị viên</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editCustomerModal"><i class="fa fa-pencil"></i> Sửa</button>
+                                        <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCustomerModal"><i class="fa fa-trash"></i> Xóa</button>
+                                    </td>
+                                </tr>
+                                <!-- ...thêm dữ liệu khác... -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer small text-muted">Cập nhật hôm qua lúc 11:59 PM</div>
+            </div>
+            <!-- Modal Thêm khách hàng -->
+            <div class="modal fade" id="addCustomerModal" tabindex="-1" role="dialog" aria-labelledby="addCustomerLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="addCustomerLabel">Thêm khách hàng mới</h5>
+                            <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="customer_id">Mã người dùng</label>
+                                <input type="text" class="form-control" id="customer_id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="role_id">Mã vai trò</label>
+                                <input type="text" class="form-control" id="role_id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer_name">Họ tên</label>
+                                <input type="text" class="form-control" id="customer_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer_email">Email</label>
+                                <input type="email" class="form-control" id="customer_email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer_phone">Số điện thoại</label>
+                                <input type="text" class="form-control" id="customer_phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer_address">Địa chỉ</label>
+                                <input type="text" class="form-control" id="customer_address">
+                            </div>
+                            <div class="form-group">
+                                <label for="customer_status">Trạng thái</label>
+                                <select class="form-control" id="customer_status">
+                                    <option value="active">Hoạt động</option>
+                                    <option value="locked">Khóa</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer_role">Vai trò</label>
+                                <select class="form-control" id="customer_role">
+                                    <option value="customer">Khách hàng</option>
+                                    <option value="admin">Quản trị viên</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                            <button class="btn btn-primary" type="submit">Thêm mới</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Modal Sửa khách hàng -->
+            <div class="modal fade" id="editCustomerModal" tabindex="-1" role="dialog" aria-labelledby="editCustomerLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form class="modal-content">
+                        <div class="modal-header bg-info text-white">
+                            <h5 class="modal-title" id="editCustomerLabel">Sửa thông tin khách hàng</h5>
+                            <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="edit_customer_id">Mã người dùng</label>
+                                <input type="text" class="form-control" id="edit_customer_id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_role_id">Mã vai trò</label>
+                                <input type="text" class="form-control" id="edit_role_id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_customer_name">Họ tên</label>
+                                <input type="text" class="form-control" id="edit_customer_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_customer_email">Email</label>
+                                <input type="email" class="form-control" id="edit_customer_email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_customer_phone">Số điện thoại</label>
+                                <input type="text" class="form-control" id="edit_customer_phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_customer_address">Địa chỉ</label>
+                                <input type="text" class="form-control" id="edit_customer_address">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_customer_status">Trạng thái</label>
+                                <select class="form-control" id="edit_customer_status">
+                                    <option value="active">Hoạt động</option>
+                                    <option value="locked">Khóa</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_customer_role">Vai trò</label>
+                                <select class="form-control" id="edit_customer_role">
+                                    <option value="customer">Khách hàng</option>
+                                    <option value="admin">Quản trị viên</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                            <button class="btn btn-info" type="submit">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Modal Xóa khách hàng -->
+            <div class="modal fade" id="deleteCustomerModal" tabindex="-1" role="dialog" aria-labelledby="deleteCustomerLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="deleteCustomerLabel">Xóa khách hàng</h5>
+                            <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Bạn có chắc chắn muốn xóa khách hàng này không?
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                            <button class="btn btn-danger" type="submit">Xóa</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Sticky Footer -->
+
+    </div>
+</main>

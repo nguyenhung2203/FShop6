@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class TrangChuController : Controller
+    public class CuaHangController : Controller
     {
-        public IActionResult Index()
+        public IActionResult SanPham()
         {
             return View();
         }

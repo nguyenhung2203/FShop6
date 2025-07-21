@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // ĐÃ ĐĂNG NHẬP
             accountText.textContent = `Xin chào, ${currentUser.name}`;
             dropdownContent.innerHTML = `
-                <a href="accounts.html" class="dropdown-link">Tài khoản của tôi</a>
+                <a asp-controller="TaiKhoan" asp-action="HoSo">Tài khoản của tôi</a>
                 <a href="#" id="show-logout-modal" class="dropdown-link logout">Đăng xuất</a>
             `;
             // Gán sự kiện logout cho nút trong dropdown
