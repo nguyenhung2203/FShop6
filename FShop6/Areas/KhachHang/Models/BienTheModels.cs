@@ -1,6 +1,6 @@
 ﻿namespace FShop6.Areas.KhachHang.Models
 {
-    public class BienThe
+    public class BienTheModels
     {
         public int MaBienThe { get; set; }
         public int MaSanPham { get; set; }

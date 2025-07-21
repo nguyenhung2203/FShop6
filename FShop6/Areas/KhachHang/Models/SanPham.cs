@@ -10,7 +10,7 @@
         public string HinhAnhDaiDien { get; set; }
 
         public DanhMuc DanhMuc { get; set; }
-        public ICollection<BienThe> BienThes { get; set; }
+        public ICollection<BienTheModels> BienThes { get; set; }
     }
 
 }
