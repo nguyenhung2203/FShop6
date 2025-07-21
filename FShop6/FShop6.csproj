@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\KhachHang\Models\" />
-    <Folder Include="Data\" />
-    <Folder Include="CauHinh\" />
-    <Folder Include="TienIch\" />
-    <Folder Include="Services\" />
     <Folder Include="wwwroot\Admin\css\" />
     <Folder Include="wwwroot\Admin\js\" />
     <Folder Include="wwwroot\Admin\images\" />
