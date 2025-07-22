@@ -1,7 +1,18 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using FShop6.Areas.KhachHang.Services;
+using FShop6.Data;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+//connection db
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Thêm dịch vụ MVC
 builder.Services.AddControllersWithViews();
+
+// 🟢 Đăng ký dịch vụ TrangChuService
+builder.Services.AddScoped<ITrangChuService, TrangChuServices>();
 
 var app = builder.Build();
 
