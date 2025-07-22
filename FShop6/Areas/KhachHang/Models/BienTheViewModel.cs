@@ -10,6 +10,7 @@
         public decimal GiaBan { get; set; }
         public int SoLuongConLai { get; set; }
         public string TinhTrang { get; set; }
+        public bool NoiBat { get; set; }
 
         // Từ bảng SanPham
         public int MaSanPham { get; set; }
