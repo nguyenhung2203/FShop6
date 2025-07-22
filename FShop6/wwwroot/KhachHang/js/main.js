@@ -233,3 +233,21 @@ document.addEventListener("DOMContentLoaded", function () {
     // Áp dụng hàm cho việc chọn màu
     setupActiveClassToggle(".color__link", "color-active");
 });
+
+// Hàm cập nhật giá và số lượng khi người dùng chọn một biến thể
+function updateProductInfo(selectedElement) {
+    // Lấy thông tin từ thuộc tính data của biến thể được chọn
+    var id = $(selectedElement).data('id'); // Lấy ID từ data-id của biến thể
+    var giaBan = $(selectedElement).data('giaban');
+    var soLuongConLai = $(selectedElement).data('soluong'); // Lấy số lượng tồn kho từ biến thể
+
+    // Cập nhật giá bán
+    $('#product-price').text(giaBan); // Thay đổi giá sản phẩm
+
+    // Cập nhật thông tin SKU và Tình trạng (số lượng)
+    $('#product-sku').text(id); // Cập nhật SKU từ data-id của biến thể
+    $('#product-status').text("Còn " + soLuongConLai + " sản phẩm"); // Cập nhật số lượng tồn kho
+}
+
+
+

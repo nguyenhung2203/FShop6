@@ -1,5 +1,6 @@
 ﻿using FShop6.Areas.KhachHang.Models;
 using FShop6.Data;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 
 namespace FShop6.Areas.KhachHang.Services
@@ -19,28 +20,35 @@ namespace FShop6.Areas.KhachHang.Services
             }
             public async Task<BienTheChiTietModel> LayChiTietSanPhamAsync(int maSanPham)
             {
-                var bienThe = await _context.AnhBienThe
-                    .Include(bt => bt.BienThe)
-                    .ThenInclude(bt => bt.SanPham)
-                    .ThenInclude(sp => sp.DanhMuc)
-                    .Where(bt => bt.BienThe.SanPham.MaSanPham == maSanPham)
-                    .ToListAsync();
+                var sanPham = await _context.SanPham
+                    .Include(sp => sp.DanhMuc)
+                    .Include(sp => sp.BienThe)
+                        .ThenInclude(b => b.AnhBienThe)
+                    .FirstOrDefaultAsync(sp => sp.MaSanPham == maSanPham);
 
-                if (bienThe == null)
+                if (sanPham == null)
                 {
                     return null;
-                }
+                }    
+
+                var bienTheList = sanPham.BienThe.Select(bienthe => new BienTheChiTietModel.BienTheModel
+                {
+                    MaBienThe = bienthe.MaBienThe,
+                    LoaiBienThe = bienthe.LoaiBienThe,
+                    GiaBan = bienthe.GiaBan.ToString("N0"),
+                    SKU = bienthe.MaSKU,
+                    SoLuongTon = bienthe.SoLuongConLai, // Thêm số lượng tồn kho
+                    DanhSachAnh = bienthe.AnhBienThe.Select(a => a.URL).ToList()
+                }).ToList();
 
                 return new BienTheChiTietModel
                 {
-                    MaBienThe = bienThe.First().MaBienThe,
-                    MaSanPham = bienThe.First().BienThe.MaSanPham,
-                    GiaBan = bienThe.First().BienThe.GiaBan,
-                    MaSKU = bienThe.First().BienThe.MaSKU,
-                    LoaiBienThe = bienThe.First().BienThe.LoaiBienThe,
-                    SoLuong = bienThe.First().BienThe.SoLuongConLai,
-                    AnhBienThe = bienThe, // Assigning the collection of AnhBienTheModel  
-                    SanPham = bienThe.First().BienThe.SanPham
+                    MaSanPham = sanPham.MaSanPham,
+                    TenSanPham = sanPham.TenSanPham,
+                    MoTa = sanPham.MoTa,
+                    HinhAnhDaiDien = sanPham.HinhAnhDaiDien,
+                    DanhMuc = sanPham.DanhMuc?.TenDanhMuc ?? "Không có danh mục",
+                    BienThe = bienTheList // Trả về danh sách các biến thể
                 };
             }
         }

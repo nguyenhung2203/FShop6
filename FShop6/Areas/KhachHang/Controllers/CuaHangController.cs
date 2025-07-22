@@ -19,9 +19,15 @@ namespace FShop6.Areas.KhachHang.Controllers
             _chiTietSanPhamService = chiTietSanPhamService;
         }
 
-        public async Task<IActionResult> ChiTietSanPham()
+        public async Task<IActionResult> ChiTietSanPham(int maSanPham)
         {
-            var model = await _chiTietSanPhamService.LayChiTietSanPhamAsync(1);
+            maSanPham = 1;
+            var model = await _chiTietSanPhamService.LayChiTietSanPhamAsync(maSanPham);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
             return View(model);
         }
     }
