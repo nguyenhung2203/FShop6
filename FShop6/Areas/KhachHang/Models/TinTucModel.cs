@@ -1,7 +1,10 @@
-﻿namespace FShop6.Areas.KhachHang.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FShop6.Areas.KhachHang.Models
 {
-    public class TinTuc
+    public class TinTucModel
     {
+        [Key]
         public int MaTinTuc { get; set; }
 
         public string TieuDe { get; set; }
