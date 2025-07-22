@@ -2,6 +2,7 @@
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Chi tiết sản phẩm";
 }
+@model FShop6.Areas.KhachHang.Models.BienTheChiTietModel
 <main class="main">
     <!--=============== BREADCRUMB ===============-->
     <section class="breadcrumb">
@@ -15,11 +16,10 @@
     </section>
 
     <!--=============== DETAILS ===============-->
-    <section class="details section--lg">
         <div class="details__container container grid">
             <div class="details__group">
-                <img src="./assets/img/product-8-1.jpg"
-                     alt=""
+                <img src="~/KhachHang/images/AoCamCaoDang.png"
+                     alt="Ảnh sản phẩm"
                      class="details__img" />
                 <div class="details__small-images grid">
                     <img src="./assets/img/product-8-2.jpg"
@@ -34,7 +34,8 @@
                 </div>
             </div>
             <div class="details__group">
-                <h3 class="details__title">Áo Henley</h3>
+               
+                <h3 class="details__title">@Model.SanPham.TenSanPham</h3>
                 <p class="details__brand">Thương hiệu: <span>adidas</span></p>
                 <div class="details__price flex">
                     <span class="new__price">$116</span>

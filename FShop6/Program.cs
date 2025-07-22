@@ -1,6 +1,7 @@
 ﻿using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
 using Microsoft.EntityFrameworkCore;
+using static FShop6.Areas.KhachHang.Services.ChiTietSanPhamServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ builder.Services.AddControllersWithViews();
 
 // 🟢 Đăng ký dịch vụ TrangChuService
 builder.Services.AddScoped<ITrangChuService, TrangChuServices>();
+// 🟢 Đăng ký dịch vụ ChiTietSanPhamService
+builder.Services.AddScoped<IChiTietSanPhamService, ChiTietSanPhamService>();
+
 
 var app = builder.Build();
 
@@ -31,13 +35,13 @@ app.UseAuthorization();
 // 🟡 Định tuyến cho khu vực (Areas) — Quan trọng
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=TrangChu}/{action=Index}/{id?}"
+    pattern: "{area:exists}/{controller=CuaHang}/{action=ChiTietSanPham}/{id?}"
 );
 
 // 🔵 Định tuyến mặc định: Chuyển hướng về KhachHang/TrangChu/Index
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=TrangChu}/{action=Index}/{id?}",
+    pattern: "{controller=CuaHang}/{action=ChiTietSanPham}/{id?}",
     defaults: new { area = "KhachHang" } // 🟢 Mặc định dùng Area KhachHang
 );
 
