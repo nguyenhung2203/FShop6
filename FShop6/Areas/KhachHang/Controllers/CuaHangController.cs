@@ -1,13 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FShop6.Areas.KhachHang.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
     public class CuaHangController : Controller
     {
-        public IActionResult SanPham()
+        private readonly ICuaHangServices _cuaHangService;
+
+        public CuaHangController(ICuaHangServices cuaHangService)
         {
-            return View();
+            _cuaHangService = cuaHangService;
+        }
+        public async Task<IActionResult> SanPham()
+        {
+            var model = await _cuaHangService.laySanPhamTatCa();
+            return View(model);
         }
     }
 }

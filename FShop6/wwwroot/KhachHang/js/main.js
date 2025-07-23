@@ -3,19 +3,60 @@ const navMenu = document.getElementById("nav-menu"),
     navToggle = document.getElementById("nav-toggle"),
     navClose = document.getElementById("nav-close");
 
-/*===== Menu Show =====*/
 if (navToggle) {
     navToggle.addEventListener("click", () => {
         if (navMenu) navMenu.classList.add("show-menu");
     });
 }
-
-/*===== Hide Show =====*/
 if (navClose) {
     navClose.addEventListener("click", () => {
         if (navMenu) navMenu.classList.remove("show-menu");
     });
 }
+
+/*=============== STICKY NAVIGATION MENU LOGIC (FIXED) ===============*/
+document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('.nav');
+    const header = document.querySelector('.header');
+
+    if (nav && header) {
+        // Lấy vị trí ban đầu của thanh menu
+        const navOffsetTop = nav.offsetTop;
+        // Lấy chiều cao của thanh menu
+        const navHeight = nav.offsetHeight;
+
+        window.addEventListener('scroll', () => {
+            // Nếu vị trí cuộn của trang lớn hơn vị trí ban đầu của menu
+            if (window.scrollY > navOffsetTop) {
+                // Thêm class để "ghim" menu lại
+                header.classList.add('header-fixed');
+                // Thêm một khoảng đệm cho nội dung chính để không bị che
+                document.body.style.paddingTop = navHeight + 'px';
+            } else {
+                // Gỡ bỏ class khi cuộn lên đầu
+                header.classList.remove('header-fixed');
+                document.body.style.paddingTop = '0';
+            }
+        });
+    }
+
+    // --- LOGIC MỚI: ĐẢM BẢO CHỈ CHỌN MỘT CHECKBOX ---
+    categoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            // Nếu checkbox hiện tại được tích vào
+            if (e.target.checked) {
+                // Bỏ tích tất cả các checkbox khác
+                categoryCheckboxes.forEach(otherCheckbox => {
+                    if (otherCheckbox !== e.target) {
+                        otherCheckbox.checked = false;
+                    }
+                });
+            }
+        });
+    });
+
+    // ... các đoạn code khác của bạn như Active Link, Login Status ...
+});
 /*=============== LOGIC TỰ ĐỘNG THAY ĐỔI MÀU MENU CHO ASP.NET MVC ===============*/
 document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('.nav__link');
@@ -315,3 +356,4 @@ document.addEventListener("DOMContentLoaded", function () {
     // Áp dụng hàm cho việc chọn màu
     setupActiveClassToggle(".color__link", "color-active");
 });
+

@@ -448,40 +448,46 @@ table {
 
 /* CSS để header__top luôn nằm ở đầu và cố định */
 
-/* Header__top cố định ở đầu trang */
-.header__top {
+/* --- STICKY NAVIGATION MENU STYLING --- */
+
+/* --- FIXED HEADER STYLING (FIXED) --- */
+
+/* Lớp này sẽ được JavaScript thêm vào khi cuộn */
+/* --- FIXED HEADER STYLING (Bản sửa lỗi cuối cùng) --- */
+
+/* Lớp này sẽ được JavaScript thêm vào thẻ <header> khi cuộn */
+.header-fixed {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    z-index: 1002;
-    background-color: var(--first-color-alt);
-    border-bottom: 1px solid #e0e0e0;
     width: 100%;
-}
-
-/* Nav cố định ngay bên dưới header__top */
-.nav {
-    position: fixed;
-    top: 100px !important;
-    left: 0;
-    right: 0;
-    z-index: 1001;
+    z-index: 1000;
     background-color: var(--body-color);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    animation: slideDown 0.3s ease-in-out;
 }
 
-/* Header container không cần fixed nữa */
-.header {
-    position: relative;
-}
+    /* Ẩn thanh top bar khi header được ghim lại */
+    .header-fixed .header__top {
+        display: none;
+    }
 
-/* Thêm padding cho body để không bị che nội dung */
-body {
-    padding-top: 140px; /* header__top (60px) + nav (80px) */
-}
+    /* Quan trọng: Khi header được ghim, thanh nav bên trong vẫn giữ bố cục */
+    .header-fixed .nav {
+        /* Không cần position: fixed ở đây nữa */
+        height: calc(var(--header-height) + 1.5rem); /* Đồng bộ chiều cao */
+    }
 
+/* Hiệu ứng trượt xuống mượt mà */
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
 /* Hoặc nếu có main content container */
 .main-content,
 .container-main,
@@ -3226,6 +3232,9 @@ main {
 .header__action-btn:hover i {
     color: var(--first-color); /* Chuyển sang màu cam */
 }
+.header {
+    margin-bottom: -8rem; /* Khoảng cách dưới header */
+}
 
 /* --- ACCOUNT DROPDOWN IN HEADER TOP --- */
 
@@ -3737,4 +3746,52 @@ main {
 
     .product__item:hover {
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+/* --- CUSTOM STYLING FOR SHOP PAGE PRODUCTS --- */
+
+/* --- San pham shop--- */
+
+.shop-product__item {
+    min-height: 20px!important; /* Bạn có thể thay đổi số này cho phù hợp */
+    height: 450px;
+}
+
+    .shop-product__item .product__category {
+        font-size: var(--smaller-font-size);
+    }
+
+    .shop-product__item .product__title {
+        font-size: var(--h4-font-size);
+        height: 60px;  Giảm chiều cao của tên sản phẩm 
+    }
+
+    .shop-product__item .new__price {
+        font-size: var(--large-font-size);
+    }
+
+    .shop-product__item .action__btn {
+        width: 36px;
+        height: 36px;
+    }
+
+        .shop-product__item .action__btn i {
+            font-size: 1rem;
+        }
+
+    .shop-product__item .product__bottom-row {
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+    }
+    .shop-product__item .product__description {
+        font-size: var(--small-font-size);
+        line-height: 1.4;
+        margin-top: 1.5rem; /* Kéo lên một chút cho gần tên sản phẩm */
+        margin-bottom: 1rem;
+        height: 3em; /* Giới hạn mô tả chỉ hiển thị trên 2 dòng */
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Số dòng tối đa */
+        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
     }
