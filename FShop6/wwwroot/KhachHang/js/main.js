@@ -3,19 +3,142 @@ const navMenu = document.getElementById("nav-menu"),
     navToggle = document.getElementById("nav-toggle"),
     navClose = document.getElementById("nav-close");
 
-/*===== Menu Show =====*/
 if (navToggle) {
     navToggle.addEventListener("click", () => {
         if (navMenu) navMenu.classList.add("show-menu");
     });
 }
-
-/*===== Hide Show =====*/
 if (navClose) {
     navClose.addEventListener("click", () => {
         if (navMenu) navMenu.classList.remove("show-menu");
     });
 }
+
+/*=============== STICKY NAVIGATION MENU LOGIC (FIXED) ===============*/
+document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('.nav');
+    const header = document.querySelector('.header');
+
+    if (nav && header) {
+        // Lấy vị trí ban đầu của thanh menu
+        const navOffsetTop = nav.offsetTop;
+        // Lấy chiều cao của thanh menu
+        const navHeight = nav.offsetHeight;
+
+        window.addEventListener('scroll', () => {
+            // Nếu vị trí cuộn của trang lớn hơn vị trí ban đầu của menu
+            if (window.scrollY > navOffsetTop) {
+                // Thêm class để "ghim" menu lại
+                header.classList.add('header-fixed');
+                // Thêm một khoảng đệm cho nội dung chính để không bị che
+                document.body.style.paddingTop = navHeight + 'px';
+            } else {
+                // Gỡ bỏ class khi cuộn lên đầu
+                header.classList.remove('header-fixed');
+                document.body.style.paddingTop = '0';
+            }
+        });
+    }
+
+    // --- LOGIC MỚI: ĐẢM BẢO CHỈ CHỌN MỘT CHECKBOX ---
+    categoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            // Nếu checkbox hiện tại được tích vào
+            if (e.target.checked) {
+                // Bỏ tích tất cả các checkbox khác
+                categoryCheckboxes.forEach(otherCheckbox => {
+                    if (otherCheckbox !== e.target) {
+                        otherCheckbox.checked = false;
+                    }
+                });
+            }
+        });
+    });
+
+    // ... các đoạn code khác của bạn như Active Link, Login Status ...
+});
+/*=============== LOGIC TỰ ĐỘNG THAY ĐỔI MÀU MENU CHO ASP.NET MVC ===============*/
+document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.nav__link');
+    const currentUrl = window.location.href.toLowerCase();
+    const currentPath = window.location.pathname.toLowerCase();
+
+    // Debug - xem URL hiện tại
+    console.log('Current URL:', currentUrl);
+    console.log('Current Path:', currentPath);
+
+    let isLinkActive = false;
+
+    navLinks.forEach((link, index) => {
+        const linkHref = link.href.toLowerCase();
+        const linkPath = new URL(link.href).pathname.toLowerCase();
+
+        console.log(`Link ${index + 1}:`, linkHref, 'Path:', linkPath);
+
+        // Xóa active class trước
+        link.classList.remove('active-link');
+
+        // Kiểm tra nhiều điều kiện
+        let isMatch = false;
+
+        // 1. So sánh URL đầy đủ
+        if (currentUrl === linkHref) {
+            isMatch = true;
+        }
+
+        // 2. So sánh path
+        if (currentPath === linkPath) {
+            isMatch = true;
+        }
+
+        // 3. Kiểm tra theo controller/action cho ASP.NET MVC
+        if (linkPath.includes('/trangchu') && (currentPath.includes('/trangchu') || currentPath === '/' || currentPath.includes('/index'))) {
+            isMatch = true;
+        }
+        else if (linkPath.includes('/cuahang') && currentPath.includes('/cuahang')) {
+            isMatch = true;
+        }
+        else if (linkPath.includes('/tintuc') && currentPath.includes('/tintuc')) {
+            isMatch = true;
+        }
+        else if (linkPath.includes('/gioithieu') && currentPath.includes('/gioithieu')) {
+            isMatch = true;
+        }
+
+        // 4. Kiểm tra theo action name trong URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const actionFromUrl = currentPath.split('/').pop();
+        const actionFromLink = linkPath.split('/').pop();
+
+        if (actionFromUrl && actionFromLink && actionFromUrl === actionFromLink) {
+            isMatch = true;
+        }
+
+        if (isMatch) {
+            link.classList.add('active-link');
+            isLinkActive = true;
+            console.log('Active link set:', link.textContent);
+        }
+    });
+
+    // Nếu không có link nào active, set trang chủ làm active
+    if (!isLinkActive) {
+        const homeLink = document.querySelector('.nav__link[href*="TrangChu"], .nav__link[href*="Index"]');
+        if (homeLink) {
+            homeLink.classList.add('active-link');
+            console.log('Home link set as active');
+        }
+    }
+
+    // Thêm event listener để debug khi click
+    navLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            console.log('Clicked link:', this.href);
+            console.log('Will navigate to:', this.href);
+            // Không preventDefault() - để link hoạt động bình thường
+        });
+    });
+});
 /*=============== LOGIC HEADER TOP LOGIN/LOGOUT ===============*/
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
@@ -256,5 +379,6 @@ function updateProductDetails(element) {
     // Nếu có thay đổi về số lượng, cập nhật thêm số lượng vào input
     document.getElementById('quantity').value = 1; // Đặt số lượng mặc định khi chọn biến thể
 }
+
 
 

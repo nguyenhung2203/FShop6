@@ -27,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @* @foreach (var item in Model)
                     {
                         <tr>
                             <td><img src="@item.ImageUrl" alt="" class="table__img" /></td>
@@ -40,7 +40,18 @@
                             <td><span class="subtotal">@item.Subtotal.ToString("C")</span></td>
                             <td><i class="fi fi-rs-trash table__trash"></i></td>
                         </tr>
-                    }
+                    } *@
+                    <tr>
+                        <td><img src="ImageUrl" alt="" class="table__img" /></td>
+                        <td>
+                            <h3 class="table__title">ProductName</h3>
+                            <p class="table__description">Description</p>
+                        </td>
+                        <td><span class="table__price">Price.ToString("C")</span></td>
+                        <td><input type="number" value="Quantity" class="quantity" /></td>
+                        <td><span class="subtotal">Subtotal.ToString("C")</span></td>
+                        <td><i class="fi fi-rs-trash table__trash"></i></td>
+                    </tr>
                 </tbody>
             </table>
         </div>

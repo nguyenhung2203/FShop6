@@ -2,6 +2,8 @@
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Sản phẩm";
 }
+}
+@model FShop6.Areas.KhachHang.Models.PhanTrangSanPhamViewModel
 <main class="main">
     <section class="breadcrumb">
         <ul class="breadcrumb__list flex container">
@@ -17,6 +19,17 @@
                 <div class="sidebar__widget">
                     <h3 class="widget__title">Danh Mục</h3>
                     <ul class="widget__content filter__list" id="category-filter">
+                        @if (Model?.DanhSachDanhMuc != null)
+                        {
+                            foreach (var dm in Model.DanhSachDanhMuc)
+                            {
+                                <li><label><input type="checkbox" class="category-checkbox" value="${cat}">@dm.TenDanhMuc</label></li>
+                            }
+                        }
+                        else
+                        {
+                            <p>Không có danh mục nào.</p>
+                        }
                     </ul>
                 </div>
 
@@ -43,7 +56,46 @@
                         <option value="oldest">Cũ nhất</option>
                     </select>
                 </div>
-                <div class="products__container grid" id="shop-products-grid">
+                <div class="products__container grid" id="shop-products__container">
+                    @if (Model?.TongSanPham != null && Model.TongSanPham.Any())
+                    {
+                        @foreach (var sanPham in Model.TongSanPham)
+                        {
+                            <div class="product__item shop-product__item">
+                                <div class="product__banner">
+                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaBienThe" class="product__images">
+                                        <img src="@Url.Content("~/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
+                                             alt="@sanPham.TenSanPham"
+                                             class="product__img default" />
+                                    </a>
+                                </div>
+                                <div class="product__content">
+                                    <span class="product__category">@sanPham.TenDanhMuc</span>
+                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaBienThe">
+                                        <h3 class="product__title">@sanPham.TenSanPham</h3>
+                                    </a>
+									<p class="product__description">@sanPham.MoTaNgan</p>
+                                </div>
+                                <div class="product__bottom-row">
+                                    <div class="product__price">
+                                        <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                    </div>
+                                    <div class="product-card-actions">
+                                        <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
+                                            <i class="fi fi-rs-shopping-bag-add"></i>
+                                        </a>
+                                        <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                                            <i class="fi fi-rs-heart"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Không có sản phẩm nào để hiển thị.</p>
+                    }
                 </div>
                 <div class="pagination" id="pagination">
                     <!-- Nút phân trang sẽ được render ở đây -->
