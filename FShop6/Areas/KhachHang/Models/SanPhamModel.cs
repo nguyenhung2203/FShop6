@@ -31,7 +31,7 @@ namespace FShop6.Areas.KhachHang.Models
         public DanhMucModel DanhMuc { get; set; }
 
         // Danh sách các biến thể (màu sắc, size, v.v.) của sản phẩm
-        public ICollection<BienTheModels> BienThe { get; set; } = new List<BienTheModels>();
+        public ICollection<BienTheModels> BienThes { get; set; } = new List<BienTheModels>();
     }
 
 }

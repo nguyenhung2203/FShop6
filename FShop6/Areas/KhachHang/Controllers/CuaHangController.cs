@@ -1,6 +1,6 @@
 ﻿using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
-using static FShop6.Areas.KhachHang.Services.ChiTietSanPhamServi
+using static FShop6.Areas.KhachHang.Services.ChiTietSanPhamServices;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
