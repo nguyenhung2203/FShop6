@@ -15,13 +15,13 @@
                 <p class="home__description">
                     Thể hiện cá tính và niềm tự hào của sinh viên FPT.
                 </p>
-                <a asp-controller="CuaHang" asp-action="SanPham" class="btn">Mua sắm ngay</a>
+                <a href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang" })" class="btn">Mua sắm ngay</a>
             </div>
             <img src="~/KhachHang/images/Anh2Bannner-fotor-20250722152618.png" class="home__img" alt="Sản phẩm thương hiệu FPT" />
         </div>
     </section>
 
-    <!--=============== CATEGORIES ===============-->
+    <!--=============== Danh mục phổ biến ===============-->
     <section class="categories container section">
         <h3 class="section__title"><span>Danh mục phổ biến</span></h3>
         <div class="categories__container swiper">
@@ -47,7 +47,7 @@
         </div>
     </section>
 
-    <!--=============== PRODUCTS ===============-->
+    <!--=============== Sản phẩm nổi bật và phổ biến ===============-->
     <section class="products container section">
         <div class="tab__btns">
             <span class="tab__btn active-tab" data-target="#featured">Nổi bật</span>
@@ -59,31 +59,32 @@
                 <div class="products__container grid">
                    @foreach(var sanPham in Model.SanPhamNoiBat)
                     {
-                        <div class="product__item">
-                            @* <div class="product__banner">
+                        <div class="product__item swiper-slide">
+                            <div class="product__banner">
                                 <a href="details.html" class="product__images">
-                                    <img src="assets/img/product-2-1.jpg"
-                                         alt=""
+                                    <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
+                                         alt="@sanPham.TenSanPham"
                                          class="product__img default" />
                                 </a>
-                            </div> *@
+                            </div>
                             <div class="product__content">
                                 <a href="details.html">
                                     <h3 class="product__title">@sanPham.TenSanPham</h3>
                                 </a>
+                                <p class="product__description">@sanPham.MoTaNgan</p>
+                            </div>
+                            <div class="product__bottom-row">
                                 <div class="product__price flex">
-                                    <span class="new__price">@sanPham.GiaBan</span>
+                                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
                                 </div>
-                                <a href="#"
-                                   class="action__btn"
-                                   aria-label="Add to Wishlist">
-                                    <i class="fi fi-rs-heart"></i>
-                                </a>
-                                <a href="#"
-                                   class="action__btn cart__btn"
-                                   aria-label="Add To Cart">
-                                    <i class="fi fi-rs-shopping-bag-add"></i>
-                                </a>
+                                <div class="product-card-actions">
+                                    <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
+                                        <i class="fi fi-rs-shopping-bag-add"></i>
+                                    </a>
+                                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                                        <i class="fi fi-rs-heart"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     }
@@ -93,31 +94,32 @@
                 <div class="products__container grid">
                     @foreach (var sanPham in Model.SanPhamPhoBien)
                     {
-                        <div class="product__item">
-                            @* <div class="product__banner">
+                        <div class="product__item swiper-slide">
+                            <div class="product__banner">
                                 <a href="details.html" class="product__images">
-                                    <img src="assets/img/product-2-1.jpg"
-                                         alt=""
+                                    <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
+                                         alt="@sanPham.TenSanPham"
                                          class="product__img default" />
                                 </a>
-                            </div> *@
+                            </div>
                             <div class="product__content">
                                 <a href="details.html">
                                     <h3 class="product__title">@sanPham.TenSanPham</h3>
                                 </a>
+                                <p class="product__description">@sanPham.MoTaNgan</p>
+                            </div>
+                            <div class="product__bottom-row">
                                 <div class="product__price flex">
-                                    <span class="new__price">@sanPham.GiaBan</span>
+                                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
                                 </div>
-                                <a href="#"
-                                   class="action__btn"
-                                   aria-label="Add to Wishlist">
-                                    <i class="fi fi-rs-heart"></i>
-                                </a>
-                                <a href="#"
-                                   class="action__btn cart__btn"
-                                   aria-label="Add To Cart">
-                                    <i class="fi fi-rs-shopping-bag-add"></i>
-                                </a>
+                                <div class="product-card-actions">
+                                    <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
+                                        <i class="fi fi-rs-shopping-bag-add"></i>
+                                    </a>
+                                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                                        <i class="fi fi-rs-heart"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     }
@@ -126,40 +128,43 @@
         </div>
     </section>
 
-    <!--=============== NEW ARRIVALS ===============-->
+    <!--=============== Sản phẩm mới về ===============-->
     <section class="new__arrivals container section">
         <h3 class="section__title"><span>Hàng mới về</span></h3>
         <div class="new__container swiper">
             <div class="swiper-wrapper">
-                <div class="product__item swiper-slide">
-                    <div class="product__banner">
-                        <a href="details.html" class="product__images">
-                            <img src="assets/img/product-1-1.jpg"
-                                 alt=""
-                                 class="product__img default" />
-                            <img src="assets/img/product-1-2.jpg"
-                                 alt=""
-                                 class="product__img hover" />
-                        </a>
-                    </div>
-                    <div class="product__content">
-                        <a href="details.html">
-                            <h3 class="product__title">Colorful Pattern Shirts</h3>
-                        </a>
-                        <div class="product__price flex">
-                            <span class="new__price">$238.85</span>
+                @foreach (var sanPham in Model.SanPhamMoi)
+                {
+                    <div class="product__item swiper-slide">
+                        <div class="product__banner">
+                            <a href="details.html" class="product__images">
+                                <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
+                                     alt="@sanPham.TenSanPham"
+                                     class="product__img default" />
+                            </a>
                         </div>
-                        <a href="#" class="action__btn" aria-label="Add to Wishlist">
-                            <i class="fi fi-rs-heart"></i>
-                        </a>
-                        <a href="#"
-                           class="action__btn cart__btn"
-                           aria-label="Add To Cart">
-                            <i class="fi fi-rs-shopping-bag-add"></i>
-                        </a>
+                        <div class="product__content">
+                            <a href="details.html">
+                                <h3 class="product__title">@sanPham.TenSanPham</h3>
+                            </a>
+                            <p class="product__description">@sanPham.MoTaNgan</p>
+                        </div>
+                        <div class="product__bottom-row">
+                            <div class="product__price flex">
+                                <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                            </div>
+                            <div class="product-card-actions">
+                                <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
+                                    <i class="fi fi-rs-shopping-bag-add"></i>
+                                </a>
+                                <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                                    <i class="fi fi-rs-heart"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>              
-                </div>
+                }
+            </div>
             </div>
 
             <div class="swiper-button-prev">
@@ -178,68 +183,30 @@
         <h3 class="section__title"><span>Tin tức</span> & Bài viết</h3>
 
         <div class="news__container grid">
-            <div class="news__item">
-                <div class="news__banner">
+            @foreach (var tinTuc in Model.TinTuc)
+            {
+                <div class="news__item">
+                    <div class="news__banner">
                     <a href="blog-post.html">
-                        <img src="assets/img/home-img.png" alt="Blog post image" class="news__img">
+                        <img src="assets/img/home-img.png" alt="Ảnh tin tức" class="news__img">
                     </a>
                 </div>
                 <div class="news__content">
                     <div class="news__meta">
-                        <span class="news__author">bởi **Admin**</span>
-                        <span class="news__date">15/07/2025</span>
+                        <span class="news__author">bởi Admin</span>
+                        <span class="news__date">@tinTuc.ThoiGianTao</span>
                     </div>
                     <a href="blog-post.html">
-                        <h3 class="news__title">Top 5 xu hướng thời trang không thể bỏ lỡ mùa hè này</h3>
+                        <h3 class="news__title">@tinTuc.TieuDe</h3>
                     </a>
                     <p class="news__description">
-                        Cùng khám phá những item thời trang đang làm mưa làm gió và cách phối đồ để bạn luôn nổi bật và tự tin...
+                        @(tinTuc.MoTaNgan + "...")
                     </p>
                     <a href="blog-post.html" class="news__readmore">Đọc thêm <i class="fi fi-rs-arrow-right"></i></a>
                 </div>
             </div>
+            }
 
-            <div class="news__item">
-                <div class="news__banner">
-                    <a href="blog-post.html">
-                        <img src="assets/img/home-img.png" alt="Blog post image" class="news__img">
-                    </a>
-                </div>
-                <div class="news__content">
-                    <div class="news__meta">
-                        <span class="news__author">bởi **Khôi**</span>
-                        <span class="news__date">12/07/2025</span>
-                    </div>
-                    <a href="blog-post.html">
-                        <h3 class="news__title">Bí quyết chọn túi xách phù hợp với mọi vóc dáng</h3>
-                    </a>
-                    <p class="news__description">
-                        Một chiếc túi xách phù hợp không chỉ tiện dụng mà còn giúp tôn lên vóc dáng của bạn. Hãy tìm hiểu ngay...
-                    </p>
-                    <a href="blog-post.html" class="news__readmore">Đọc thêm <i class="fi fi-rs-arrow-right"></i></a>
-                </div>
-            </div>
-
-            <div class="news__item">
-                <div class="news__banner">
-                    <a href="blog-post.html">
-                        <img src="assets/img/home-img.png" alt="Blog post image" class="news__img">
-                    </a>
-                </div>
-                <div class="news__content">
-                    <div class="news__meta">
-                        <span class="news__author">bởi **Admin**</span>
-                        <span class="news__date">10/07/2025</span>
-                    </div>
-                    <a href="blog-post.html">
-                        <h3 class="news__title">Mẹo bảo quản quần áo luôn như mới mà bạn nên biết</h3>
-                    </a>
-                    <p class="news__description">
-                        Để giữ cho những bộ trang phục yêu thích của bạn luôn bền đẹp, hãy áp dụng những mẹo bảo quản đơn giản...
-                    </p>
-                    <a href="blog-post.html" class="news__readmore">Đọc thêm <i class="fi fi-rs-arrow-right"></i></a>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -248,210 +215,31 @@
     <!--=============== SHOWCASE ===============-->
     <section class="showcase section">
         <div class="showcase__container container grid">
-            <div class="showcase__wrapper">
-                <h3 class="section__title">Áo Thun & Võ Phục</h3>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-1.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">
-                                Floral Print Casual Cotton Dress
-                            </h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
+            @foreach (var danhMuc in Model.DanhMucSanPhamHienThi)
+            {
+                <div class="showcase__wrapper">
+                    <h3 class="section__title">@danhMuc.TenDanhMuc</h3>
+
+                    @foreach (var sanPham in danhMuc.SanPhams)
+                    {
+                        <div class="showcase__item">
+                            <a href="details.html" class="showcase__img-box">
+                                <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
+                                     alt="@sanPham.TenSanPham"
+                                     class="showcase__img" />
+                            </a>
+                            <div class="showcase__content">
+                                <a href="details.html">
+                                    <h4 class="showcase__title">@sanPham.TenSanPham</h4>
+                                </a>
+                                <div class="showcase__price flex">
+                                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-2.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">
-                                Ruffled Solid Long Sleeve Blouse
-                            </h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-3.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">
-                                Multi-Color Print V-neck T-shirt
-                            </h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="showcase__wrapper">
-                <h3 class="section__title">Phụ Kiện</h3>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-4.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">Fish Print Patched T-shirt</h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-5.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">Fintage Floral Print Dress</h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-6.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">
-                                Multi-Color Stripe Circle T-shirt
-                            </h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="showcase__wrapper">
-                <h3 class="section__title">Gấu Bông</h3>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-7.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">
-                                Geometric Printed Long Sleeve Blouse
-                            </h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-8.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">Print Patchwork Maxi Dress</h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-9.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">
-                                Daisy Floral Print Straps Jumpsuit
-                            </h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="showcase__wrapper">
-                <h3 class="section__title">BaLo</h3>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-7.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">Floral Print Casual Cotton</h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-8.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">Ruffled Solid Long Sleeve</h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase__item">
-                    <a href="details.html" class="showcase__img-box">
-                        <img src="./assets/img/showcase-img-9.jpg"
-                             alt=""
-                             class="showcase__img" />
-                    </a>
-                    <div class="showcase__content">
-                        <a href="details.html">
-                            <h4 class="showcase__title">Multi-Color Print V-neck</h4>
-                        </a>
-                        <div class="showcase__price flex">
-                            <span class="new__price">$238.85</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </section>
 </main>

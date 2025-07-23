@@ -22,6 +22,7 @@ namespace FShop6.Areas.KhachHang.Services
             // Danh mục phổ biến
             var danhMucPhoBien = await _context.DanhMucSP
                 .OrderBy(d => d.TenDanhMuc)
+                .Take(10)
                 .Select(d => new DanhMucModel
                 {
                     Id = d.Id,
@@ -32,26 +33,30 @@ namespace FShop6.Areas.KhachHang.Services
             var sanPhamNoiBat = await _context.BienThe
                 .Include(bt => bt.SanPham).ThenInclude(sp => sp.DanhMuc)
                 .Where(bt => bt.NoiBat)
+                .Take(12)
                 .Select(bt => new BienTheTrangChuViewModel
                 {
                     MaBienThe = bt.MaBienThe,
                     TenSanPham = bt.SanPham.TenSanPham,
                     HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
                     GiaBan = bt.GiaBan,
+                    MoTaNgan = bt.SanPham.MoTa,
                 }).ToListAsync();
+            // Sản phẩm mới (dựa trên ngày tạo)
+            var sanPhamMoi = await _context.SanPham
+            .Include(sp => sp.BienThes)
+            .OrderByDescending(sp => sp.NgayTao)
+            .Take(12)
+            .Select(sp => new BienTheTrangChuViewModel
+            {
+                MaBienThe = sp.BienThes.OrderBy(bt => bt.GiaBan).Select(bt => bt.MaBienThe).FirstOrDefault(),
+                TenSanPham = sp.TenSanPham,
+                HinhAnhDaiDien = sp.HinhAnhDaiDien,
+                GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).Select(bt => bt.GiaBan).FirstOrDefault(),
+                MoTaNgan = sp.MoTa
+            })
+            .ToListAsync();
 
-            // Sản phẩm mới
-            var sanPhamMoi = await _context.BienThe
-                .Include(bt => bt.SanPham).ThenInclude(sp => sp.DanhMuc)
-                .OrderByDescending(bt => bt.SanPham.NgayTao)
-                .Take(10)
-                .Select(bt => new BienTheTrangChuViewModel
-                {
-                    MaBienThe = bt.MaBienThe,
-                    TenSanPham = bt.SanPham.TenSanPham,
-                    HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                    GiaBan = bt.GiaBan,
-                }).ToListAsync();
 
             // Sản phẩm phổ biến (dựa trên số lượng đã bán)
             var sanPhamPhoBien = await _context.ChiTietDonHang
@@ -67,6 +72,7 @@ namespace FShop6.Areas.KhachHang.Services
                     TenSanPham = g.First().BienThe.SanPham.TenSanPham,
                     HinhAnhDaiDien = g.First().BienThe.SanPham.HinhAnhDaiDien,
                     GiaBan = g.First().BienThe.GiaBan,
+                    MoTaNgan = g.First().BienThe.SanPham.MoTa,
                 }).ToListAsync();
             //Tin tức
             var tinTuc = await _context.TinTuc
@@ -81,22 +87,22 @@ namespace FShop6.Areas.KhachHang.Services
                     ThoiGianTao = t.ThoiGianTao
                 }).ToListAsync();
             // Sản phẩm theo danh mục
-            var sanPhamTheoDanhMuc = await _context.BienThe
-            .Include(bt => bt.SanPham).ThenInclude(sp => sp.DanhMuc)
-            .Select(bt => new DanhMucSanPhamViewModel 
+            var sanPhamTheoDanhMuc = await _context.SanPham
+            .Include(sp => sp.DanhMuc)
+            .Include(sp => sp.BienThes)
+            .GroupBy(sp => sp.DanhMuc.TenDanhMuc)
+            .Select(group => new DanhMucSanPhamViewModel
             {
-                TenDanhMuc = bt.SanPham.DanhMuc.TenDanhMuc,
-                SanPhams = new List<BienTheTrangChuViewModel>
+                TenDanhMuc = group.Key,
+                SanPhams = group.Take(3).Select(sp => new BienTheTrangChuViewModel
                 {
-                    new BienTheTrangChuViewModel
-                    {
-                        MaBienThe = bt.MaBienThe,
-                        TenSanPham = bt.SanPham.TenSanPham,
-                        HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                        GiaBan = bt.GiaBan,
-                    }
-                }
+                    MaBienThe = sp.BienThes.FirstOrDefault().MaBienThe,
+                    TenSanPham = sp.TenSanPham,
+                    HinhAnhDaiDien = sp.HinhAnhDaiDien,
+                    GiaBan = sp.BienThes.FirstOrDefault().GiaBan
+                }).ToList()
             }).ToListAsync();
+
             // Trả về ViewModel tổng hợp
             return new TrangChuViewModel
             {

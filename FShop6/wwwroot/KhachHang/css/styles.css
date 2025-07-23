@@ -138,7 +138,7 @@ table {
 }
 
 .section__title {
-    font-size: var(--h4-font-size);
+    font-size: var(--h3-font-size);
     margin-bottom: 1.5rem;
 }
 
@@ -161,6 +161,7 @@ table {
 .new__price {
     color: var(--first-color);
     font-weight: var(--weight-600);
+    font-size: var(--large-font-size);
 }
 
 .old__price {
@@ -230,13 +231,25 @@ table {
     column-gap: 1rem;
 }
 
+.nav__logo {
+    width: auto !important;
+    max-width: none !important;
+    flex-shrink: 0;
+    display: block;
+}
+
 .nav__logo-img {
-    width: 130px;
+    width: 140px !important;
+    height: auto !important;
+    max-width: none !important;
+    flex-shrink: 0;
+    display: block;
+    object-fit: contain; /* Giữ tỷ lệ ảnh */
 }
 
 .nav__menu {
     flex-grow: 1;
-    margin-left: 2.5rem;
+    margin-left: 16px; /* Đẩy menu sang bên phải */
 }
 
 .nav__list {
@@ -244,15 +257,6 @@ table {
     margin-right: auto;
 }
 
-.nav__link {
-    color: var(--title-color);
-    font-weight: var(--weight-700);
-    transform: all 0.3s var(--transition);
-    -webkit-transform: all 0.3s var(--transition);
-    -moz-transform: all 0.3s var(--transition);
-    -ms-transform: all 0.3s var(--transition);
-    -o-transform: all 0.3s var(--transition);
-}
 
 .header__search {
     width: 340px;
@@ -272,6 +276,7 @@ table {
 
 .header__user-actions {
     column-gap: 1.25rem;
+    margin-right: 16px;
 }
 
 .header__action-btn {
@@ -304,13 +309,215 @@ table {
 .nav__toggle {
     display: none;
 }
+/* ================================================= */
+/* === MODERN NAVIGATION MENU STYLING (Complete) === */
+/* ================================================= */
 
-/* Active link */
-.active-link,
-.nav__link:hover {
-    color: var(--first-color);
+/* Khung bao bọc menu (Tùy chọn, thêm vào HTML nếu muốn có hiệu ứng kính mờ) */
+.nav__menu {
+    flex-grow: 1; /* Cho phép menu co giãn để chiếm không gian */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Đẩy list menu và ô tìm kiếm ra hai bên */
 }
 
+.nav__list {
+    display: flex;
+    align-items: center;
+    column-gap: 2.5rem; /* Tạo khoảng cách giữa các mục menu */
+    /* Bỏ margin-right: auto; nếu có */
+}
+
+.header__search {
+    width: 300px;
+    position: relative;
+    /* Không cần thay đổi gì ở đây */
+    margin-left: 16px; /* Đẩy ô tìm kiếm sang bên phải */
+}
+#nav-container {
+    background: rgba(255, 255, 255, 0.7); /* Màu nền trắng mờ */
+    border-radius: 12px; /* Bo góc lớn hơn */
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    padding: 8px;
+    backdrop-filter: blur(10px); /* Hiệu ứng kính mờ */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav__list {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+}
+.nav__link .icon {
+    width: 25px;
+    height: 25px;
+    margin-right: 8px;
+    opacity: 0.7;
+    transition: var(--transition);
+}
+
+.nav__item {
+    position: relative;
+    margin-left: 0; /* Khoảng cách từ bên trái */
+    width: 150px;
+}
+
+.nav__link {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--text-color); /* Sử dụng biến màu của bạn */
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-align: center; /* Căn giữa chữ trong link */
+    justify-content: center;
+    gap: 5px; /* Khoảng cách giữa icon và text */
+}
+
+    /* Hiệu ứng khi di chuột vào (chưa active) */
+    .nav__link:hover {
+        color: var(--first-color); /* Màu cam FPT */
+        background-color: var(--first-color-alt); /* Màu cam nhạt */
+        transform: translateY(-2px);
+    }
+
+    /* Trạng thái được chọn (active) */
+    .nav__link.active-link {
+        color: white;
+        background: linear-gradient(135deg, var(--first-color) 0%, #d65c14 100%); /* Nền cam gradient */
+        box-shadow: 0 4px 15px rgba(243,111,33,0.25);
+        font-weight: 600;
+    }
+
+        .nav__link.active-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(243,111,33,0.3);
+        }
+
+        /* Hiệu ứng tỏa sáng cho link đang active */
+        .nav__link.active-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--first-color) 0%, #d65c14 100%);
+            border-radius: inherit;
+            opacity: 0.3;
+            filter: blur(8px);
+            z-index: -1;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+@keyframes glow {
+    from {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0.5;
+        transform: scale(1.05);
+    }
+}
+
+/* Responsive (Tùy chỉnh nếu cần) */
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 4px;
+    }
+
+    .nav__list {
+        justify-content: space-around;
+    }
+
+    .nav__link {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+/* CSS để header__top luôn nằm ở đầu và cố định */
+
+/* Header__top cố định ở đầu trang */
+.header__top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1002;
+    background-color: var(--first-color-alt);
+    border-bottom: 1px solid #e0e0e0;
+    width: 100%;
+}
+
+/* Nav cố định ngay bên dưới header__top */
+.nav {
+    position: fixed;
+    top: 100px !important;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    background-color: var(--body-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+/* Header container không cần fixed nữa */
+.header {
+    position: relative;
+}
+
+/* Thêm padding cho body để không bị che nội dung */
+body {
+    padding-top: 140px; /* header__top (60px) + nav (80px) */
+}
+
+/* Hoặc nếu có main content container */
+.main-content,
+.container-main,
+.content-wrapper,
+main {
+    margin-top: 140px;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .nav {
+        top: 50px; /* Giảm chiều cao header__top trên mobile */
+    }
+
+    body {
+        padding-top: 120px; /* 50px + 70px */
+    }
+
+    .main-content,
+    .container-main,
+    .content-wrapper,
+    main {
+        margin-top: 120px;
+    }
+}
+
+/* Đảm bảo header__top luôn hiển thị trên cùng */
+.header__top {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth transition */
+.header__top,
+.nav {
+    transition: all 0.3s ease;
+}
 /*=============== HOME ===============*/
 .home__container {
     grid-template-columns: 5fr 7fr;
@@ -659,7 +866,7 @@ table {
 }
 
 .product__title {
-    font-size: var(--normal-font-size);
+    font-size: var(--h4-font-size);
     margin-block: 0.75rem 0.5rem;
 }
 
@@ -689,25 +896,35 @@ table {
     display: none;
 }
 
-/* Product Hover */
-.product__img.hover,
-.product__actions,
-.action__btn::before,
-.action__btn::after,
-.product__item:hover .product__img.default {
-    opacity: 0;
+/* ẨN hoàn toàn ảnh hover */
+.product__img.hover {
+    display: none !important;
 }
 
+/* Luôn hiển thị ảnh mặc định */
+.product__img.default {
+    opacity: 1 !important;
+}
+
+/* Khi hover vào sản phẩm, chỉ tạo box-shadow và hiển thị nút */
 .product__item:hover {
     box-shadow: 0 0 10px hsl(0, 0%, 0%, 0.1);
 }
 
-    .product__item:hover .product__img.hover,
-    .product__item:hover .product__actions,
-    .action__btn:hover::before,
-    .action__btn:hover::after {
-        opacity: 1;
-    }
+/* Nút vẫn hoạt động như cũ */
+.product__actions,
+.action__btn::before,
+.action__btn::after {
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.product__item:hover .product__actions,
+.action__btn:hover::before,
+.action__btn:hover::after {
+    opacity: 1;
+}
+
 
 .action__btn:hover::before,
 .action__btn:hover::after {
@@ -859,7 +1076,7 @@ table {
     .showcase__wrapper .section__title::before {
         content: "";
         position: absolute;
-        width: 50px;
+        width: 306px;
         height: 2px;
         left: 0;
         bottom: -1.5px;
@@ -1776,13 +1993,10 @@ table {
         height: calc(var(--header-height) + 1.5rem);
     }
 
-    .nav__logo-img {
-        width: 116px;
-    }
-
     .nav__menu {
         position: fixed;
         right: -100%;
+        margin-left: 0;
         top: 0;
         max-width: 400px;
         width: 100%;
@@ -1810,10 +2024,6 @@ table {
         flex-direction: column;
         align-items: flex-start;
         row-gap: 1.5rem;
-    }
-
-    .nav__link {
-        font-size: var(--large-font-size);
     }
 
     .header__search .form__input {
@@ -3442,4 +3652,89 @@ table {
     .btn--danger:hover {
         background-color: #851313;
         color: white;
+    }
+/* --- PRODUCT CARD STYLING (Bản hoàn thiện) --- */
+
+/* Thẻ sản phẩm cha */
+.product__item {
+    position: relative; /* Bắt buộc: Để định vị các phần tử con */
+    border: 1px solid var(--border-color);
+    border-radius: 1.5rem;
+    transition: all 0.2s var(--transition);
+    /* Chừa một khoảng trống cố định ở dưới cho giá và icon */
+    padding-bottom: 5.5rem;
+}
+
+    .product__item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+/* Phần nội dung (tên, danh mục) */
+.product__content {
+    padding: 0 1.25rem;
+}
+
+.product__title {
+    height: 40px; /* Giới hạn tên sản phẩm trên 2 dòng */
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+/* KHỐI MỚI CHỨA GIÁ VÀ CÁC NÚT */
+.product__bottom-row {
+    position: absolute; /* Định vị cố định so với thẻ cha */
+    bottom: 2rem; /* Cách đáy 1.25rem */
+    left: 1.25rem; /* Cách trái 1.25rem */
+    right: 1.25rem; /* Cách phải 1.25rem */
+    /* Dùng Flexbox để căn chỉnh */
+    display: flex;
+    justify-content: space-between; /* Đẩy giá và các nút ra hai bên */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.product-card-actions {
+    display: flex;
+    gap: 0.5rem; /* Khoảng cách giữa 2 icon */
+}
+
+/* Ghi đè lại các style cũ không cần thiết */
+.cart__btn {
+    position: static;
+}
+
+.product-card-actions {
+    display: static; /* Định vị cố định so với thẻ cha */
+    bottom: -0.5rem; /* Cách đáy 1.25rem */
+}
+/* --- PRODUCT DESCRIPTION STYLING --- */
+
+.product__description {
+    font-size: var(--normal-font-size);
+    color: var(--text-color-light);
+    line-height: 1.5;
+    margin-top: -0.5rem; /* Kéo lên một chút cho gần tên sản phẩm */
+    margin-bottom: 1rem;
+    /* Giới hạn mô tả chỉ hiển thị trên 2 dòng */
+    height: 4.5em; /* (1.5 line-height * 3 lines) - điều chỉnh nếu cần */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Số dòng tối đa */
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+}
+/* --- PRODUCT CARD STYLING (Fixed Height) --- */
+
+.product__item {
+    border: 1px solid var(--border-color);
+    border-radius: 1.5rem;
+    transition: all 0.2s var(--transition);
+    /* Dùng Flexbox để sắp xếp nội dung bên trong */
+    display: flex;
+    flex-direction: column;
+    /* ĐẶT MỘT CHIỀU CAO TỐI THIỂU CỐ ĐỊNH */
+    height: 500px; /* Bạn có thể thay đổi số này cho phù hợp */
+}
+
+    .product__item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }
