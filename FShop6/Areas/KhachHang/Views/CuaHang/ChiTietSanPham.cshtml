@@ -32,10 +32,7 @@
                
                 <h3 class="details__title">@Model.TenSanPham</h3>
                 <div class="details__price flex">
-                @foreach (var bienThe in Model.BienThe)
-                {
-                    <span class="new__price" id="product-price">@bienThe.GiaBan</span> <!-- Hiển thị giá cho từng biến thể -->
-                }
+                <span class="new__price" id="product-price"></span> <!-- Hiển thị giá cho từng biến thể -->
                 </div>
                 <p class="short__description">
                     @Model.MoTa
@@ -77,13 +74,13 @@
 					    @foreach (var bienThe in Model.BienThe)
 					    {
 						    <li>
-							   <a href="#" class="size__link"
-                               data-id="@bienThe.MaBienThe"
-                               data-giaban="@bienThe.GiaBan"
-                               data-soluong=@bienThe.SoLuongTon
-                               onclick="updateProductDetails(this)">
-                               @bienThe.LoaiBienThe
-                               </a> <!-- Hiển thị loại sản phẩm -->
+                                <a href="#" class="size__link"
+                                   data-id="@bienThe.MaBienThe"
+                                   data-giaban="@bienThe.GiaBan"
+                                   data-soluong="@bienThe.SoLuongTon"
+                                   onclick="updateProductDetails(this)">
+                                    @bienThe.LoaiBienThe
+                                </a>
 						    </li>
 					    }
                     </ul>
