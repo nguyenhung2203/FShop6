@@ -39,6 +39,8 @@ namespace FShop6.Areas.KhachHang.Models
         // Navigation property
         [ForeignKey("MaSanPham")]
         public SanPhamModel SanPham { get; set; }
+        // Liên kết với AnhBienThe
+        public ICollection<AnhBienTheModel> AnhBienThe { get; set; } // Mối quan hệ 1-n
     }
 
 }

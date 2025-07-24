@@ -2,6 +2,7 @@
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Chi tiết sản phẩm";
 }
+@model FShop6.Areas.KhachHang.Models.BienTheChiTietModel
 <main class="main">
     <!--=============== BREADCRUMB ===============-->
     <section class="breadcrumb">
@@ -15,32 +16,26 @@
     </section>
 
     <!--=============== DETAILS ===============-->
-    <section class="details section--lg">
         <div class="details__container container grid">
             <div class="details__group">
-                <img src="./assets/img/product-8-1.jpg"
-                     alt=""
+            <img src="@Model.HinhAnhDaiDien"
+                     alt="Ảnh sản phẩm"
                      class="details__img" />
                 <div class="details__small-images grid">
-                    <img src="./assets/img/product-8-2.jpg"
-                         alt=""
-                         class="details__small-img" />
-                    <img src="./assets/img/product-8-1.jpg"
-                         alt=""
-                         class="details__small-img" />
-                    <img src="./assets/img/product-8-2.jpg"
-                         alt=""
-                         class="details__small-img" />
+				    @foreach (var image in Model.BienThe.SelectMany(bt => bt.DanhSachAnh))
+				    {
+					    <img src="@image" alt="Ảnh sản phẩm nhỏ" class="details__small-img" />
+				    })
                 </div>
             </div>
             <div class="details__group">
-                <h3 class="details__title">Áo Henley</h3>
-                <p class="details__brand">Thương hiệu: <span>adidas</span></p>
+               
+                <h3 class="details__title">@Model.TenSanPham</h3>
                 <div class="details__price flex">
-                    <span class="new__price">$116</span>
+                <span class="new__price" id="product-price"></span> <!-- Hiển thị giá cho từng biến thể -->
                 </div>
                 <p class="short__description">
-                    Áo Henley mang phong cách thời trang hiện đại. Với chất liệu cao cấp và thiết kế tinh tế, áo mang lại cảm giác thoải mái, phù hợp cho nhiều dịp sử dụng.
+                    @Model.MoTa
                 </p>
                 <ul class="products__list">
                     <li class="list__item flex">
@@ -53,7 +48,7 @@
                         <i class="fi-rs-credit-card"></i> Thanh toán khi nhận hàng
                     </li>
                 </ul>
-                <div class="details__color flex">
+                @* <div class="details__color flex">
                     <span class="details__color-title">Màu sắc</span>
                     <ul class="color__list">
                         <li>
@@ -72,22 +67,22 @@
                             <a href="#" class="color__link">Xanh lá</a>
                         </li>
                     </ul>
-                </div>
+                </div> *@
                 <div class="details__size flex">
-                    <span class="details__size-title">Size</span>
+                    <span class="details__size-title">Loại</span>
                     <ul class="size__list">
-                        <li>
-                            <a href="#" class="size__link size-active">M</a>
-                        </li>
-                        <li>
-                            <a href="#" class="size__link">L</a>
-                        </li>
-                        <li>
-                            <a href="#" class="size__link">XL</a>
-                        </li>
-                        <li>
-                            <a href="#" class="size__link">XXL</a>
-                        </li>
+					    @foreach (var bienThe in Model.BienThe)
+					    {
+						    <li>
+                                <a href="#" class="size__link"
+                                   data-id="@bienThe.MaBienThe"
+                                   data-giaban="@bienThe.GiaBan"
+                                   data-soluong="@bienThe.SoLuongTon"
+                                   onclick="updateProductDetails(this)">
+                                    @bienThe.LoaiBienThe
+                                </a>
+						    </li>
+					    }
                     </ul>
                 </div>
                 <div class="details__action">
@@ -98,13 +93,17 @@
                     </a>
                 </div>
                 <ul class="details__meta">
-                    <li class="meta__list flex"><span>SKU:</span>FWM15VKT</li>
                     <li class="meta__list flex">
-                        <span>Thẻ:</span>Quần áo, Nữ, Đầm
+                        <span>SKU:</span> <span id="product-sku">FWM15VKT</span>
                     </li>
                     <li class="meta__list flex">
-                        <span>Tình trạng:</span>Còn 8 sản phẩm
+                        <span>Thẻ:</span> <span id="product-tags">Quần áo, Nữ, Đầm</span>
+                    </li>
+                    <li class="meta__list flex">
+                        <span>Tình trạng:</span> <span id="product-status">Còn 8 sản phẩm</span>
+                    </li>
                 </ul>
+
             </div>
         </div>
     </section>
