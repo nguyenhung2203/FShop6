@@ -22,7 +22,7 @@ namespace FShop6.Areas.KhachHang.Services
             {
                 var sanPham = await _context.SanPham
                     .Include(sp => sp.DanhMuc)
-                    .Include(sp => sp.BienThe)
+                    .Include(sp => sp.BienThes)
                         .ThenInclude(b => b.AnhBienThe)
                     .FirstOrDefaultAsync(sp => sp.MaSanPham == maSanPham);
 
@@ -31,7 +31,7 @@ namespace FShop6.Areas.KhachHang.Services
                     return null;
                 }    
 
-                var bienTheList = sanPham.BienThe.Select(bienthe => new BienTheChiTietModel.BienTheModel
+                var bienTheList = sanPham.BienThes.Select(bienthe => new BienTheChiTietModel.BienTheModel
                 {
                     MaBienThe = bienthe.MaBienThe,
                     LoaiBienThe = bienthe.LoaiBienThe,
