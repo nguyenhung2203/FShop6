@@ -23,12 +23,49 @@
                         {
                             foreach (var dm in Model.DanhSachDanhMuc)
                             {
-                                <li><label><input type="checkbox" class="category-checkbox" value="${cat}">@dm.TenDanhMuc</label></li>
+                                // Kiểm tra nếu danh mục hiện tại đang được lọc
+                                var isChecked = ViewBag.MaDanhMuc != null && (int)ViewBag.MaDanhMuc == dm.Id;
+
+                                <li>
+                                    <label>
+                                        <input type="checkbox"
+                                               class="category-checkbox"
+                                               value="@dm.Id"
+                                               data-id="@dm.Id"
+                                               @(isChecked ? "checked" : "") />
+                                        @dm.TenDanhMuc
+                                    </label>
+                                </li>
                             }
                         }
                         else
                         {
                             <p>Không có danh mục nào.</p>
+                        }
+
+                        @section Scripts {
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const checkboxes = document.querySelectorAll('.category-checkbox');
+
+                                    checkboxes.forEach(cb => {
+                                        cb.addEventListener('change', function () {
+                                            const maDanhMuc = this.dataset.id;
+                                            const isChecked = this.checked;
+
+                                            let url = '@Url.Action("SanPham", "CuaHang", new { area = "KhachHang" })';
+
+                                            if (isChecked) {
+                                                // Đang chọn → lọc theo danh mục
+                                                window.location.href = `${url}?maDanhMuc=${maDanhMuc}&loai=1`;
+                                            } else {
+                                                // Click lần nữa → bỏ lọc (loại bỏ maDanhMuc)
+                                                window.location.href = `${url}`;
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
                         }
                     </ul>
                 </div>
@@ -57,9 +94,9 @@
                     </select>
                 </div>
                 <div class="products__container grid" id="shop-products__container">
-                    @if (Model?.TongSanPham != null && Model.TongSanPham.Any())
+                    @if (Model?.DanhSachSanPham != null && Model.DanhSachSanPham.Any())
                     {
-                        @foreach (var sanPham in Model.TongSanPham)
+                        @foreach (var sanPham in Model.DanhSachSanPham)
                         {
                             <div class="product__item shop-product__item">
                                 <div class="product__banner">
@@ -94,11 +131,40 @@
                     }
                     else
                     {
-                        <p>Không có sản phẩm nào để hiển thị.</p>
+                        <p>Không có sản phẩm để hiển thị.</p>
                     }
                 </div>
                 <div class="pagination" id="pagination">
-                    <!-- Nút phân trang sẽ được render ở đây -->
+                    @if (Model.TongSoTrang > 1)
+                    {
+                        <!-- Nút « -->
+                        <li>
+                            <a class="pagination__link icon @(Model.TrangHienTai == 1 ? "disabled" : "")"
+                               href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, trang = Model.TrangHienTai - 1 })">
+                                «
+                            </a>
+                        </li>
+
+                        <!-- Các trang số -->
+                        @for (int i = 1; i <= Model.TongSoTrang; i++)
+                        {
+                            <li>
+                                <a class="pagination__link @(Model.TrangHienTai == i ? "active" : "")"
+                                   href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, trang = i })">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        <!-- Nút » -->
+                        <li>
+                            <a class="pagination__link icon @(Model.TrangHienTai == Model.TongSoTrang ? "disabled" : "")"
+                               href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, trang = Model.TrangHienTai + 1 })">
+                                »
+                            </a>
+                        </li>
+                    }
+
                 </div>
             </div>
         </div>

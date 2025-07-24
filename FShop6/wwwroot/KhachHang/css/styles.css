@@ -613,7 +613,10 @@ main {
 
 .category__item {
     text-align: center;
+    justify-content: center;
+    text-align: center;
     border: 1px solid var(--border-color);
+    padding: 0;
     padding: 0.625rem 0.625rem 1.25rem;
     border-radius: 1.25rem;
     -webkit-border-radius: 1.25rem;
@@ -3795,3 +3798,8 @@ main {
         -webkit-box-orient: vertical;
         text-overflow: ellipsis;
     }
+
+.pagination li {
+    list-style: none;
+    margin: 0 6px;
+}
