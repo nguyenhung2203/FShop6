@@ -1,4 +1,5 @@
-﻿using FShop6.Areas.KhachHang.Services;
+﻿using FShop6.Areas.KhachHang.Models;
+using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
 using static FShop6.Areas.KhachHang.Services.ChiTietSanPhamServices;
 namespace FShop6.Areas.KhachHang.Controllers
@@ -25,6 +26,24 @@ namespace FShop6.Areas.KhachHang.Controllers
             _chiTietSanPhamService = chiTietSanPhamService;
         }
 
+        public async Task<IActionResult> SanPham(int? maDanhMuc, int? loai, int trang = 1)
+        {
+            if (trang < 1) trang = 1;
+
+            PhanTrangSanPhamViewModel model;
+
+            if (loai == 1 && maDanhMuc.HasValue && maDanhMuc.Value > 0)
+            {
+                model = await _cuaHangService.LaySanPhamDanhMuc(maDanhMuc.Value, trang);
+            }
+            else
+            {
+                model = await _cuaHangService.LaySanPhamTatCa(trang);
+            }
+
+            ViewBag.MaDanhMuc = maDanhMuc;
+            ViewBag.Loai = loai;
+
         public async Task<IActionResult> ChiTietSanPham(int maSanPham)
         {
             maSanPham = 1;
@@ -33,6 +52,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 return NotFound();
             }
+
 
             return View(model);
         }
