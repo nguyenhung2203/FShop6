@@ -1,20 +1,43 @@
-﻿<main class="main">
-    <section class="login-register section--lg">
-        <div class="login-register__container container">
-            <div class="register">
-                </a>
-                <h3 class="section__title">Tạo Tài Khoản Mới</h3>
-                <form action="" class="form grid">
-                    <input type="text" placeholder="Tên của bạn" class="form__input" required />
-                    <input type="email" placeholder="Email" class="form__input" required />
-                    <input type="password" placeholder="Mật khẩu" class="form__input" required />
-                    <input type="password" placeholder="Nhập lại mật khẩu" class="form__input" required />
-                    <div class="form__btn">
-                        <button class="btn">Đăng Ký</button>
-                    </div>
-                </form>
-                <p class="form__switch">Đã có tài khoản? <a href="login.html">Đăng nhập ngay</a></p>
-            </div>
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng Ký - FShop6</title>
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.0.0/uicons-brands/css/uicons-brands.css" />
+    <link rel="stylesheet" href="~/KhachHang/css/styles.css" />
+</head>
+<body>
+    <!-- Header Rút Gọn -->
+    <header class="header-minimal">
+        <div class="container">
+            <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
+                <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
+            </a>
         </div>
-    </section>
-</main>
+    </header>
+    <main class="main">
+        <section class="login-register section--lg">
+            <div class="login-register__container container">
+                <div class="register">
+                    </a>
+                    <h3 class="section__title">Tạo Tài Khoản Mới</h3>
+                    <form action="" class="form grid">
+                        <input type="text" placeholder="Tên của bạn" class="form__input" required />
+                        <input type="email" placeholder="Email" class="form__input" required />
+                        <input type="password" placeholder="Mật khẩu" class="form__input" required />
+                        <input type="password" placeholder="Nhập lại mật khẩu" class="form__input" required />
+                        <div class="form__btn">
+                            <button class="btn">Đăng Ký</button>
+                        </div>
+                    </form>
+                    <p class="form__switch">Đã có tài khoản? <a href="@Url.Action("DangNhap", "TaiKhoan", new { area = "KhachHang" })">Đăng nhập ngay</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
