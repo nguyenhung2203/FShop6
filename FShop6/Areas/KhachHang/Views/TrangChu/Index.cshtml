@@ -26,7 +26,7 @@
         <h3 class="section__title"><span>Danh mục phổ biến</span></h3>
         <div class="categories__container swiper">
             <div class="swiper-wrapper">
-                 @foreach (var dm in Model.DanhMucPhoBien)
+                @foreach (var dm in Model.DanhMucPhoBien)
                 {
                     <a href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = dm.Id, loai = 1 })" class="category__item swiper-slide">
                         <img src=""

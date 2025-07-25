@@ -30,7 +30,9 @@
                     </div>
                 </div>
 
-                <button type="submit" form="checkout-form" class="btn btn--md">Đặt Hàng</button>
+                <button type="submit" form="checkout-form" class="btn btn--md"
+                        data-success-url="@Url.Action("DatHangThanhCong", "CuaHang", new { area = "KhachHang" })">
+                        Đặt Hàng</button>
             </div>
         </div>
     </section>

@@ -43,5 +43,10 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             return View(model);
         }
+
+        public IActionResult DatHangThanhCong()
+        {
+            return View();
+        }
     }
 }
