@@ -1,38 +1,119 @@
-﻿<main class="main">
-    <section class="login-register section--lg">
-        <div class="login-register__container container">
-            <div class="login">
-                </a>
+﻿@{
+    Layout = null;
+}
 
-                <div id="step-get-otp">
-                    <h3 class="section__title">Đặt Lại Mật Khẩu</h3>
-                    <form id="form-otp" class="form grid">
-                        <input type="email" id="email-input" placeholder="Nhập email của bạn" class="form__input" required>
-
-                        <div class="form__group--otp">
-                            <input type="text" id="otp-input" placeholder="Nhập mã OTP" class="form__input" required>
-                            <button type="button" id="get-otp-btn" class="btn btn--sm btn--outline">Lấy mã</button>
-                        </div>
-
-                        <div class="form__btn">
-                            <button type="submit" class="btn">Xác Nhận</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="step-reset-password" class="hidden">
-                    <h3 class="section__title">Tạo Mật Khẩu Mới</h3>
-                    <form id="form-new-password" class="form grid">
-                        <input type="password" id="new-password" placeholder="Mật khẩu mới (ít nhất 6 ký tự)" class="form__input" required minlength="6">
-                        <input type="password" id="confirm-new-password" placeholder="Xác nhận mật khẩu mới" class="form__input" required>
-                        <div class="form__btn">
-                            <button type="submit" class="btn">Lưu Mật Khẩu</button>
-                        </div>
-                    </form>
-                </div>
-
-                <p class="form__switch">Nhớ mật khẩu rồi? <a href="login.html">Quay lại đăng nhập</a></p>
-            </div>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quên Mật Khẩu - FShop6</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="~/KhachHang/css/styles.css" />
+</head>
+<body>
+    <!-- Header Rút Gọn -->
+    <header class="header-minimal">
+        <div class="container">
+            <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
+                <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
+            </a>
         </div>
-    </section>
-</main>
+    </header>
+    <main class="main">
+        <section class="login-register section--lg">
+            <div class="login-register__container container">
+                <div class="login">
+                    </a>
+
+                    <div id="step-get-otp">
+                        <h3 class="section__title">Đặt Lại Mật Khẩu</h3>
+                        <form id="form-otp" class="form grid">
+                            <input type="email" id="email-input" placeholder="Nhập email của bạn" class="form__input" required>
+
+                            <div class="form__group--otp">
+                                <input type="text" id="otp-input" placeholder="Nhập mã OTP" class="form__input" required>
+                                <button type="button" id="get-otp-btn" class="btn btn--sm btn--outline">Lấy mã</button>
+                            </div>
+
+                            <div class="form__btn">
+                                <button type="submit" class="btn">Xác Nhận</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="step-reset-password" class="hidden">
+                        <h3 class="section__title">Tạo Mật Khẩu Mới</h3>
+                        <form id="form-new-password" class="form grid">
+                            <input type="password" id="new-password" placeholder="Mật khẩu mới (ít nhất 6 ký tự)" class="form__input" required minlength="6">
+                            <input type="password" id="confirm-new-password" placeholder="Xác nhận mật khẩu mới" class="form__input" required>
+                            <div class="form__btn">
+                                <button type="submit" class="btn">Lưu Mật Khẩu</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <p class="form__switch">Nhớ mật khẩu rồi? <a href="@Url.Action("DangNhap", "TaiKhoan", new { area = "KhachHang" })">Quay lại đăng nhập</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stepGetOtp = document.getElementById('step-get-otp');
+            const stepResetPassword = document.getElementById('step-reset-password');
+            const formOtp = document.getElementById('form-otp');
+            const formNewPassword = document.getElementById('form-new-password');
+            const getOtpBtn = document.getElementById('get-otp-btn');
+            const otpInput = document.getElementById('otp-input');
+            const newPasswordInput = document.getElementById('new-password');
+            const confirmNewPasswordInput = document.getElementById('confirm-new-password');
+
+            const MOCK_OTP = '123456'; // Mã OTP giả để demo
+
+            // Xử lý nút Lấy mã và đếm ngược
+            getOtpBtn.addEventListener('click', () => {
+                alert(`Mã OTP (giả) đã được gửi. Mã là: ${MOCK_OTP}`);
+                getOtpBtn.disabled = true;
+                let countdown = 60;
+                getOtpBtn.textContent = `Gửi lại (${countdown}s)`;
+                const interval = setInterval(() => {
+                    countdown--;
+                    getOtpBtn.textContent = `Gửi lại (${countdown}s)`;
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        getOtpBtn.textContent = 'Lấy mã';
+                        getOtpBtn.disabled = false;
+                    }
+                }, 1000);
+            });
+
+            // Xử lý form Xác nhận OTP
+            formOtp.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (otpInput.value === MOCK_OTP) {
+                    stepGetOtp.classList.add('hidden');
+                    stepResetPassword.classList.remove('hidden');
+                } else {
+                    alert('Mã OTP không chính xác.');
+                }
+            });
+
+            // Xử lý form Đặt lại mật khẩu
+            formNewPassword.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (newPasswordInput.value !== confirmNewPasswordInput.value) {
+                    alert('Mật khẩu xác nhận không khớp.');
+                    return;
+                }
+                alert('Đặt lại mật khẩu thành công! Bạn sẽ được chuyển đến trang đăng nhập.');
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+    <!--=============== SWIPER JS ===============-->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="~/KhachHang/js/include.js"></script>
+</body>
+</html>

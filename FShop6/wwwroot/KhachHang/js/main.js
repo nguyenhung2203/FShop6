@@ -140,54 +140,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 /*=============== LOGIC HEADER TOP LOGIN/LOGOUT ===============*/
+const URL_HO_SO = "/KhachHang/TaiKhoan/HoSo";
+const URL_DANG_NHAP = "/KhachHang/TaiKhoan/DangNhap";
+const URL_DANG_KY = "/KhachHang/TaiKhoan/DangKy";
+
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        const accountText = document.getElementById('account-text');
-        const dropdownContent = document.getElementById('account-dropdown-content');
-        if (!accountText || !dropdownContent) {
-            console.error('Account text or dropdown content not found');
-            return;
-        }
-        // Gán dữ liệu giả cho currentUser nếu chưa có (chỉ để test)
-        if (!localStorage.getItem('currentUser')) {
-            const fakeUser = {
-                name: "Hùng",
-                email: "hung@example.com",
-                role: "user"
-            };
-            localStorage.setItem('currentUser', JSON.stringify(fakeUser));
+    const accountText = document.getElementById('account-text');
+    const dropdownContent = document.getElementById('account-dropdown-content');
+
+    if (!accountText || !dropdownContent) return;
+
+    // Fake user nếu chưa có
+    if (!localStorage.getItem('currentUser')) {
+        const fakeUser = {
+            name: "Ngọc",
+            email: "hung@example.com",
+            role: "user"
+        };
+        localStorage.setItem('currentUser', JSON.stringify(fakeUser));
+    }
+
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    if (!currentUser) {
+        // Đã đăng nhập
+        accountText.textContent = `Xin chào, ${currentUser.name}`;
+        dropdownContent.innerHTML = `
+            <a href="${URL_HO_SO}">Tài khoản của tôi</a>
+            <a href="#" id="show-logout-modal" class="dropdown-link logout">Đăng xuất</a>
+        `;
+
+        const logoutBtn = document.getElementById('show-logout-modal');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const modalOverlay = document.getElementById('logout-confirm-modal');
+                if (modalOverlay) {
+                    modalOverlay.classList.remove('hidden');
+                }
+            });
         }
 
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-        if (currentUser) {
-            // ĐÃ ĐĂNG NHẬP
-            accountText.textContent = `Xin chào, ${currentUser.name}`;
-            dropdownContent.innerHTML = `
-                <a asp-controller="TaiKhoan" asp-action="HoSo">Tài khoản của tôi</a>
-                <a href="#" id="show-logout-modal" class="dropdown-link logout">Đăng xuất</a>
-            `;
-            // Gán sự kiện logout cho nút trong dropdown
-            const logoutBtn = document.getElementById('show-logout-modal');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const modalOverlay = document.getElementById('logout-confirm-modal');
-                    if (modalOverlay) {
-                        modalOverlay.classList.remove('hidden');
-                    }
-                });
-            }
-        } else {
-            // CHƯA ĐĂNG NHẬP
-            accountText.textContent = 'Tài khoản';
-            dropdownContent.innerHTML = `
-                <a href="login.html" class="dropdown-link">Đăng nhập</a>
-                <a href="register.html" class="dropdown-link">Đăng ký</a>
-            `;
-        }
-    }, 100); // Chờ 100ms để header được include nếu dùng include.js
+    } else {
+        // Chưa đăng nhập
+        accountText.textContent = 'Tài khoản';
+        dropdownContent.innerHTML = `
+            <a href="${URL_DANG_NHAP}" class="dropdown-link">Đăng nhập</a>
+            <a href="${URL_DANG_KY}" class="dropdown-link">Đăng ký</a>
+        `;
+    }
 });
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const modalOverlay = document.getElementById('logout-confirm-modal');

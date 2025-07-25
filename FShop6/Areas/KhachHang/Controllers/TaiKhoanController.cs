@@ -8,6 +8,20 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             return View();
         }
+        public IActionResult DangNHap()
+        {
+            return View();
+        }
+
+        public IActionResult DangKy()
+        {
+            return View();
+        }
+
+        public IActionResult QuenMatKhau()
+        {
+            return View();
+        }
 
         public IActionResult SanPhamYeuThich()
         {
