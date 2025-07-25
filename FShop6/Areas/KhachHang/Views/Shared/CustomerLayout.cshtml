@@ -30,8 +30,8 @@
     <script src="~/KhachHang/js/address-form.js"></script>
     <script src="~/KhachHang/js/include.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="~/KhachHang/js/main.js" asp-append-version="true"></script>
+    <script src="~/KhachHang/js/main.js"></script>
 
-    @RenderSection("Scripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
