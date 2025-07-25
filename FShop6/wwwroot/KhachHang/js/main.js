@@ -378,6 +378,7 @@ function updateProductDetails(element) {
 
     // Nếu có thay đổi về số lượng, cập nhật thêm số lượng vào input
     document.getElementById('quantity').value = 1; // Đặt số lượng mặc định khi chọn biến thể
+    document.getElementById('hiddenMaBienThe').value = maBienThe;
 }
 
 

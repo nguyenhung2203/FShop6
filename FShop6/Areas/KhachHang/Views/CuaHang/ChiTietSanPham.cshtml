@@ -18,14 +18,14 @@
     <!--=============== DETAILS ===============-->
         <div class="details__container container grid">
             <div class="details__group">
-            <img src="@Model.HinhAnhDaiDien"
+            <img src="~/KhachHang/images/@Model.HinhAnhDaiDien"
                      alt="Ảnh sản phẩm"
                      class="details__img" />
                 <div class="details__small-images grid">
 				    @foreach (var image in Model.BienThe.SelectMany(bt => bt.DanhSachAnh))
 				    {
-					    <img src="@image" alt="Ảnh sản phẩm nhỏ" class="details__small-img" />
-				    })
+                    <img src="~/KhachHang/images/@image" alt="Ảnh sản phẩm nhỏ" class="details__small-img" />
+				    }
                 </div>
             </div>
             <div class="details__group">
@@ -85,13 +85,18 @@
 					    }
                     </ul>
                 </div>
-                <div class="details__action">
-                    <input type="number" class="quantity" value="3" />
-                    <a href="#" class="btn btn--sm">Thêm vào giỏ hàng</a>
+                <form asp-action="ThemVaoGioHang" method="post" class="details__action d-flex align-items-center gap-3">
+                    <input type="hidden" name="maSanPham" value="@Model.MaSanPham" />
+                <input type="hidden" name="maBienThe" id="hiddenMaBienThe" />
+
+                    <input type="number" name="soLuong" class="quantity" value="1" min="1" />
+
+                    <button type="submit" class="btn btn--sm">Thêm vào giỏ hàng</button>
+
                     <a href="#" class="details__action-btn">
                         <i class="fi fi-rs-heart"></i>
                     </a>
-                </div>
+                </form>
                 <ul class="details__meta">
                     <li class="meta__list flex">
                         <span>SKU:</span> <span id="product-sku">FWM15VKT</span>
@@ -107,7 +112,7 @@
             </div>
         </div>
     </section>
-
+    <br />
     <!--=============== DETAILS TAB ===============-->
     <section class="details__tab container">
         <div class="detail__tabs">

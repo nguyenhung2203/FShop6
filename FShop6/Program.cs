@@ -1,8 +1,6 @@
 ﻿using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
 using Microsoft.EntityFrameworkCore;
-using static FShop6.Areas.KhachHang.Services.ChiTietSanPhamServices;
-
 var builder = WebApplication.CreateBuilder(args);
 
 //connection db
@@ -13,11 +11,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllersWithViews();
 
 // 🟢 Đăng ký dịch vụ TrangChuService
+builder.Services.AddScoped<IShopService, ShopService>();
+// Đảm bảo đăng ký dịch vụ đúng cách
 builder.Services.AddScoped<ITrangChuService, TrangChuServices>();
-// 🟢 Đăng ký dịch vụ ChiTietSanPhamService
-builder.Services.AddScoped<IChiTietSanPhamService, ChiTietSanPhamService>();
-// 🟢 Đăng ký dịch vụ CuaHangService
-builder.Services.AddScoped<ICuaHangServices, CuaHangServices>();
 
 
 var app = builder.Build();
