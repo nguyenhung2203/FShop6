@@ -135,6 +135,7 @@ table {
 
 .section--lg {
     padding-block: 4rem;
+    padding-top:0;
 }
 
 .section__title {
@@ -1272,6 +1273,7 @@ main {
 .breadcrumb {
     background-color: var(--container-color);
     padding-block: 1.5rem;
+    margin-top: -18px;
 }
 
 .breadcrumb__list {
@@ -2072,6 +2074,7 @@ main {
     .home__container {
         grid-template-columns: 5.5fr 6.5fr;
     }
+
 
     .countdown {
         column-gap: 1rem;
