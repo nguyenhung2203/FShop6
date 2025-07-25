@@ -47,10 +47,10 @@ namespace FShop6.Areas.KhachHang.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ThemVaoGioHang(int maSanPham, int maBienThe, int soLuong, int maNguoiDung)
-        {;
+        public async Task<IActionResult> ThemVaoGioHang(int maSanPham, int maBienThe, int soLuong)
+        {
 
-            maNguoiDung = 2;
+            int maNguoiDung = 1;
 
             if (maBienThe <= 0 || soLuong <= 0)
             {
