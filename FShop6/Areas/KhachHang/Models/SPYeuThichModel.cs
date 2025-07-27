@@ -3,23 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FShop6.Areas.KhachHang.Models
 {
-    public class GioHangModel
+    [Table("SPYeuThich")]
+    public class SPYeuThichModel
     {
         [Key]
         public int Id { get; set; }
-        [Required]
         public int MaNguoiDung { get; set; }
-        [Required]
-        public int MaBienThe { get; set; }
-        [Required]
-        public int SoLuong { get; set; }
+        public int MaSanPham { get; set; }
         public DateTime NgayThem { get; set; } = DateTime.Now;
-
-        // Navigation properties
         [ForeignKey("MaNguoiDung")]
-        public NguoiDungModel NguoiDung { get; set; }
+        public virtual NguoiDungModel NguoiDung { get; set; }
+        [ForeignKey("MaSanPham")]
+        public virtual SanPhamModel SanPham { get; set; }
 
-        [ForeignKey("MaBienThe")]
-        public BienTheModels BienThe { get; set; }
     }
 }

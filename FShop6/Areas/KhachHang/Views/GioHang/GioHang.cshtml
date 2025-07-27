@@ -2,6 +2,7 @@
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Giỏ hàng";
 }
+@model FShop6.Areas.KhachHang.Models.TrangChuViewModel
 <main class="main">
     <section class="breadcrumb">
         <ul class="breadcrumb__list flex container">
@@ -18,8 +19,13 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th>
+                            <input type="checkbox" id="select-all" class="product-checkbox select-all-checkbox" />
+                            <label for="select-all" class="checkbox-label">Chọn tất cả</label>
+                        </th>
                         <th>Ảnh</th>
                         <th>Tên sản phẩm</th>
+                        <th>Loại</th>
                         <th>Giá</th>
                         <th>Số lượng</th>
                         <th>Tổng tiền</th>
@@ -27,29 +33,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @* @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td><img src="@item.ImageUrl" alt="" class="table__img" /></td>
-                            <td>
-                                <h3 class="table__title">@item.ProductName</h3>
-                                <p class="table__description">@item.Description</p>
-                            </td>
-                            <td><span class="table__price">@item.Price.ToString("C")</span></td>
-                            <td><input type="number" value="@item.Quantity" class="quantity" /></td>
-                            <td><span class="subtotal">@item.Subtotal.ToString("C")</span></td>
-                            <td><i class="fi fi-rs-trash table__trash"></i></td>
-                        </tr>
-                    } *@
                     <tr>
+                        <td>
+                            <input type="checkbox" id="product-1" class="product-checkbox item-checkbox"
+                                   data-price="100000" />
+                            <label for="product-1" class="checkbox-label"></label>
+                        </td>
                         <td><img src="ImageUrl" alt="" class="table__img" /></td>
                         <td>
-                            <h3 class="table__title">ProductName</h3>
-                            <p class="table__description">Description</p>
+                            <h3 class="table__title">Áo thun</h3>
+                            <p class="table__description">Thoáng m</p>
                         </td>
-                        <td><span class="table__price">Price.ToString("C")</span></td>
+                        <td><span class="table__price">200000</span></td>
                         <td><input type="number" value="Quantity" class="quantity" /></td>
-                        <td><span class="subtotal">Subtotal.ToString("C")</span></td>
+                        <td><span class="subtotal">200000</span></td>
                         <td><i class="fi fi-rs-trash table__trash"></i></td>
                     </tr>
                 </tbody>
@@ -87,27 +84,94 @@
                 <h3 class="section__title">Thanh toán</h3>
                 @{
                     // var total = Model.Sum(x => x.x);
-                    var shipping = 10.00m;
+                    var shipping = 0;
                     // var grandTotal = total + shipping;
                 }
                 <table class="cart__total-table">
                     <tr>
                         <td><span class="cart__total-title">Tổng tạm tính</span></td>
-                        @* <td><span class="cart__total-price">@total.ToString("C")</span></td> *@
+                        <td><span class="cart__total-price" id="selected-total">0₫</span></td>
                     </tr>
                     <tr>
                         <td><span class="cart__total-title">Phí giao hàng</span></td>
-                        <td><span class="cart__total-price">@shipping.ToString("C")</span></td>
+                        <td><span class="cart__total-price">Miễn phí vận chuyển</span></td>
                     </tr>
                     <tr>
                         <td><span class="cart__total-title">Tổng tiền</span></td>
-                        @* <td><span class="cart__total-price">@grandTotal.ToString("C")</span></td> *@
+                        <td><span class="cart__total-price" id="grand-total">@shipping.ToString("C")</span></td>
                     </tr>
                 </table>
-                <a asp-controller="Cart" asp-action="Checkout" class="btn flex btn--md">
-                    <i class="fi fi-rs-box-alt"></i> Thanh toán
+                <a href="@Url.Action("ThanhToan", "GioHang", new { area = "KhachHang" })" class="btn flex btn--md" id="checkout-btn">
+                    <i class="fi fi-rs-box-alt"></i> Thanh toán (<span id="selected-count">0</span> sản phẩm)
                 </a>
             </div>
         </div>
     </section>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('select-all');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const selectedTotal = document.getElementById('selected-total');
+        const grandTotal = document.getElementById('grand-total');
+        const selectedCount = document.getElementById('selected-count');
+        const checkoutBtn = document.getElementById('checkout-btn');
+
+        const shippingFee = 10000; // 10,000 VND
+
+        // Function to format currency
+        function formatCurrency(amount) {
+            return amount.toLocaleString('vi-VN') + '₫';
+        }
+
+        // Function to update totals
+        function updateTotals() {
+            let total = 0;
+            let count = 0;
+
+            itemCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    total += parseFloat(checkbox.dataset.price || 0);
+                    count++;
+                }
+            });
+
+            selectedTotal.textContent = formatCurrency(total);
+            grandTotal.textContent = formatCurrency(total + (count > 0 ? shippingFee : 0));
+            selectedCount.textContent = count;
+
+            // Update checkout button state
+            if (count > 0) {
+                checkoutBtn.style.opacity = '1';
+                checkoutBtn.style.pointerEvents = 'auto';
+            } else {
+                checkoutBtn.style.opacity = '0.6';
+                checkoutBtn.style.pointerEvents = 'none';
+            }
+        }
+
+        // Select all functionality
+        selectAllCheckbox.addEventListener('change', function() {
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateTotals();
+        });
+
+        // Individual checkbox functionality
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Update select all checkbox state
+                const checkedCount = document.querySelectorAll('.item-checkbox:checked').length;
+                selectAllCheckbox.checked = checkedCount === itemCheckboxes.length;
+                selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < itemCheckboxes.length;
+
+                updateTotals();
+            });
+        });
+
+        // Initialize
+        updateTotals();
+    });
+</script>

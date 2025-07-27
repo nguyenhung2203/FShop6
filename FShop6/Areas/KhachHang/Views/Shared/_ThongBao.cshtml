@@ -1,0 +1,33 @@
+﻿@if (TempData["ThongBao"] != null)
+{
+    var loaiThongBao = TempData["LoaiThongBao"]?.ToString() ?? "info";
+    var thongBao = TempData["ThongBao"].ToString();
+    var iconClass = "fi fi-rs-info"; // Icon mặc định
+
+    // Chọn icon phù hợp với loại thông báo
+    if (loaiThongBao == "success") { iconClass = "fi fi-rs-check-circle"; }
+    else if (loaiThongBao == "error") { iconClass = "fi fi-rs-cross-circle"; }
+    else if (loaiThongBao == "warning") { iconClass = "fi fi-rs-exclamation"; }
+
+    <div id="toast-notification" class="toast-notification @loaiThongBao">
+        <i class="@iconClass"></i>
+        <span>@thongBao</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toast = document.getElementById('toast-notification');
+            if (toast) {
+                // Hiện thông báo sau một khoảng trễ ngắn để hiệu ứng mượt hơn
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 100);
+
+                // Tự động ẩn thông báo sau 5 giây
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 5000);
+            }
+        });
+    </script>
+}

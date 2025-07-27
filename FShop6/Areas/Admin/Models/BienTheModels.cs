@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FShop6.Areas.KhachHang.Models
+namespace FShop6.Areas.Admin.Models
 {
     [Table("BienThe")]
     public class BienTheModels
