@@ -135,6 +135,7 @@ table {
 
 .section--lg {
     padding-block: 4rem;
+    padding-top:0;
 }
 
 .section__title {
@@ -1272,6 +1273,7 @@ main {
 .breadcrumb {
     background-color: var(--container-color);
     padding-block: 1.5rem;
+    margin-top: -18px;
 }
 
 .breadcrumb__list {
@@ -2072,6 +2074,7 @@ main {
     .home__container {
         grid-template-columns: 5.5fr 6.5fr;
     }
+
 
     .countdown {
         column-gap: 1rem;
@@ -3802,4 +3805,92 @@ main {
 .pagination li {
     list-style: none;
     margin: 0 6px;
+}
+
+/* CSS cho checkbox sản phẩm */
+.product-checkbox {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: #ff6b35;
+}
+
+.checkbox-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    margin-left: 8px;
+    user-select: none;
+}
+
+.select-all-checkbox {
+    margin-right: 5px;
+}
+
+/* Styling cho header checkbox */
+.table thead th:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 8px;
+}
+
+/* Styling cho body checkbox */
+.table tbody td:first-child {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 8px;
+}
+
+/* Hover effect cho checkbox */
+.product-checkbox:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+/* Custom checkbox styling */
+.product-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    position: relative;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+    .product-checkbox:checked {
+        background-color: #ff6b35;
+        border-color: #ff6b35;
+    }
+
+        .product-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .checkbox-label {
+        font-size: 12px;
+    }
+
+    .product-checkbox {
+        width: 16px;
+        height: 16px;
+    }
+
+    .table thead th:first-child {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
 }

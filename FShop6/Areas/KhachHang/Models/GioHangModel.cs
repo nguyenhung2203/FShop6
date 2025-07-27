@@ -6,9 +6,10 @@ namespace FShop6.Areas.KhachHang.Models
     public class GioHangModel
     {
         [Key]
-        public int Id { get; set; } 
-
+        public int Id { get; set; }
+        [Required]
         public int MaNguoiDung { get; set; }
+        [Required]
         public int MaBienThe { get; set; }
         [Required]
         public int SoLuong { get; set; }

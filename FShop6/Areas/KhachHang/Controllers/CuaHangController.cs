@@ -13,7 +13,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             _shopService = shopService;
         }
 
-        public async Task<IActionResult> SanPham(int? maDanhMuc, int? loai, int trang = 1)
+        public async Task<IActionResult> SanPham(int? maDanhMuc, int? loai, int? loaiXapXep, decimal? khoangGia, int trang = 1)
         {
             if (trang < 1) trang = 1;
 
@@ -23,6 +23,14 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 model = await _shopService.LaySanPhamDanhMuc(maDanhMuc.Value, trang);
             }
+            else if (loai == 2)
+            {
+                model = await _cuaHangService.LaySanPhamXapXep(loaiXapXep.Value, trang);
+            }
+            else if (loai == 3)
+            {
+                model = await _cuaHangService.LaySanPhamTheoGia(khoangGia.Value, trang);
+            }    
             else
             {
                 model = await _shopService.LaySanPhamTatCa(trang);
@@ -30,10 +38,10 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             ViewBag.MaDanhMuc = maDanhMuc;
             ViewBag.Loai = loai;
+            ViewBag.KhoangGia = khoangGia;
 
             return View(model);
         }
-
         public async Task<IActionResult> ChiTietSanPham(int maSanPham)
         {
             maSanPham = 1;
@@ -66,6 +74,9 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 return StatusCode(500, "Lỗi: " + ex.Message);
             }
+        public IActionResult DatHangThanhCong()
+        {
+            return View();
         }
     }
 }

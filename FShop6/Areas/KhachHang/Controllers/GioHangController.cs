@@ -9,5 +9,10 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             return View();
         }
+
+        public IActionResult ThanhToan()
+        {
+            return View();
+        }
     }
 }

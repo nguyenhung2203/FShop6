@@ -42,6 +42,7 @@ namespace FShop6.Areas.KhachHang.Services
                     GiaBan = bt.GiaBan,
                     MoTaNgan = bt.SanPham.MoTa,
                 }).ToListAsync();
+
             // Sản phẩm mới (dựa trên ngày tạo)
             var sanPhamMoi = await _context.SanPham
             .Include(sp => sp.BienThes)

@@ -1,6 +1,8 @@
 ﻿@{
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Tài khoản";
+    string tab = Context.Request.Query["tab"];
+    tab = string.IsNullOrEmpty(tab) ? "dashboard" : tab;
 }
 <main class="main">
     <!--=============== BREADCRUMB ===============-->
