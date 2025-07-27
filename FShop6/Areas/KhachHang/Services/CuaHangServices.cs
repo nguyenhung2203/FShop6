@@ -15,11 +15,22 @@ namespace FShop6.Areas.KhachHang.Services
         Task<PhanTrangSanPhamViewModel> LaySanPhamTheoGia(decimal khoangGia, int trang = 1, int kichThuocTrang = 8);
     }
 
-    public class CuaHangServices : ICuaHangServices
+    public interface IChiTietSanPhamService
     {
-        private readonly AppDbContext _context;
+        Task<BienTheChiTietModel> LayChiTietSanPhamAsync(int maSanPham);
+    }
 
-        public CuaHangServices(AppDbContext context)
+    public interface IShopService : ICuaHangServices, IChiTietSanPhamService
+    {
+        Task ThemVaoGioHang(int maNguoiDung, int maBienThe, int soLuong);
+    }
+
+
+    public class ShopService : IShopService
+    {
+        public readonly AppDbContext _context;
+
+        public ShopService(AppDbContext context)
         {
             _context = context;
         }
@@ -218,5 +229,63 @@ namespace FShop6.Areas.KhachHang.Services
                 TongSoTrang = tongSoTrang,
             };
         }
+
+        public async Task<BienTheChiTietModel> LayChiTietSanPhamAsync(int maSanPham)
+        {
+            var sanPham = await _context.SanPham
+                    .Include(sp => sp.DanhMuc)
+                    .Include(sp => sp.BienThes)
+                        .ThenInclude(b => b.AnhBienThe)
+                    .FirstOrDefaultAsync(sp => sp.MaSanPham == maSanPham);
+
+            if (sanPham == null)
+            {
+                return null;
+            }
+
+            var bienTheList = sanPham.BienThes.Select(bienthe => new BienTheChiTietModel.BienTheModel
+            {
+                MaBienThe = bienthe.MaBienThe,
+                LoaiBienThe = bienthe.LoaiBienThe,
+                GiaBan = bienthe.GiaBan.ToString("N0"),
+                SKU = bienthe.MaSKU,
+                SoLuongTon = bienthe.SoLuongConLai, // Thêm số lượng tồn kho
+                DanhSachAnh = bienthe.AnhBienThe.Select(a => a.URL).ToList()
+            }).ToList();
+
+            return new BienTheChiTietModel
+            {
+                MaSanPham = sanPham.MaSanPham,
+                TenSanPham = sanPham.TenSanPham,
+                MoTa = sanPham.MoTa,
+                HinhAnhDaiDien = sanPham.HinhAnhDaiDien,
+                DanhMuc = sanPham.DanhMuc?.TenDanhMuc ?? "Không có danh mục",
+                BienThe = bienTheList // Trả về danh sách các biến thể
+            };
+        }
+
+        public async Task ThemVaoGioHang(int maNguoiDung, int maBienThe, int soLuong)
+        {
+            var giohang = await _context.GioHang
+                .FirstOrDefaultAsync(g => g.MaNguoiDung == maNguoiDung && g.MaBienThe == maBienThe);
+
+            if (giohang != null)
+            {
+                giohang.SoLuong += soLuong;
+            }
+            else
+            {
+                _context.GioHang.Add(new GioHangModel
+                {
+                    MaNguoiDung = maNguoiDung,
+                    MaBienThe = maBienThe,
+                    SoLuong = soLuong,
+                    NgayThem = DateTime.Now
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
     }
 }
