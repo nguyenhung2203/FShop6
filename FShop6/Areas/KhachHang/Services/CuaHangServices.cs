@@ -59,21 +59,20 @@ namespace FShop6.Areas.KhachHang.Services
                 trang);
 
 
-            var danhSachSanPhamLocDanhMuc = await _context.BienThe
-                .Include(bt => bt.SanPham)
-                .ThenInclude(sp => sp.DanhMuc)
-                .Where(bt => bt.SanPham.DanhMuc.Id == maDanhMuc)
-                .OrderBy(bt => bt.SanPham.TenSanPham)
+            var danhSachSanPhamLocDanhMuc = await _context.SanPham
+                .Include(sp => sp.DanhMuc)
+                .Where(dm => dm.DanhMuc.Id == maDanhMuc)
+                .OrderBy(sp => sp.TenSanPham)
                 .Skip((trangHienTai - 1) * kichThuocTrang)
                 .Take(kichThuocTrang)
-                .Select(bt => new BienTheTrangChuViewModel
+                .Select(sp => new SanPhamTrangChuViewModel
                 {
-                    MaBienThe = bt.MaBienThe,
-                    TenSanPham = bt.SanPham.TenSanPham,
-                    HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                    GiaBan = bt.GiaBan,
-                    MoTaNgan = bt.SanPham.MoTa,
-                    TenDanhMuc = bt.SanPham.DanhMuc.TenDanhMuc
+                    MaSanPham = sp.MaSanPham,
+                    TenSanPham = sp.TenSanPham,
+                    HinhAnhDaiDien = sp.HinhAnhDaiDien,
+                    GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
+                    MoTaNgan = sp.MoTa,
+                    TenDanhMuc = sp.DanhMuc.TenDanhMuc
                 })
                 .ToListAsync();
 
@@ -98,20 +97,19 @@ namespace FShop6.Areas.KhachHang.Services
             if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
             if (trang < 1) trang = 1;
 
-            var tongSanPham = await _context.BienThe
-                .Include(bt => bt.SanPham)
-                .ThenInclude(sp => sp.DanhMuc)
-                .OrderBy(bt => bt.SanPham.TenSanPham)
+            var tongSanPham = await _context.SanPham
+                .Include(sp => sp.DanhMuc)
+                .OrderBy(sp => sp.TenSanPham)
                 .Skip((trangHienTai - 1) * kichThuocTrang)
                 .Take(kichThuocTrang)
-                .Select(bt => new BienTheTrangChuViewModel
+                .Select(sp => new SanPhamTrangChuViewModel
                 {
-                    MaBienThe = bt.MaBienThe,
-                    TenSanPham = bt.SanPham.TenSanPham,
-                    HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                    GiaBan = bt.GiaBan,
-                    MoTaNgan = bt.SanPham.MoTa,
-                    TenDanhMuc = bt.SanPham.DanhMuc.TenDanhMuc
+                    MaSanPham = sp.MaSanPham,
+                    TenSanPham = sp.TenSanPham,
+                    HinhAnhDaiDien = sp.HinhAnhDaiDien,
+                    GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
+                    MoTaNgan = sp.MoTa,
+                    TenDanhMuc = sp.DanhMuc.TenDanhMuc
                 })
                 .ToListAsync();
 
@@ -131,48 +129,47 @@ namespace FShop6.Areas.KhachHang.Services
                 bt => true,
                 kichThuocTrang,
                 trang);
-            List<BienTheTrangChuViewModel> tongSanPham = new List<BienTheTrangChuViewModel>();
+            List<SanPhamTrangChuViewModel> tongSanPham = new List<SanPhamTrangChuViewModel>();
 
-            IQueryable<BienTheModels> query = _context.BienThe
-            .Include(bt => bt.SanPham)
-            .ThenInclude(sp => sp.DanhMuc);
+            IQueryable<SanPhamModel> query = _context.SanPham
+            .Include(sp => sp.DanhMuc);
 
             if (loai == 2)
             {
-                query = query.OrderBy(bt => bt.GiaBan);
+                query = query.OrderBy(bt => bt.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan);
             }
             else if (loai == 3)
             {
-                query = query.OrderByDescending(bt => bt.GiaBan);
+                query = query.OrderByDescending(bt => bt.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan);
             }
             else if (loai == 4)
             {
-                query = query.OrderBy(bt => bt.SanPham.TenSanPham);
+                query = query.OrderBy(sp => sp.TenSanPham);
             }
             else if (loai == 5)
             {
-                query = query.OrderByDescending(bt => bt.SanPham.TenSanPham);
+                query = query.OrderByDescending(sp => sp.TenSanPham);
             }
             else if (loai == 6)
             {
-                query = query.OrderBy(bt => bt.SanPham.NgayTao);
+                query = query.OrderBy(sp => sp.NgayTao);
             }
             else if (loai == 7)
             {
-                query = query.OrderByDescending(bt => bt.SanPham.NgayTao);
+                query = query.OrderByDescending(sp => sp.NgayTao);
             }
 
             tongSanPham = await query
             .Skip((trangHienTai - 1) * kichThuocTrang)
             .Take(kichThuocTrang)
-            .Select(bt => new BienTheTrangChuViewModel
+            .Select(sp => new SanPhamTrangChuViewModel
             {
-                MaBienThe = bt.MaBienThe,
-                TenSanPham = bt.SanPham.TenSanPham,
-                HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                GiaBan = bt.GiaBan,
-                MoTaNgan = bt.SanPham.MoTa,
-                TenDanhMuc = bt.SanPham.DanhMuc.TenDanhMuc
+                MaSanPham = sp.MaSanPham,
+                TenSanPham = sp.TenSanPham,
+                HinhAnhDaiDien = sp.HinhAnhDaiDien,
+                GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
+                MoTaNgan = sp.MoTa,
+                TenDanhMuc = sp.DanhMuc.TenDanhMuc
             })
             .ToListAsync();
 
@@ -194,23 +191,24 @@ namespace FShop6.Areas.KhachHang.Services
                 bt => bt.GiaBan < khoangGia,
                 kichThuocTrang,
                 trang);
-            var tongSanPham = await _context.BienThe
-                .Include(bt => bt.SanPham)
-                .ThenInclude(sp => sp.DanhMuc)
-                .Where(bt => bt.GiaBan < khoangGia)
-                .OrderBy(bt => bt.SanPham.TenSanPham)
+            var tongSanPham = await _context.SanPham
+                .Include(sp => sp.DanhMuc)
+                .Include(sp => sp.BienThes)
+                .Where(sp => sp.BienThes.Any(bt => bt.GiaBan <= khoangGia))
+                .OrderBy(sp => sp.TenSanPham)
                 .Skip((trangHienTai - 1) * kichThuocTrang)
                 .Take(kichThuocTrang)
-                .Select(bt => new BienTheTrangChuViewModel
+                .Select(sp => new SanPhamTrangChuViewModel
                 {
-                    MaBienThe = bt.MaBienThe,
-                    TenSanPham = bt.SanPham.TenSanPham,
-                    HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                    GiaBan = bt.GiaBan,
-                    MoTaNgan = bt.SanPham.MoTa,
-                    TenDanhMuc = bt.SanPham.DanhMuc.TenDanhMuc
+                    MaSanPham = sp.MaSanPham,
+                    TenSanPham = sp.TenSanPham,
+                    HinhAnhDaiDien = sp.HinhAnhDaiDien,
+                    GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
+                    MoTaNgan = sp.MoTa,
+                    TenDanhMuc = sp.DanhMuc.TenDanhMuc
                 })
                 .ToListAsync();
+
             var danhSachDanhMuc = await LayDanhMuc();
             return new PhanTrangSanPhamViewModel
             {

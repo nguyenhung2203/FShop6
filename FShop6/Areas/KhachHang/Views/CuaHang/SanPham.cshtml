@@ -126,9 +126,9 @@
                     {
                         @foreach (var sanPham in Model.DanhSachSanPham)
                         {
-                            <div class="product__item shop-product__item">
+                            <div class="product__item shop-product__item shop-card">
                                 <div class="product__banner">
-                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaBienThe" class="product__images">
+                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaSanPham" class="product__images">
                                         <img src="@Url.Content("~/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
                                              alt="@sanPham.TenSanPham"
                                              class="product__img default" />
@@ -136,20 +136,17 @@
                                 </div>
                                 <div class="product__content">
                                     <span class="product__category">@sanPham.TenDanhMuc</span>
-                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaBienThe">
+                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaSanPham">
                                         <h3 class="product__title">@sanPham.TenSanPham</h3>
                                     </a>
-									<p class="product__description">@sanPham.MoTaNgan</p>
+                                    <p class="product__description">@sanPham.MoTaNgan</p>
                                 </div>
                                 <div class="product__bottom-row">
                                     <div class="product__price">
                                         <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
                                     </div>
                                     <div class="product-card-actions">
-                                        <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-                                            <i class="fi fi-rs-shopping-bag-add"></i>
-                                        </a>
-                                        <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                                        <a href="#" class="action__btn" aria-label="Thêm yêu thích">
                                             <i class="fi fi-rs-heart"></i>
                                         </a>
                                     </div>
