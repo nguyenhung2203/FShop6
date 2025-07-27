@@ -14,9 +14,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IShopService, ShopService>();
 // Đảm bảo đăng ký dịch vụ đúng cách
 builder.Services.AddScoped<ITrangChuService, TrangChuServices>();
-// 🟡 Đăng ký dịch vụ QuanLyDonHangService
 
-
+// 🟢 Đăng ký dịch vụ CuaHangService
+builder.Services.AddScoped<ICuaHangServices, CuaHangServices>();
+// 🟢 Đăng ký dịch vụ TaiKhoanService
+builder.Services.AddScoped<ITaiKhoanServices, TaiKhoanServices>();
 
 var app = builder.Build();
 

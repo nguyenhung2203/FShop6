@@ -17,6 +17,6 @@ namespace FShop6.Data
         public DbSet<ChiTietDonHangModel> ChiTietDonHang { get; set; }
         public DbSet<GioHangModel> GioHang { get; set; }
         public DbSet<AnhBienTheModel> AnhBienThe { get; set; }
-
+        public DbSet<SPYeuThichModel> SPYeuThich { get; set; }
     }
 }

@@ -16,12 +16,12 @@
     <title>@ViewData["Title"] - FShop6</title>
 </head>
 <body>
+    <!--=============== Thông báo ===============-->
+    @Html.Partial("_ThongBao")
     <!--=============== HEADER ===============-->
     @Html.Partial("Header")
-
     <!--=============== MAIN ===============-->
     @RenderBody()
-
     <!--=============== FOOTER ===============-->
     @Html.Partial("Footer")
 
