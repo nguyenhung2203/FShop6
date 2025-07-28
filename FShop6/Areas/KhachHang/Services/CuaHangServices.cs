@@ -22,7 +22,6 @@ namespace FShop6.Areas.KhachHang.Services
 
     public interface IShopService : ICuaHangServices, IChiTietSanPhamService
     {
-        Task ThemVaoGioHang(int maNguoiDung, int maBienThe, int soLuong);
     }
 
 
@@ -263,29 +262,5 @@ namespace FShop6.Areas.KhachHang.Services
                 BienThe = bienTheList // Trả về danh sách các biến thể
             };
         }
-
-        public async Task ThemVaoGioHang(int maNguoiDung, int maBienThe, int soLuong)
-        {
-            var giohang = await _context.GioHang
-                .FirstOrDefaultAsync(g => g.MaNguoiDung == maNguoiDung && g.MaBienThe == maBienThe);
-
-            if (giohang != null)
-            {
-                giohang.SoLuong += soLuong;
-            }
-            else
-            {
-                _context.GioHang.Add(new GioHangModel
-                {
-                    MaNguoiDung = maNguoiDung,
-                    MaBienThe = maBienThe,
-                    SoLuong = soLuong,
-                    NgayThem = DateTime.Now
-                });
-            }
-
-            await _context.SaveChangesAsync();
-        }
-
     }
 }

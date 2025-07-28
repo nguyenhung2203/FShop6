@@ -2,123 +2,153 @@
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Giỏ hàng";
 }
-@model FShop6.Areas.KhachHang.Models.TrangChuViewModel
+@model FShop6.Areas.KhachHang.Models.GioHangViewModel
+
 <main class="main">
     <section class="breadcrumb">
-        <ul class="breadcrumb__list flex container">
-            <li><a asp-controller="Home" asp-action="Index" class="breadcrumb__link">Trang chủ</a></li>
-            <li><span class="breadcrumb__link">></span></li>
-            <li><span class="breadcrumb__link">Sản phẩm</span></li>
-            <li><span class="breadcrumb__link">></span></li>
-            <li><span class="breadcrumb__link">Giỏ hàng</span></li>
-        </ul>
+        <!-- breadcrumb -->
     </section>
 
-    <section class="cart section--lg container">
-        <div class="table__container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            <input type="checkbox" id="select-all" class="product-checkbox select-all-checkbox" />
-                            <label for="select-all" class="checkbox-label">Chọn tất cả</label>
-                        </th>
-                        <th>Ảnh</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Loại</th>
-                        <th>Giá</th>
-                        <th>Số lượng</th>
-                        <th>Tổng tiền</th>
-                        <th>Xoá</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <input type="checkbox" id="product-1" class="product-checkbox item-checkbox"
-                                   data-price="100000" />
-                            <label for="product-1" class="checkbox-label"></label>
-                        </td>
-                        <td><img src="ImageUrl" alt="" class="table__img" /></td>
-                        <td>
-                            <h3 class="table__title">Áo thun</h3>
-                            <p class="table__description">Thoáng m</p>
-                        </td>
-                        <td><span class="table__price">200000</span></td>
-                        <td><input type="number" value="Quantity" class="quantity" /></td>
-                        <td><span class="subtotal">200000</span></td>
-                        <td><i class="fi fi-rs-trash table__trash"></i></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="cart__actions">
-            <a href="#" class="btn flex btn__md"><i class="fi-rs-shuffle"></i> Sắp xếp giỏ hàng</a>
-            <a asp-controller="Shop" asp-action="Index" class="btn flex btn__md">
-                <i class="fi-rs-shopping-bag"></i> Tiếp tục mua sắm
-            </a>
-        </div>
-
-        <div class="divider"><i class="fi fi-rs-fingerprint"></i></div>
-
-        <div class="cart__group grid">
-            <div>
-                <div class="cart__shipping">
-                    <h3 class="section__title">Địa chỉ giao hàng</h3>
-                    <form id="shipping-form" class="form grid">
-                        <select class="form__input" id="city-province"><option>Chọn Tỉnh/Thành phố</option></select>
-                        <select class="form__input" id="district"><option>Chọn Quận/Huyện</option></select>
-                        <select class="form__input" id="ward"><option>Chọn Phường/Xã</option></select>
-                        <input type="text" class="form__input" placeholder="Số nhà, tên đường..." />
-                        <div class="form__btn">
-                            <button type="submit" class="btn flex btn--sm">
-                                <i class="fi-rs-shuffle"></i> Cập nhật
-                            </button>
-                        </div>
-                    </form>
-                </div>
+    @using (Html.BeginForm("ThanhToan", "GioHang", FormMethod.Post, new { area = "KhachHang" }))
+    {
+        @Html.AntiForgeryToken()
+        <section class="cart section--lg container">
+            <div class="table__container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="select-all" class="product-checkbox select-all-checkbox" />
+                                <label for="select-all" class="checkbox-label">Chọn tất cả</label>
+                            </th>
+                            <th>Ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Loại</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Tổng tiền</th>
+                            <th>Xoá</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.GioHang == null || Model.GioHang.Count == 0)
+                        {
+                        }
+                        else
+                        {
+                            @for (int i = 0; i < Model.GioHang.Count; i++)
+                            {
+                                var item = Model.GioHang[i];
+                                <tr>
+                                    <td>
+                                        <input type="checkbox"
+                                               name="GioHang[@i].DuocChon"
+                                               value="true"
+                                               @(item.DuocChon ? "checked" : "")
+                                               class="item-checkbox product-checkbox"
+                                               data-price="@(item.GiaBan* item.SoLuong)" />
+                                        @Html.HiddenFor(m => m.GioHang[i].MaBienThe)
+                                    </td>
+                                    <td>
+                                        <img src="@item.HinhAnhDaiDien" alt="@item.TenSanPham" class="table__img" />
+                                        @Html.HiddenFor(m => m.GioHang[i].HinhAnhDaiDien)
+                                    </td>
+                                    <td>
+                                        <h3 class="table__title">@item.TenSanPham</h3>
+                                        @Html.HiddenFor(m => m.GioHang[i].TenSanPham)
+                                    </td>
+                                    <td>
+                                        <span class="table__type">@item.LoaiBienThe</span>
+                                        @Html.HiddenFor(m => m.GioHang[i].LoaiBienThe)
+                                    </td>
+                                    <td>
+                                        <span class="table__price">@item.GiaBan.ToString("N0")</span>
+                                        @Html.HiddenFor(m => m.GioHang[i].GiaBan)
+                                    </td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.GioHang[i].SoLuong, new { @class = "quantity", type = "number", min = "1" })
+                                    </td>
+                                    <td>
+                                        <span class="subtotal">@((item.GiaBan * item.SoLuong).ToString("N0"))</span>
+                                    </td>
+                                    <td>
+                                        <i class="fi fi-rs-trash table__trash"></i>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
             </div>
 
-            <div class="cart__total">
-                <h3 class="section__title">Thanh toán</h3>
-                @{
-                    // var total = Model.Sum(x => x.x);
-                    var shipping = 0;
-                    // var grandTotal = total + shipping;
-                }
-                <table class="cart__total-table">
-                    <tr>
-                        <td><span class="cart__total-title">Tổng tạm tính</span></td>
-                        <td><span class="cart__total-price" id="selected-total">0₫</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="cart__total-title">Phí giao hàng</span></td>
-                        <td><span class="cart__total-price">Miễn phí vận chuyển</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="cart__total-title">Tổng tiền</span></td>
-                        <td><span class="cart__total-price" id="grand-total">@shipping.ToString("C")</span></td>
-                    </tr>
-                </table>
-                <a href="@Url.Action("ThanhToan", "GioHang", new { area = "KhachHang" })" class="btn flex btn--md" id="checkout-btn">
-                    <i class="fi fi-rs-box-alt"></i> Thanh toán (<span id="selected-count">0</span> sản phẩm)
+            <div class="cart__actions">
+                <a asp-controller="Shop" asp-action="Index" class="btn flex btn__md">
+                    <i class="fi-rs-shopping-bag"></i> Tiếp tục mua sắm
                 </a>
             </div>
-        </div>
-    </section>
+
+            <div class="divider"><i class="fi fi-rs-fingerprint"></i></div>
+
+            <div class="cart__group grid">
+                <div>
+                    <div class="cart__shipping">
+                        <h3 class="section__title">Địa chỉ giao hàng</h3>
+                        <div class="form grid">
+                            <!-- Select để hiển thị, value sẽ là tên -->
+                            <select class="form__input" name="DiaChi.Tinh" id="city-province">
+                                <option value="" disabled selected>Chọn Tỉnh/Thành phố</option>
+                            </select>
+
+                            <select class="form__input" name="DiaChi.Huyen" id="district">
+                                <option value="" disabled selected>Chọn Quận/Huyện</option>
+                            </select>
+
+                            <select class="form__input" name="DiaChi.Xa" id="ward">
+                                <option value="" disabled selected>Chọn Phường/Xã</option>
+                            </select>
+
+                            <input type="text" class="form__input" name="DiaChi.CuThe" placeholder="Số nhà, tên đường..." />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cart__total">
+                    <h3 class="section__title">Thanh toán</h3>
+                    <table class="cart__total-table">
+                        <tr>
+                            <td><span class="cart__total-title">Tổng tạm tính</span></td>
+                            <td><span class="cart__total-price" id="selected-total">0₫</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cart__total-title">Phí giao hàng</span></td>
+                            <td><span class="cart__total-price">Miễn phí vận chuyển</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cart__total-title">Tổng tiền</span></td>
+                            <td><span class="cart__total-price" id="grand-total">0₫</span></td>
+                        </tr>
+                    </table>
+                    <button type="submit" class="btn flex btn--md" id="checkout-btn">
+                        <i class="fi fi-rs-box-alt"></i> Thanh toán (<span id="selected-count">0</span> sản phẩm)
+                    </button>
+                </div>
+            </div>
+        </section>
+    }
 </main>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const selectAllCheckbox = document.getElementById('select-all');
-        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        // Chỉ lấy checkbox chính, không lấy hidden input của CheckBoxFor
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox[type="checkbox"]');
         const selectedTotal = document.getElementById('selected-total');
         const grandTotal = document.getElementById('grand-total');
         const selectedCount = document.getElementById('selected-count');
         const checkoutBtn = document.getElementById('checkout-btn');
 
-        const shippingFee = 10000; // 10,000 VND
+        const shippingFee = 0;
 
         // Function to format currency
         function formatCurrency(amount) {
@@ -151,6 +181,12 @@
             }
         }
 
+        // Set default checked state for all items
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.checked = false; // Mặc định tất cả đều được tick
+        });
+        selectAllCheckbox.checked = false; // Select all cũng được tick
+
         // Select all functionality
         selectAllCheckbox.addEventListener('change', function() {
             itemCheckboxes.forEach(checkbox => {
@@ -163,7 +199,7 @@
         itemCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 // Update select all checkbox state
-                const checkedCount = document.querySelectorAll('.item-checkbox:checked').length;
+                const checkedCount = document.querySelectorAll('.item-checkbox[type="checkbox"]:checked').length;
                 selectAllCheckbox.checked = checkedCount === itemCheckboxes.length;
                 selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < itemCheckboxes.length;
 
@@ -171,7 +207,7 @@
             });
         });
 
-        // Initialize
+        // Initialize totals after setting default checked state
         updateTotals();
     });
 </script>

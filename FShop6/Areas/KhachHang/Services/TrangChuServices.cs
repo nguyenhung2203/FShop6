@@ -46,12 +46,11 @@ namespace FShop6.Areas.KhachHang.Services
 
             // Sản phẩm mới (dựa trên ngày tạo)
             var sanPhamMoi = await _context.SanPham
-            .Include(sp => sp.BienThes)
             .OrderByDescending(sp => sp.NgayTao)
             .Take(12)
             .Select(sp => new SanPhamTrangChuViewModel
             {
-                MaSanPham = sp.BienThes.OrderBy(bt => bt.GiaBan).Select(bt => bt.MaBienThe).FirstOrDefault(),
+                MaSanPham = sp.MaSanPham,
                 TenSanPham = sp.TenSanPham,
                 HinhAnhDaiDien = sp.HinhAnhDaiDien,
                 GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).Select(bt => bt.GiaBan).FirstOrDefault(),
@@ -70,7 +69,7 @@ namespace FShop6.Areas.KhachHang.Services
                 .Take(8)
                 .Select(g => new SanPhamTrangChuViewModel
                 {
-                    MaSanPham = g.First().BienThe.MaBienThe,
+                    MaSanPham = g.First().BienThe.SanPham.MaSanPham,
                     TenSanPham = g.First().BienThe.SanPham.TenSanPham,
                     HinhAnhDaiDien = g.First().BienThe.SanPham.HinhAnhDaiDien,
                     GiaBan = g.First().BienThe.GiaBan,
@@ -91,14 +90,14 @@ namespace FShop6.Areas.KhachHang.Services
             // Sản phẩm theo danh mục
             var sanPhamTheoDanhMuc = await _context.SanPham
             .Include(sp => sp.DanhMuc)
-            .Include(sp => sp.BienThes)
             .GroupBy(sp => sp.DanhMuc.TenDanhMuc)
+            .Take(4)
             .Select(group => new DanhMucSanPhamViewModel
             {
                 TenDanhMuc = group.Key,
                 SanPhams = group.Take(3).Select(sp => new SanPhamTrangChuViewModel
                 {
-                    MaSanPham = sp.BienThes.FirstOrDefault().MaBienThe,
+                    MaSanPham = sp.MaSanPham,
                     TenSanPham = sp.TenSanPham,
                     HinhAnhDaiDien = sp.HinhAnhDaiDien,
                     GiaBan = sp.BienThes.FirstOrDefault().GiaBan

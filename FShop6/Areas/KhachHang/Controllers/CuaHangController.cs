@@ -25,11 +25,11 @@ namespace FShop6.Areas.KhachHang.Controllers
             }
             else if (loai == 2)
             {
-                model = await _cuaHangService.LaySanPhamXapXep(loaiXapXep.Value, trang);
+                model = await _shopService.LaySanPhamXapXep(loaiXapXep.Value, trang);
             }
             else if (loai == 3)
             {
-                model = await _cuaHangService.LaySanPhamTheoGia(khoangGia.Value, trang);
+                model = await _shopService.LaySanPhamTheoGia(khoangGia.Value, trang);
             }    
             else
             {
@@ -44,36 +44,13 @@ namespace FShop6.Areas.KhachHang.Controllers
         }
         public async Task<IActionResult> ChiTietSanPham(int maSanPham)
         {
-            maSanPham = 1;
             var model = await _shopService.LayChiTietSanPhamAsync(maSanPham);
             if (model == null)
             {
                 return NotFound();
             }
-
             return View(model);
         }
-
-        [HttpPost]
-        public async Task<IActionResult> ThemVaoGioHang(int maSanPham, int maBienThe, int soLuong)
-        {
-
-            int maNguoiDung = 1;
-
-            if (maBienThe <= 0 || soLuong <= 0)
-            {
-                return BadRequest("Thông tin không hợp lệ.");
-            }
-
-            try
-            {
-                await _shopService.ThemVaoGioHang(maNguoiDung, maBienThe, soLuong);
-                return RedirectToAction("ChiTietSanPham", new { maSanPham = maSanPham });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Lỗi: " + ex.Message);
-            }
         public IActionResult DatHangThanhCong()
         {
             return View();

@@ -53,12 +53,12 @@ namespace FShop6.Areas.KhachHang.Controllers
 
          
         [HttpPost] // Chỉ nhận POST request
-        public ActionResult ThemYeuThich()
+        public ActionResult ThemYeuThich(int maSanPham, int maNguoiDung)
         {
             try
             {
-                int nguoiDungId = 6;
-                bool ketQua = _taiKhoanServices.ThemSanPham(nguoiDungId, 6); 
+                maNguoiDung = 6;
+                bool ketQua = _taiKhoanServices.ThemSanPham(maNguoiDung, maSanPham); 
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Thêm sản phẩm yêu thích thành công.";
@@ -66,8 +66,8 @@ namespace FShop6.Areas.KhachHang.Controllers
                 }
                 else
                 {
-                   TempData["ThongBao"] = "Sản phẩm đã tồn tại trong danh sách yêu thích.";
-                     TempData["LoaiThongBao"] = "warning";
+                    TempData["ThongBao"] = "Sản phẩm đã tồn tại trong danh sách yêu thích.";
+                    TempData["LoaiThongBao"] = "warning";
                 }
             }
             catch (Exception ex)
