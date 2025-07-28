@@ -46,9 +46,45 @@ namespace FShop6.Areas.KhachHang.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SanPhamThanhToan(GioHangViewModel model)
+        {
+            if (model == null || model.GioHang.Count == 0)
+            {
+                TempData["ThongBao"] = "Không có sản phẩm nào được chọn để thanh toán.";
+                TempData["LoaiThongBao"] = "warning";
+                return RedirectToAction("GioHang");
+            }
+
+            try
+            {
+                var ketQua = _gioHangServices.ThanhToan(model);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Đặt hàng thành công!";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Thanh toán thất bại. Vui lòng thử lại.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+                return RedirectToAction("GioHang");
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error: {ex.Message}");
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+                return RedirectToAction("GioHang");
+            }
+        }
+
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ThemGioHang(int maNguoiDung, int maBienThe, int soLuong, int maSanPham)
         {
             try

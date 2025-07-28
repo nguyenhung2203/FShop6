@@ -13,7 +13,7 @@ namespace FShop6.Areas.KhachHang.Services
     }
     public interface IThanhToan
     {
-        //bool ThanhToan(int maNguoiDung, int maBienThe, int soLuong);
+        bool ThanhToan(GioHangViewModel sanPham);
     }
 
     public interface IGioHangServices : IGioHang, IThanhToan
@@ -84,26 +84,72 @@ namespace FShop6.Areas.KhachHang.Services
             return _context.GioHang.Any(x => x.MaNguoiDung == maNguoiDung && x.MaBienThe == maBienThe);
         }
 
-        //public bool ThanhToan(int maNguoiDung, List<int> maBienThe, int soLuong, bool phuongThucThanhToan)
-        //{
-        //    string phuongThuc = phuongThucThanhToan ? "Chuyển khoản" : "Thanh toán khi nhận hàng";
-        //    try
-        //    {
-        //        var gioHang = _context.GioHang.Select(x => x.MaNguoiDung == maNguoiDung && x.MaBienThe == maBienThe);
-        //        var nguoiDung = _context.NguoiDung.FirstOrDefault(x => x.MaNguoiDung == maNguoiDung);
-        //        var donHang = new DonHangModel
-        //        {
-        //            MaNguoiDung = maNguoiDung,
-        //            DiaChiGiaoHang = nguoiDung.DiaChi,
-        //            PhuongThucThanhToan = phuongThuc,
-        //            TongTien = gioHang.Sum(x => x. * x.BienThe.GiaBan),
+        public bool ThanhToan(GioHangViewModel sanPham)
+        {
+            var gioHang = sanPham.GioHang.ToList();
+            var diaChi = sanPham.DiaChi;
+            string diaChiChiTiet = diaChi.CuThe;
+            decimal tongTien = gioHang.Sum(x => x.GiaBan * x.SoLuong);
+            var thanhToan = sanPham.PhuongThucThanhToan;
+            string phuongThucThanhToan = "";
+            if (thanhToan)
+            {
+                phuongThucThanhToan = "Chuyển khoản";
+            }
+            else
+            {
+                phuongThucThanhToan = "Thanh toán khi nhận hàng";
+            }
+            try
+            {
+                var donHang = new DonHangModel
+                {
+                    MaDonHang = Guid.NewGuid().ToString(),
+                    MaNguoiDung = sanPham.MaNguoiDung = 5,
+                    DiaChiGiaoHang = diaChiChiTiet,
+                    PhuongThucThanhToan = phuongThucThanhToan,
+                    TongTien = tongTien,
+                    TrangThai = "Chờ xử lý",
+                    ThoiGianDatHang = DateTime.Now,
+                    NgayCapNhat = DateTime.Now,
+                    GhiChu = sanPham.GhiChu ?? string.Empty,
+                };
+                _context.DonHang.Add(donHang);
+                _context.SaveChanges();
+                foreach (var item in gioHang)
+                {
+                    var chiTietDonHang = new ChiTietDonHangModel
+                    {
+                        IDDonHang = donHang.ID,
+                        MaBienThe = item.MaBienThe,
+                        SoLuong = item.SoLuong,
+                        DonGia = item.GiaBan
+                    };
+                    _context.ChiTietDonHang.Add(chiTietDonHang);
+                }
+                foreach (var item in gioHang)
+                {
+                    var gioHangDaThanhToan = _context.GioHang.FirstOrDefault(x => x.MaBienThe == item.MaBienThe && x.MaNguoiDung == sanPham.MaNguoiDung);
+                    if (gioHangDaThanhToan != null)
+                        _context.GioHang.RemoveRange(gioHangDaThanhToan);
+                }
 
-        //        };
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        return false;
-        //    }
-        //}
+                foreach (var item in gioHang)
+                {
+                    var bienThe = _context.BienThe.FirstOrDefault(x => x.MaBienThe == item.MaBienThe);
+                    if (bienThe != null)
+                    {
+                        bienThe.SoLuongConLai -= item.SoLuong;
+                        _context.BienThe.Update(bienThe);
+                    }
+                }
+                _context.SaveChanges();
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                return false;
+            }
+        }
     }
 }

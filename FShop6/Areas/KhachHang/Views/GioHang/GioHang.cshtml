@@ -82,7 +82,7 @@
             </div>
 
             <div class="cart__actions">
-                <a asp-controller="Shop" asp-action="Index" class="btn flex btn__md">
+                <a href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang" })" class="btn flex btn__md">
                     <i class="fi-rs-shopping-bag"></i> Tiếp tục mua sắm
                 </a>
             </div>
