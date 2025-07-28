@@ -16,7 +16,6 @@ builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<ITrangChuService, TrangChuServices>();
 
 // 🟢 Đăng ký dịch vụ CuaHangService
-builder.Services.AddScoped<ICuaHangServices, CuaHangServices>();
 // 🟢 Đăng ký dịch vụ TaiKhoanService
 builder.Services.AddScoped<ITaiKhoanServices, TaiKhoanServices>();
 
