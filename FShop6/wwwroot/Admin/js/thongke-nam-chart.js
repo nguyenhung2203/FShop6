@@ -5,7 +5,7 @@
     const yearData = JSON.parse(rawData.textContent);
     console.log(yearData); // Xem dữ liệu JSON đã được lấy lên
 
-    const labels = yearData.map(item => `Tháng ${item.thang}`);
+    const labels = yearData.map(item => `Tháng: ` + item.thang);
     const data = yearData.map(item => item.tongDoanhThu);
 
     const ctx = document.getElementById("yearChart").getContext("2d");
