@@ -21,7 +21,6 @@ namespace FShop6.Areas.Admin.Services
         public async Task<QuanLyDonHangViewModel> LayTatCaDonHangAsync()
         {
             var donHang = await _context.DonHang
-                .Where(dh => dh.NguoiDung.TenVaiTro == "Khách hàng")
                 .Include(dh => dh.NguoiDung)
                 .Include(dh => dh.ChiTietDonHangs)
                 .ThenInclude(ct => ct.BienThe)
