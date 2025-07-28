@@ -15,6 +15,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ITrangChuService, TrangChuServices>();
 // 🟢 Đăng ký dịch vụ CuaHangService
 builder.Services.AddScoped<ICuaHangServices, CuaHangServices>();
+// 🟢 Đăng ký dịch vụ TaiKhoanService
+builder.Services.AddScoped<ITaiKhoanServices, TaiKhoanServices>();
 
 var app = builder.Build();
 
