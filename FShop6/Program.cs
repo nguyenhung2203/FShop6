@@ -21,7 +21,7 @@ builder.Services.AddScoped<ITaiKhoanServices, TaiKhoanServices>();
 
 var app = builder.Build();
 
-// Cấu hình pipeline
+// Cấu hình pipelinex
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -42,8 +42,8 @@ app.MapControllerRoute(
 // 🔵 Định tuyến mặc định: Chuyển hướng về KhachHang/TrangChu/Index
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=CuaHang}/{action=ChiTietSanPham}/{id?}",
-    defaults: new { area = "KhachHang" } // 🟢 Mặc định dùng Area KhachHang
+    pattern: "{controller=ThongKe}/{action=ThongKe}/{id?}",
+    defaults: new { area = "Admin" } // 🟢 Mặc định dùng Area KhachHang
 );
 
 app.Run();
