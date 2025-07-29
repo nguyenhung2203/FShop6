@@ -22,6 +22,7 @@ namespace FShop6.Areas.KhachHang.Services
 
     public interface IShopService : ICuaHangServices, IChiTietSanPhamService
     {
+        Task<List<object>> TimKiem(string tuKhoa);
     }
 
 
@@ -198,7 +199,7 @@ namespace FShop6.Areas.KhachHang.Services
         public async Task<PhanTrangSanPhamViewModel> LaySanPhamTheoGia(decimal khoangGia, int trang = 1, int kichThuocTrang = 8)
         {
             var (tongSoTrang, trangHienTai) = PhanTrang(
-                bt => bt.GiaBan < khoangGia,
+                bt => bt.GiaBan <= khoangGia,
                 kichThuocTrang,
                 trang);
             var tongSanPham = await _context.SanPham
@@ -261,6 +262,24 @@ namespace FShop6.Areas.KhachHang.Services
                 DanhMuc = sanPham.DanhMuc?.TenDanhMuc ?? "Không có danh mục",
                 BienThe = bienTheList // Trả về danh sách các biến thể
             };
+        }
+
+        public async Task<List<object>> TimKiem(string tuKhoa)
+        {
+            if (string.IsNullOrWhiteSpace(tuKhoa))
+                return new List<object>();
+            var ketQua = await _context.SanPham
+                .Where(sp => sp.TenSanPham.Contains(tuKhoa))
+                .Select(sp => new
+                {
+                    id = sp.MaSanPham,
+                    ten = sp.TenSanPham,
+                    gia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan.ToString("N0") + "₫" ,
+                    anh = sp.HinhAnhDaiDien
+                })
+                .Take(5)
+                .ToListAsync();
+            return ketQua.Cast<object>().ToList();
         }
     }
 }

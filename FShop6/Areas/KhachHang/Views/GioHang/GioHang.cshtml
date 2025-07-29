@@ -38,6 +38,7 @@
                         {
                             @for (int i = 0; i < Model.GioHang.Count; i++)
                             {
+                                var formId = "form-xoa-" + i;
                                 var item = Model.GioHang[i];
                                 <tr>
                                     <td>
@@ -72,7 +73,13 @@
                                         <span class="subtotal">@((item.GiaBan * item.SoLuong).ToString("N0"))</span>
                                     </td>
                                     <td>
-                                        <i class="fi fi-rs-trash table__trash"></i>
+                                        @using (Html.BeginForm("XoaGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
+                                        {
+                                            @Html.Hidden("maBienThe", item.MaBienThe)
+                                            <button type="submit" data-confirm="Bạn có chắc chắn muốn xóa sản phẩm này?">
+                                                <i class="fi fi-rs-trash table__trash"></i>
+                                            </button>
+                                        }
                                     </td>
                                 </tr>
                             }

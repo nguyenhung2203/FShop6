@@ -1,35 +1,87 @@
-﻿using FShop6.Areas.KhachHang.Services;
+﻿using FShop6.Areas.KhachHang.Models;
+using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Threading.Tasks;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class TaiKhoanController : Controller
+    public class TaiKhoanController : BaseController
     {
         private readonly ITaiKhoanServices _taiKhoanServices;
-        public TaiKhoanController(ITaiKhoanServices taiKhoanServices)
+        public TaiKhoanController(IHeaderServices headerServices, ITaiKhoanServices taiKhoanServices)
+            : base(headerServices)
         {
             _taiKhoanServices = taiKhoanServices;
         }
 
-        private int GetCurrentUserId()
+
+        public async Task<IActionResult> HoSo()
         {
-
-            // Cách 2: Từ Authentication Cookie
-            if (User.Identity.IsAuthenticated)
+            var moDel = await _taiKhoanServices.LayThongTinHoSo(5);
+            return View(moDel);
+        }
+        [HttpPost]
+        public ActionResult HuyDon(string maDonHang)
+        {
+            try
             {
-                // Giả sử lưu UserId trong Claims
-                var userId = User.Identity.Name; // hoặc User.FindFirst("UserId").Value
-                return Convert.ToInt32(userId);
+                bool ketQua = _taiKhoanServices.HuyDonHang(maDonHang);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Hủy đơn hàng thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Không thể hủy đơn hàng khi đã được xử lý.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
             }
-
-            // Chưa đăng nhập
-            throw new UnauthorizedAccessException("Vui lòng đăng nhập để sử dụng tính năng này");
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            return RedirectToAction("HoSo", "TaiKhoan");
         }
 
-        public IActionResult HoSo(string? tab)
+        [HttpPost]
+        public ActionResult CapNhatHoSo(HoSoViewModel hoSo)
         {
-            ViewBag.SelectedTab = tab;
-            return View();
+            try
+            {
+                var nguoiDung = hoSo.nguoiDungModels;
+                if (nguoiDung == null || nguoiDung.MaNguoiDung == 0)
+                {
+                    TempData["ThongBao"] = "Dữ liệu người dùng không hợp lệ.";
+                    TempData["LoaiThongBao"] = "warning";
+                    return RedirectToAction("HoSo", "TaiKhoan");
+                }
+                bool ketQua = _taiKhoanServices.CapNhatThongTinHoSo(nguoiDung);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Cập nhật hồ sơ thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Cập nhật hồ sơ thất bại.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+            }
+            catch (SqlException ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra Database: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            return RedirectToAction("HoSo", "TaiKhoan");
         }
         public IActionResult DangNHap()
         {
@@ -53,11 +105,11 @@ namespace FShop6.Areas.KhachHang.Controllers
 
          
         [HttpPost] // Chỉ nhận POST request
-        public ActionResult ThemYeuThich(int maSanPham, int maNguoiDung)
+        public ActionResult ThemYeuThich(int maSanPham, int maNguoiDung, string giaoDien)
         {
             try
             {
-                maNguoiDung = 6;
+                maNguoiDung = 5;
                 bool ketQua = _taiKhoanServices.ThemSanPham(maNguoiDung, maSanPham); 
                 if (ketQua)
                 {
@@ -74,6 +126,10 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
                 TempData["LoaiThongBao"] = "error";
+            }
+            if (!string.IsNullOrEmpty(giaoDien))
+            {
+                return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
             }
 
             return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });

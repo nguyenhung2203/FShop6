@@ -1,6 +1,7 @@
 ﻿using FShop6.Areas.KhachHang.Models;
 using FShop6.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace FShop6.Areas.KhachHang.Services
 {
@@ -112,7 +113,7 @@ namespace FShop6.Areas.KhachHang.Services
                 SanPhamMoi = sanPhamMoi,
                 SanPhamPhoBien = sanPhamPhoBien,
                 TinTuc = tinTuc,
-                DanhMucSanPhamHienThi = sanPhamTheoDanhMuc
+                DanhMucSanPhamHienThi = sanPhamTheoDanhMuc,
             };
         }
     }

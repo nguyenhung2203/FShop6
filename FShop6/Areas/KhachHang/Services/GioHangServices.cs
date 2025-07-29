@@ -9,11 +9,13 @@ namespace FShop6.Areas.KhachHang.Services
     public interface IGioHang
     {
         bool ThemVaoGioHang(int maNguoiDung, int maBienThe, int soLuong);
+        bool xoaGioHang(int maNguoiDung, int maBienThe);
         Task<GioHangViewModel> LayGioHang(int maNguoiDung);
     }
     public interface IThanhToan
     {
         bool ThanhToan(GioHangViewModel sanPham);
+        Task<GioHangViewModel> ThongTinNguoiNhan(int maNguoiDung);
     }
 
     public interface IGioHangServices : IGioHang, IThanhToan
@@ -79,9 +81,23 @@ namespace FShop6.Areas.KhachHang.Services
             }
         }
 
-        public bool KiemTraGioHang(int maNguoiDung, int maBienThe)
+        public bool xoaGioHang(int maNguoiDung, int maBienThe)
         {
-            return _context.GioHang.Any(x => x.MaNguoiDung == maNguoiDung && x.MaBienThe == maBienThe);
+            try
+            {
+                var gioHang = _context.GioHang.FirstOrDefault(x => x.MaNguoiDung == maNguoiDung && x.MaBienThe == maBienThe);
+                if (gioHang != null)
+                {
+                    _context.GioHang.Remove(gioHang);
+                    _context.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch (SqlException ex)
+            {
+                return false;
+            }
         }
 
         public bool ThanhToan(GioHangViewModel sanPham)
@@ -151,5 +167,17 @@ namespace FShop6.Areas.KhachHang.Services
                 return false;
             }
         }
+
+        public async Task<GioHangViewModel> ThongTinNguoiNhan(int maNguoiDung)
+        {
+            var nguoiDung = await _context.NguoiDung.FirstOrDefaultAsync(x => x.MaNguoiDung == maNguoiDung);
+            var thongTin = new GioHangViewModel
+            {
+                TenNguoiNhan = nguoiDung?.HoTen ?? string.Empty,
+                SoDienThoai = nguoiDung?.SoDienThoai ?? string.Empty,
+            };
+            return thongTin;
+        }
+
     }
 }

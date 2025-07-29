@@ -3402,6 +3402,44 @@ main {
     width: 100%;
 }
 
+/* Thanh trượt chính */
+input[type="range"] {
+    -webkit-appearance: none !important;
+    background: #fff0e8 !important;
+}
+
+    input[type="range"]::-webkit-slider-track {
+        background: #f36f21 !important;
+        height: 6px !important;
+        border-radius: 3px !important;
+    }
+
+    /* Nút kéo */
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        background: #2196F3; /* Màu xanh dương cho nút */
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    /* Cho Firefox */
+    input[type="range"]::-moz-range-track {
+        background: #f36f21; /* Màu cam chủ đạo FPT */
+        height: 6px;
+        border-radius: 3px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none !important;
+        background: #f36f21 !important;
+        height: 20px !important;
+        width: 20px !important;
+        border-radius: 50% !important;
+        cursor: pointer !important;
+    }
+
 .price-range__value {
     display: block;
     text-align: center;
@@ -5524,6 +5562,172 @@ main {
         padding: 1.25rem;
     }
 }
+/* Dropdown gợi ý */
+.search__suggestions {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    top: 105%;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+}
 
+/* Mỗi item trong dropdown */
+.suggestion__item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #f1f1f1;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
 
+    .suggestion__item:hover {
+        background-color: #f9f9f9;
+    }
 
+    .suggestion__item img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        margin-right: 10px;
+        border-radius: 4px;
+    }
+
+.suggestion__info {
+    display: flex;
+    flex-direction: column;
+}
+
+.suggestion__name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.suggestion__price {
+    color: orange;
+    font-size: 13px;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+    .modal-overlay.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    }
+
+/* Modal Content */
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 0;
+    max-width: 520px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal-content {
+    transform: scale(1);
+}
+
+/* Modal Header */
+.modal-header {
+    padding: 24px 24px 24px;
+    text-align: center;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+    line-height: 1.4;
+}
+
+/* Modal Footer */
+.modal-footer {
+    padding: 24px 32px 32px;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+/* Buttons */
+.btn {
+    padding: 16px 32px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #f36f21 0%, #e55a0f 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(243, 111, 33, 0.3);
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #e55a0f 0%, #d44e0a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(243, 111, 33, 0.4);
+    }
+
+.btn-secondary {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+}
+
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #7f8c8d 0%, #6c7b7d 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
+    }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Demo styles */
+.demo-container {
+    padding: 50px;
+    text-align: center;
+}
+
+.demo-btn {
+    margin: 10px;
+    padding: 12px 24px;
+    font-size: 16px;
+}

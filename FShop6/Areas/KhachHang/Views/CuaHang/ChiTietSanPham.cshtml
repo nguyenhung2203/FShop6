@@ -7,11 +7,11 @@
 	<!--=============== BREADCRUMB ===============-->
 	<section class="breadcrumb">
 		<ul class="breadcrumb__list flex container">
-			<li><a href="index.html" class="breadcrumb__link">Home</a></li>
-			<li><span class="breadcrumb__link"></span>></li>
-			<li><span class="breadcrumb__link">Fashion</span></li>
-			<li><span class="breadcrumb__link"></span>></li>
-			<li><span class="breadcrumb__link">Henley Shirt</span></li>
+			<li><a href="index.html" class="breadcrumb__link">Trang chủ</a></li>
+			<li><span class="breadcrumb__link">></span></li>
+			<li><span class="breadcrumb__link"></span>Chi tiết sản phẩm</li>
+			<li><span class="breadcrumb__link">></span></li>
+			<li><span class="breadcrumb__link"></span>@Model.TenSanPham</li>
 		</ul>
 	</section>
 
@@ -65,16 +65,22 @@
 					}
 				</ul>
 			</div>
-			@using (Html.BeginForm("ThemGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang"}))
+			@using (Html.BeginForm("ThemGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang" }))
 			{
 				@Html.Hidden("maSanPham", Model.MaSanPham, new { id = "hiddenMaSanPham" })
 				@Html.Hidden("maBienThe", "", new { id = "hiddenMaBienThe" })
 				<input type="number" name="soLuong" class="quantity" value="1" min="1" />
 				<button type="submit" class="btn btn--sm">Thêm vào giỏ hàng</button>
-				<a href="#" class="details__action-btn">
-					<i class="fi fi-rs-heart"></i>
-				</a>
 			}
+
+			<form id="yeuthich" action="@Url.Action("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" })" method="post">
+				<input type="hidden" name="giaoDien" value="ok" />
+				<input type="hidden" name="maSanPham" value="@Model.MaSanPham" />
+				<button type="submit" class="btn-heart">
+					<i class="fi fi-rs-heart table__trash"></i>
+				</button>
+			</form>
+
 			<ul class="details__meta">
 				<li class="meta__list flex">
 					<span>SKU:</span> <span id="product-sku"></span>

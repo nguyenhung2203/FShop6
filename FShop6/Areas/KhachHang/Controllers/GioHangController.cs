@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class GioHangController : Controller
+    public class GioHangController : BaseController
     {
         private readonly IGioHangServices _gioHangServices;
-        public GioHangController(IGioHangServices gioHangServices)
+        public GioHangController(IHeaderServices headerServices, IGioHangServices gioHangServices)
+            : base(headerServices)
         {
             _gioHangServices = gioHangServices;
         }
+
         public async Task<IActionResult> GioHang()
         {
             var model = await _gioHangServices.LayGioHang(5);
@@ -36,11 +38,13 @@ namespace FShop6.Areas.KhachHang.Controllers
                 TempData["LoaiThongBao"] = "warning";
                 return RedirectToAction("GioHang");
             }
-
+            var thongTinNguoiNhan = _gioHangServices.ThongTinNguoiNhan(5).Result;
             var viewModel = new GioHangViewModel
             {
                 GioHang = gioCanThanhToan,
-                DiaChi = model.DiaChi
+                DiaChi = model.DiaChi,
+                SoDienThoai = thongTinNguoiNhan.SoDienThoai,
+                TenNguoiNhan = thongTinNguoiNhan.TenNguoiNhan,
             };
 
             return View(viewModel);
@@ -109,6 +113,31 @@ namespace FShop6.Areas.KhachHang.Controllers
                 TempData["LoaiThongBao"] = "error";
             }
             return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
+        }
+
+        [HttpPost]
+        public ActionResult XoaGioHang(int maNguoiDung, int maBienThe)
+        {
+            try
+            {
+                bool ketQua = _gioHangServices.xoaGioHang(maNguoiDung = 5, maBienThe);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Xóa sản phẩm khỏi giỏ hàng thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Xóa sản phẩm thất bại";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+            }
+            catch (SqlException ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            return RedirectToAction("GioHang");
         }
     }
 }

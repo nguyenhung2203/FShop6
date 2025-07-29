@@ -24,11 +24,17 @@
                     </div>
                     <div class="shipping-form">
                         <div class="form-group">
-                            <input type="text" id="fullName" placeholder="Họ và tên *" class="form-input" required />
+                            <input type="text" 
+                                id="fullName" 
+                                value="@Model.TenNguoiNhan"
+                                placeholder="Họ và tên *" class="form-input" required />
                             <span class="form-error" id="fullName-error"></span>
                         </div>
                         <div class="form-group">
-                            <input type="tel" id="phoneNumber" placeholder="Số điện thoại *" class="form-input" required />
+                            <input type="tel" 
+                                id="phoneNumber" 
+                                value="@Model.SoDienThoai"
+                                placeholder="Số điện thoại *" class="form-input" required />
                             <span class="form-error" id="phoneNumber-error"></span>
                         </div>
                         <div class="form-group">

@@ -19,9 +19,11 @@
     <!--=============== Thông báo ===============-->
     @Html.Partial("_ThongBao")
     <!--=============== HEADER ===============-->
-    @Html.Partial("Header")
+    @await Html.PartialAsync("Header")
     <!--=============== MAIN ===============-->
     @RenderBody()
+	<!--=============== MODAL xác nhận ===============-->
+    @Html.Partial("_ConfirmModal")
     <!--=============== FOOTER ===============-->
     @Html.Partial("Footer")
 

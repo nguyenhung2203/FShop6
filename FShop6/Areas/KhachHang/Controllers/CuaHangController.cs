@@ -1,14 +1,16 @@
 ﻿using FShop6.Areas.KhachHang.Models;
 using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class CuaHangController : Controller
+    public class CuaHangController : BaseController
     {
         private readonly IShopService _shopService;
-
-        public CuaHangController(IShopService shopService)
+        public CuaHangController(IHeaderServices headerServices, IShopService shopService)
+            : base(headerServices)
         {
             _shopService = shopService;
         }
@@ -23,25 +25,26 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 model = await _shopService.LaySanPhamDanhMuc(maDanhMuc.Value, trang);
             }
-            else if (loai == 2)
+            else if (loai == 2 && loaiXapXep.HasValue)
             {
                 model = await _shopService.LaySanPhamXapXep(loaiXapXep.Value, trang);
             }
-            else if (loai == 3)
+            else if (loai == 3 && khoangGia.HasValue)
             {
                 model = await _shopService.LaySanPhamTheoGia(khoangGia.Value, trang);
-            }    
+            }
             else
             {
                 model = await _shopService.LaySanPhamTatCa(trang);
             }
-
+            ViewBag.loaiXapXep = loaiXapXep;
             ViewBag.MaDanhMuc = maDanhMuc;
             ViewBag.Loai = loai;
             ViewBag.KhoangGia = khoangGia;
 
             return View(model);
         }
+
         public async Task<IActionResult> ChiTietSanPham(int maSanPham)
         {
             var model = await _shopService.LayChiTietSanPhamAsync(maSanPham);
@@ -55,5 +58,13 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> TimKiem(string tuKhoa)
+        {
+            var ketQua = await _shopService.TimKiem(tuKhoa);
+            return Json(ketQua);
+        }
+
     }
 }
