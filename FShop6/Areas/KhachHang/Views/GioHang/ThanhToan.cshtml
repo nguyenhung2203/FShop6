@@ -2,55 +2,173 @@
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Thanh toán";
 }
+@model FShop6.Areas.KhachHang.Models.GioHangViewModel
 <main class="main">
-    <section class="checkout section--lg">
-        <div class="checkout__container container grid">
-            <div class="checkout__group">
-                <h3 class="section__title">Thông Tin Thanh Toán</h3>
-                <form id="checkout-form" class="form grid">
-                    <input type="text" placeholder="Họ và tên" class="form__input" required />
-                    <input type="tel" placeholder="Số điện thoại" class="form__input" required />
-                    <input type="text" placeholder="Địa chỉ nhận hàng" class="form__input" required />
-                </form>
-            </div>
+    @using (Html.BeginForm("SanPhamThanhToan", "GioHang", FormMethod.Post, new { area = "KhachHang" }))
+    {
+		var TongTien = Model.GioHang.Sum(sp => sp.SoLuong * sp.GiaBan);
+        @Html.AntiForgeryToken()
+        @for (int i = 0; i < Model.GioHang.Count; i++)
+        {
+            @Html.HiddenFor(m => m.GioHang[i].MaBienThe)
+            @Html.HiddenFor(m => m.GioHang[i].GiaBan)
+            @Html.HiddenFor(m => m.GioHang[i].SoLuong)
+        }
 
-            <div class="checkout__group">
-                <h3 class="section__title">Đơn Hàng Của Bạn</h3>
-                <table class="order__table" id="order-summary-table"></table>
-
-                <div class="payment__methods">
-                    <h3 class="checkout__title payment__title">Phương Thức Thanh Toán</h3>
-                    <div class="payment__option flex">
-                        <input type="radio" name="payment" value="cod" id="cod" checked class="payment__input" />
-                        <label for="cod" class="payment__label">Thanh toán khi nhận hàng (COD)</label>
+        <div class="checkout-wrapper">
+            <!-- Left Column: Shipping & Payment -->
+            <div class="left-column">
+                <!-- Shipping Information Section -->
+                <div class="shipping-container">
+                    <div class="shipping-header">
+                        <h3 class="section-title">Thông Tin Vận Chuyển</h3>
                     </div>
-                    <div class="payment__option flex">
-                        <input type="radio" name="payment" value="bank" id="bank" class="payment__input" />
-                        <label for="bank" class="payment__label">Chuyển khoản ngân hàng</label>
+                    <div class="shipping-form">
+                        <div class="form-group">
+                            <input type="text" 
+                                id="fullName" 
+                                value="@Model.TenNguoiNhan"
+                                placeholder="Họ và tên *" class="form-input" required />
+                            <span class="form-error" id="fullName-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" 
+                                id="phoneNumber" 
+                                value="@Model.SoDienThoai"
+                                placeholder="Số điện thoại *" class="form-input" required />
+                            <span class="form-error" id="phoneNumber-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="DiaChi.CuThe"
+                                   value="@Model.DiaChi.CuThe, @Model.DiaChi.Xa, @Model.DiaChi.Huyen, @Model.DiaChi.Tinh"
+                                   placeholder="Địa chỉ nhận hàng *" class="form-input" required />
+                            <span class="form-error" id="address-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="GhiChu" placeholder="Ghi chú đơn hàng (tùy chọn)" class="form-textarea" rows="3"></textarea>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" form="checkout-form" class="btn btn--md"
-                        data-success-url="@Url.Action("DatHangThanhCong", "CuaHang", new { area = "KhachHang" })">
-                        Đặt Hàng</button>
-            </div>
-        </div>
-    </section>
+                <!-- Payment Methods Section -->
+                <div class="payment-container">
+                    <div class="payment-header">
+                        <h3 class="section-title">Chọn Phương Thức Thanh Toán</h3>
+                    </div>
+                    <div class="payment-content">
+                        <div class="payment-methods">
+                            <label class="payment-method" for="cod">
+                                <input type="radio" id="cod" name="PhuongThucThanhToan" value="false">
+                                <span class="payment-icon">🚚</span>
+                                <div class="payment-details">
+                                    <div class="payment-name">Thanh toán khi nhận hàng</div>
+                                    <div class="payment-desc">Thanh toán bằng tiền mặt khi nhận hàng</div>
+                                </div>
+                            </label>
 
-    <div id="bank-info-modal" class="modal-bank-info hidden">
-        <div class="modal-bank-info__overlay"></div>
-        <div class="modal-bank-info__content">
-            <h4>Thông tin chuyển khoản</h4>
-            <div class="modal-bank-info__details">
-                <img src="assets/img/qrcode.jpeg" alt="QR chuyển khoản" class="modal-bank-info__qr">
-                <div>
-                    <p><strong>Ngân hàng:</strong> <span>TPBank</span></p>
-                    <p><strong>Số tài khoản:</strong> <span>123456789</span></p>
-                    <p><strong>Chủ tài khoản:</strong> Nguyễn Văn A</p>
-                    <p><strong>Nội dung:</strong> <span>SDT_Hoten</span></p>
+                            <label class="payment-method" for="bank">
+                                <input type="radio" id="bank" name="PhuongThucThanhToan" value="true">
+                                <span class="payment-icon">🏦</span>
+                                <div class="payment-details">
+                                    <div class="payment-name">Chuyển khoản ngân hàng</div>
+                                    <div class="payment-desc">Chuyển khoản qua tài khoản ngân hàng</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="confirm-btn" id="confirmOrderBtn">
+                            Xác Nhận Đặt Hàng
+                        </button>
+                    </div>
                 </div>
             </div>
-            <button id="confirm-transfer-btn" class="btn">Tôi đã chuyển khoản</button>
+
+            <!-- Right Column: Order Summary -->
+            <div class="right-column">
+                <div class="order-container">
+                    <div class="order-header">
+                        <h2>Đơn Hàng Của Bạn</h2>
+                        <div class="order-divider"></div>
+                    </div>
+
+                    <table class="order__table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">Ảnh</th>
+                                <th style="width: 140px;">Tên sản phẩm</th>
+                                <th style="width: 60px;">SL</th>
+                                <th style="width: 80px;">Giá</th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                    <div class="scroll-indicator" id="scrollIndicator">
+                        ↓ Cuộn xuống để xem thêm sản phẩm ↓
+                    </div>
+
+                    <div class="products-container" id="productsContainer">
+                        <table class="order__table">
+                            <tbody>
+                                @for (int i = 0; i < Model.GioHang.Count; i++)
+                                {
+                                    var sanPham = Model.GioHang[i];
+                                    <tr class="product-row">
+                                        <td style="width: 60px; text-align: center;">
+                                            <img src="@sanPham.HinhAnhDaiDien" alt="@sanPham.TenSanPham" class="order__img" />
+                                        </td>
+                                        <td style="width: 140px;">
+                                            <h3 class="product-name">@sanPham.TenSanPham</h3>
+                                            <span class="product-category">@sanPham.LoaiBienThe</span>
+                                        </td>
+                                        <td style="width: 60px; text-align: center;">
+                                            <span class="table__quantity">@sanPham.SoLuong</span>
+                                        </td>
+                                        <td style="width: 80px; text-align: right;">
+                                            <span class="table__price">@sanPham.GiaBan.ToString("N0")đ</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <table class="order__table order-summary">
+                        <tbody>
+                            <tr class="summary-row">
+                                <td colspan="3" style="text-align: right; padding-right: 15px;"><span class="order__subtitle">Tạm tính</span></td>
+                                <td style="width: 80px; text-align: right;"><span class="table__price">@TongTien.ToString("N0")đ</span></td>
+                            </tr>
+                            <tr class="summary-row">
+                                <td colspan="3" style="text-align: right; padding-right: 15px;"><span class="order__subtitle">Phí vận chuyển</span></td>
+                                <td style="width: 80px; text-align: right;"><span>Miễn phí</span></td>
+                            </tr>
+                            <tr class="summary-row">
+                                <td colspan="3" style="text-align: right; padding-right: 15px;"><span class="order__subtitle">Tổng cộng</span></td>
+                                <td style="width: 80px; text-align: right;"><span class="order__grand-total">@TongTien.ToString("N0")đ</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <!-- Bank Transfer Modal -->
+        <div id="bank-info-modal" class="modal-bank-info hidden">
+            <div class="modal-bank-info__overlay"></div>
+            <div class="modal-bank-info__content">
+                <h4>Thông tin chuyển khoản</h4>
+                <div class="modal-bank-info__details">
+                    <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=120&h=120&fit=crop" alt="QR chuyển khoản" class="modal-bank-info__qr">
+                    <div>
+                        <p><strong>Ngân hàng:</strong> <span>TPBank</span></p>
+                        <p><strong>Số tài khoản:</strong> <span>123456789</span></p>
+                        <p><strong>Chủ tài khoản:</strong> <span>Nguyễn Văn A</span></p>
+                        <p><strong>Nội dung:</strong> <span>SDT_Hoten</span></p>
+                        <p><strong>Số tiền:</strong> <span>8,900,000đ</span></p>
+                    </div>
+                </div>
+                <button id="confirm-transfer-btn" class="btn">Tôi đã chuyển khoản</button>
+            </div>
+        </div>
+    }
 </main>

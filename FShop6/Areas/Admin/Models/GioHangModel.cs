@@ -1,16 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FShop6.Areas.KhachHang.Models
+namespace FShop6.Areas.Admin.Models
 {
-    [Table("GioHang")]
     public class GioHangModel
     {
         [Key]
-        public int Id { get; set; }
-        [Required]
+        public int Id { get; set; } 
+
         public int MaNguoiDung { get; set; }
-        [Required]
         public int MaBienThe { get; set; }
         [Required]
         public int SoLuong { get; set; }
@@ -21,6 +19,6 @@ namespace FShop6.Areas.KhachHang.Models
         public NguoiDungModel NguoiDung { get; set; }
 
         [ForeignKey("MaBienThe")]
-        public  BienTheModels BienThe { get; set; }
+        public BienTheModels BienThe { get; set; }
     }
 }

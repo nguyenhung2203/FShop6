@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    if (!currentUser) {
+    if (currentUser) {
         // Đã đăng nhập
         accountText.textContent = `Xin chào, ${currentUser.name}`;
         dropdownContent.innerHTML = `
@@ -360,3 +360,26 @@ document.addEventListener("DOMContentLoaded", function () {
     setupActiveClassToggle(".color__link", "color-active");
 });
 
+
+
+function updateProductDetails(element) {
+    // Lấy các giá trị từ thuộc tính data của thẻ <a> được click
+    var maBienThe = element.getAttribute("data-id");
+    var giaBan = element.getAttribute("data-giaban");
+    var soLuong = element.getAttribute("data-soluong");
+
+    // Cập nhật thông tin sản phẩm vào các thẻ li tương ứng
+    document.getElementById('product-sku').textContent = maBienThe; // Hiển thị mã SKU
+    document.getElementById('product-status').textContent = 'Còn ' + soLuong + ' sản phẩm'; // Hiển thị số lượng
+    document.getElementById('product-price').textContent = giaBan; // Cập nhật giá bán nếu có
+
+    // Nếu có thay đổi về số lượng, cập nhật thêm số lượng vào input
+    document.getElementById('hiddenMaBienThe').value = maBienThe;
+}
+window.onload = function () {
+    // Chọn thẻ <a> đầu tiên
+    var firstLink = document.querySelector('.size__list a');
+    if (firstLink) {
+        firstLink.click(); // Mô phỏng việc click vào thẻ <a> đầu tiên
+    }
+}

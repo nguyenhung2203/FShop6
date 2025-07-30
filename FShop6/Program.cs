@@ -1,7 +1,9 @@
 ﻿using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
+using FShop6.Hubs;
 using Microsoft.EntityFrameworkCore;
 
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 var builder = WebApplication.CreateBuilder(args);
 
 //connection db
@@ -10,14 +12,25 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Thêm dịch vụ MVC
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 // 🟢 Đăng ký dịch vụ TrangChuService
+builder.Services.AddScoped<IShopService, ShopService>();
+// Đảm bảo đăng ký dịch vụ đúng cách
 builder.Services.AddScoped<ITrangChuService, TrangChuServices>();
+// 🟢 Đăng ký dịch vụ HeaderServices
+builder.Services.AddScoped<IHeaderServices, HeaderServices>();
 // 🟢 Đăng ký dịch vụ CuaHangService
-builder.Services.AddScoped<ICuaHangServices, CuaHangServices>();
+builder.Services.AddScoped<ICuaHangServices, ShopService>();
 // 🟢 Đăng ký dịch vụ TaiKhoanService
 builder.Services.AddScoped<ITaiKhoanServices, TaiKhoanServices>();
+// 🟢 Đăng ký dịch vụ GioHangService
+builder.Services.AddScoped<IGioHangServices, GioHangServices>();
+// 🟢 Đăng ký dịch vụ DichVuAIThongMinh
+builder.Services.AddHttpClient<DichVuAIThongMinh>();
 
+// Đăng ký DichVuAIThongMinh như Scoped service
+builder.Services.AddScoped<DichVuAIThongMinh>();
 var app = builder.Build();
 
 // Cấu hình pipeline
@@ -27,6 +40,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.MapHub<ChatHub>("/chatHub");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
