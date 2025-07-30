@@ -18,12 +18,25 @@ namespace FShop6.Areas.Admin.Controllers
             return View(dsSanPham);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> ThemSanPham(string TenSanPham, int DanhMucID)
-        //{
-        //    await _quanLySanPhamServices.ThemSanPhamAsync(form, AnhDaiDien);
-        //    var dsSanPham = await _quanLySanPhamServices.LayTatCaSanPhamAsync();
-        //    return View("QuanLySanPham", dsSanPham);
-        //}
+        [HttpPost]
+        public async Task<IActionResult> ThemSanPham(IFormCollection form, IFormFile AnhDaiDien)
+        {
+            await _quanLySanPhamServices.ThemSanPhamAsync(form, AnhDaiDien);
+            return RedirectToAction("QuanLySanPham");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SuaSanPham(IFormCollection form, IFormFile AnhDaiDien)
+        {
+            await _quanLySanPhamServices.SuaSanPhamAsync(form, AnhDaiDien);
+            return RedirectToAction("QuanLySanPham");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> XoaSanPham(int MaSanPham)
+        {
+            await _quanLySanPhamServices.XoaSanPhamAsync(MaSanPham);
+            return RedirectToAction("QuanLySanPham");
+        }
     }
 }
