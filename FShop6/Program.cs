@@ -25,6 +25,9 @@ builder.Services.AddScoped<IThongKeServices, ThongKeServices>();
 // 🟢 Đăng ký dịch vụ QuanLyDonHangService
 builder.Services.AddScoped<IQuanLyDonHangServices, QuanLyDonHangServices>();
 
+// 🟢 Đăng ký dịch vụ QuanLySanPhamService
+builder.Services.AddScoped<IQuanLySanPhamServices, QuanLySanPhamServices>();
+
 var app = builder.Build();
 
 // Cấu hình pipelinex
@@ -42,13 +45,13 @@ app.UseAuthorization();
 // 🟡 Định tuyến cho khu vực (Areas) — Quan trọng
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=QuanLyDonHang}/{action=QuanLyDonHang}/{id?}"
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
 );
 
 // 🔵 Định tuyến mặc định: Chuyển hướng về KhachHang/TrangChu/Index
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=QuanLyDonHang}/{action=QuanLyDonHang}/{id?}",
+    pattern: "{controller=QuanLySanPham}/{action=QuanLySanPham}/{id?}",
     defaults: new { area = "Admin" } // 🟢 Mặc định dùng Area KhachHang
 );
 

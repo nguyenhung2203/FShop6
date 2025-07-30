@@ -15,11 +15,6 @@ namespace FShop6.Areas.Admin.Controllers
         public async Task<IActionResult> QuanLyDonHang()
         {
             var dsDonHang = await _quanLyDonHangServices.LayTatCaDonHangAsync();
-            if (dsDonHang == null)
-            {
-                // Kiểm tra nếu dữ liệu null, trả về view thông báo lỗi hoặc xử lý khác
-                return View("Error");
-            }
             return View(dsDonHang);
         }
     }

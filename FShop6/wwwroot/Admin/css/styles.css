@@ -424,3 +424,18 @@ body.sidebar-toggled footer.sticky-footer {
     position: relative;
     padding: 10px;
 }
+
+/* Điều chỉnh xem chi tiết sản phẩm */
+@media (min-width: 576px) {
+    .custom-product-modal {
+        max-width: 1400px !important; /* Tùy chỉnh lại nếu muốn rộng hơn */
+        margin: 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+        min-height: calc(100vh - 3.5rem) !important;
+    }
+
+    .custom-product-modal {
+        margin: auto !important;
+    }
+}

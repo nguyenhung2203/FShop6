@@ -16,12 +16,6 @@
         <div class="card-header bg-primary text-white">
             <i class="fa fa-shopping-cart"></i>
             Quản lý đơn hàng
-            <a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#addOrderModal">
-                <span class="float-right">
-                    <i class="fa fa-plus"></i>
-                    Thêm đơn hàng mới
-                </span>
-            </a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -41,27 +35,6 @@
                     </thead>
                     <tbody>
                         <!-- Ví dụ dữ liệu đơn hàng -->
-                        <tr>
-                            <td>
-                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#viewOrderModal">
-                                    <i class="fa fa-check"></i> Xem chi tiết
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#viewUserModal"><i class="fa fa-check"></i> Xem chi tiết</button>
-                            </td>
-                            <td>4,200,000</td>
-                            <td><span class="badge badge-warning">Chờ xử lý</span></td>
-                            <td>Chuyển khoản</td>
-                            <td>01/01/2023 09:00</td>
-                            <td>02/01/2023</td>
-                            <td>Giao buổi sáng</td>
-                            <td>
-                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#"><i class="fa fa-check"></i> Duyệt</button>
-                                <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editOrderModal"><i class="fa fa-pencil"></i> Sửa</button>
-                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#"><i class="fa fa-trash"></i> Xóa</button>
-                            </td>
-                        </tr>
                         @foreach(var item in Model.DSDonHang)
                         {
                             <tr>
@@ -76,88 +49,20 @@
                                 <td>@item.TongTien.ToString("N0")</td>
                                 <td><span class="badge badge-warning">@item.TrangThai</span></td>
                                 <td>@item.PhuongThucThanhToan</td>
-                                <td>@item.ThoiGianDatHang</td>
+                                <td>@item.ThoiGianDatHang.ToString("dd/MM/yyyy")</td>
                                 <td>@item.NgayCapNhat</td>
-                                <td></td>
+                                <td>@item.GhiChu</td>
                                 <td>
                                     <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#"><i class="fa fa-check"></i> Duyệt</button>
                                     <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editOrderModal"><i class="fa fa-pencil"></i> Sửa</button>
-                                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#"><i class="fa fa-trash"></i> Xóa</button>
                                 </td>
                             </tr>
                         }
-                        <!-- ...thêm dữ liệu khác... -->
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="card-footer small text-muted"></div>
-    </div>
-
-    <!-- Modal Thêm đơn hàng -->
-    <div class="modal fade" id="addOrderModal" tabindex="-1" role="dialog" aria-labelledby="addOrderLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <form class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="addOrderLabel">Thêm đơn hàng mới</h5>
-                    <button class="close text-white" type="button" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="order_code">Mã đơn hàng</label>
-                                <input type="text" class="form-control" id="order_code" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="order_address">Địa chỉ giao hàng</label>
-                                <input type="text" class="form-control" id="order_address" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="order_total">Tổng tiền</label>
-                                <input type="number" class="form-control" id="order_total" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="order_status">Trạng thái</label>
-                                <select class="form-control" id="order_status">
-                                    <option value="pending">Chờ xử lý</option>
-                                    <option value="completed">Hoàn thành</option>
-                                    <option value="cancelled">Đã hủy</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="order_payment">Phương thức thanh toán</label>
-                                <select class="form-control" id="order_payment">
-                                    <option value="cash">Tiền mặt</option>
-                                    <option value="bank">Chuyển khoản</option>
-                                    <option value="cod">COD</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="order_time">Thời gian đặt hàng</label>
-                                <input type="datetime-local" class="form-control" id="order_time" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="order_update">Ngày cập nhật</label>
-                                <input type="date" class="form-control" id="order_update" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="order_note">Ghi chú</label>
-                                <textarea class="form-control" id="order_note" rows="2" placeholder="Ghi chú thêm nếu có"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
-                    <button class="btn btn-primary" type="submit">Thêm mới</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <!-- Modal Xem chi tiết đơn hàng -->
@@ -268,16 +173,11 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="edit_order_code">Mã đơn hàng</label>
-                                <input type="text" class="form-control" id="edit_order_code" required>
+                                <input type="text" class="form-control" id="edit_order_code" readonly>
                             </div>
-                            <div class="form-group">
-                                <label for="edit_order_address">Địa chỉ giao hàng</label>
-                                <input type="text" class="form-control" id="edit_order_address" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_order_total">Tổng tiền</label>
-                                <input type="number" class="form-control" id="edit_order_total" min="0" required>
-                            </div>
+                            
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="edit_order_status">Trạng thái</label>
                                 <select class="form-control" id="edit_order_status">
@@ -285,28 +185,6 @@
                                     <option value="completed">Hoàn thành</option>
                                     <option value="cancelled">Đã hủy</option>
                                 </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="edit_order_payment">Phương thức thanh toán</label>
-                                <select class="form-control" id="edit_order_payment">
-                                    <option value="cash">Tiền mặt</option>
-                                    <option value="bank">Chuyển khoản</option>
-                                    <option value="cod">COD</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_order_time">Thời gian đặt hàng</label>
-                                <input type="datetime-local" class="form-control" id="edit_order_time" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_order_update">Ngày cập nhật</label>
-                                <input type="date" class="form-control" id="edit_order_update" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_order_note">Ghi chú</label>
-                                <textarea class="form-control" id="edit_order_note" rows="2" placeholder="Ghi chú thêm nếu có"></textarea>
                             </div>
                         </div>
                     </div>
