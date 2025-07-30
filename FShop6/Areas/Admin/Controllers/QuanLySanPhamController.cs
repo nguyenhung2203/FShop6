@@ -18,18 +18,12 @@ namespace FShop6.Areas.Admin.Controllers
             return View(dsSanPham);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> XemChiTietSanPham(int maSanPham)
-        {
-            Console.WriteLine(">> Đã vào action XemChiTietSanPham với maSanPham = " + maSanPham);
-            var dsBienTheSP = await _quanLySanPhamServices.LayTatCaBienTheSPAsync(maSanPham);
-            if (dsBienTheSP == null)
-            {
-                // Nếu không tìm thấy sản phẩm, có thể trả về một thông báo lỗi hoặc trang khác
-                return NotFound();
-            }
-            // Trả về danh sách biến thể sản phẩm cho view
-            return View("XemChiTietSanPham", dsBienTheSP);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> ThemSanPham(string TenSanPham, int DanhMucID)
+        //{
+        //    await _quanLySanPhamServices.ThemSanPhamAsync(form, AnhDaiDien);
+        //    var dsSanPham = await _quanLySanPhamServices.LayTatCaSanPhamAsync();
+        //    return View("QuanLySanPham", dsSanPham);
+        //}
     }
 }

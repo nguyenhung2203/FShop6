@@ -8,15 +8,17 @@ namespace FShop6.Areas.Admin.Services
     public interface IQuanLySanPhamServices
     {
         Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync();
-        Task<QuanLySanPhamModel> LayTatCaBienTheSPAsync(int maSanPham);
+        Task<bool> ThemSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
     }
 
     public class QuanLySanPhamServices : IQuanLySanPhamServices
     {
         private readonly AppDbContext _context;
-        public QuanLySanPhamServices(AppDbContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public QuanLySanPhamServices(AppDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync()
@@ -43,32 +45,40 @@ namespace FShop6.Areas.Admin.Services
             };
         }
 
-        public async Task<QuanLySanPhamModel> LayTatCaBienTheSPAsync(int maSanPham)
+        public async Task<bool> ThemSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien)
         {
-            // Lấy sản phẩm
-            var sanPham = await _context.SanPham
-                .Include(sp => sp.DanhMuc)
-                .FirstOrDefaultAsync(sp => sp.MaSanPham == maSanPham);
-
-            if (sanPham == null) return null;
-
-            // Lấy các biến thể
-            var dsBienTheSP = await _context.BienThe
-                .Include(bt => bt.AnhBienThe)
-                .Where(bt => bt.MaSanPham == maSanPham)
-                .ToListAsync();
-
-            return new QuanLySanPhamModel
+            try
             {
-                SanPham = sanPham,
-                DanhMuc = sanPham.DanhMuc,
-                ChiTietSanPham = dsBienTheSP.Select(bt => new ChiTietSanPhamModel
+                var sanPham = new SanPhamModel
                 {
-                    BienThes = bt,
-                    dsAnh = bt.AnhBienThe.ToList()
-                }).ToList(),
-            };
-        }
+                    TenSanPham = form["TenSanPham"],
+                    MoTa = form["MoTa"],
+                    MaDanhMucSP = int.Parse(form["DanhMucID"])
+                };
 
+                if (AnhDaiDien != null && AnhDaiDien.Length > 0)
+                {
+                    var ThoiGianLuuFile = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    var TenFile = ThoiGianLuuFile + "_" + Path.GetFileName(AnhDaiDien.FileName);
+                    var TaiLenFolder = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images");
+                    var duongDan = Path.Combine(TaiLenFolder, TenFile);
+                    using (var stream = new FileStream(duongDan, FileMode.Create))
+                    {
+                        await AnhDaiDien.CopyToAsync(stream);
+                    }
+                    sanPham.HinhAnhDaiDien = TenFile;
+                }
+
+                _context.SanPham.Add(sanPham);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu cần thiết
+                Console.WriteLine($"Lỗi khi thêm sản phẩm: {ex.Message}");
+                return false;
+            }
+        }
     }
 }
