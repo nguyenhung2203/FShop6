@@ -25,11 +25,11 @@ namespace FShop6.Areas.KhachHang.Controllers
             }
             else if (loai == 2)
             {
-                model = await _cuaHangService.LaySanPhamXapXep(loaiXapXep.Value, trang);
+                model = await _shopService.LaySanPhamXapXep(loaiXapXep.Value, trang);
             }
             else if (loai == 3)
             {
-                model = await _cuaHangService.LaySanPhamTheoGia(khoangGia.Value, trang);
+                model = await _shopService.LaySanPhamTheoGia(khoangGia.Value, trang);
             }    
             else
             {
@@ -74,6 +74,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 return StatusCode(500, "Lỗi: " + ex.Message);
             }
+        }
         public IActionResult DatHangThanhCong()
         {
             return View();

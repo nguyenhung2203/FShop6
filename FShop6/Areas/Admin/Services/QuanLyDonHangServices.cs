@@ -1,49 +1,60 @@
-﻿//using FShop6.Areas.Admin.Models;
-//using FShop6.Data;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using FShop6.Areas.Admin.Models;
+using FShop6.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-//namespace FShop6.Areas.Admin.Services
-//{
-//    public interface IQuanLyDonHangServices
-//    {
-//        Task<DonHangModel> donHang();
-//    }
-//    public class QuanLyDonHangServices : IQuanLyDonHangServices
-//    {
-//        private readonly AppDbContext _context;
-//        public QuanLyDonHangServices(AppDbContext context)
-//        {
-//            _context = context;
-//        }
-//        public async Task<DonHangModel> donHang()
-//        {
-//            // Dữ liệu giả tạm thời, để hiện giao diện mà không lỗi
-//            var model = new DonHangModel
-//            {
-//                DanhSachDonHang = new List<DonHang>
-//        {
-//            new DonHang
-//            {
-//                MaDon = "DH001",
-//                NgayDat = DateTime.Now,
-//                TongTien = 1000000,
-//                TrangThai = "Đang xử lý",
-//                KhachHang = new KhachHang { TenKhachHang = "Nguyễn Văn A" }
-//            },
-//            new DonHang
-//            {
-//                MaDon = "DH002",
-//                NgayDat = DateTime.Now.AddDays(-1),
-//                TongTien = 2500000,
-//                TrangThai = "Hoàn thành",
-//                KhachHang = new KhachHang { TenKhachHang = "Trần Thị B" }
-//            }
-//        }
-//            };
+namespace FShop6.Areas.Admin.Services
+{
+    public interface IQuanLyDonHangServices
+    {
+        Task<QuanLyDonHangViewModel> LayTatCaDonHangAsync();
+    }
 
-//            return await Task.FromResult(model); // giả lập async
-//        }
-//    }
-//}
+    public class QuanLyDonHangServices : IQuanLyDonHangServices
+    {
+        private readonly AppDbContext _context;
+        public QuanLyDonHangServices(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<QuanLyDonHangViewModel> LayTatCaDonHangAsync()
+        {
+            var donHang = await _context.DonHang
+                .Include(dh => dh.NguoiDung)
+                .Include(dh => dh.ChiTietDonHangs)
+                .ThenInclude(ct => ct.BienThe)
+                .ThenInclude(bt => bt.SanPham)
+                .ToListAsync();
+
+            var dsDonHang = donHang.Select(dh => new QuanLyDonHangModel
+            {
+                Id = dh.ID,
+                MaDonHang = dh.MaDonHang,
+                DiaChiGiaoHang = dh.DiaChiGiaoHang,
+                TongTien = dh.TongTien,
+                TrangThai = dh.TrangThai,
+                PhuongThucThanhToan = dh.PhuongThucThanhToan,
+                ThoiGianDatHang = dh.ThoiGianDatHang,
+                NgayCapNhat = dh.NgayCapNhat,
+                GhiChu = dh.GhiChu,
+                TenKhachHang = dh.NguoiDung.HoTen,
+                SoDienThoai = dh.NguoiDung.SoDienThoai,
+                ChiTietDonHangs = dh.ChiTietDonHangs.Select(ct => new ChiTietDonHangModel
+                {
+                    MaSanPham = ct.BienThe.MaSanPham,
+                    TenSanPham = ct.BienThe.SanPham.TenSanPham,
+                    GiaBan = ct.BienThe.GiaBan,
+                    LoaiBienThe = ct.BienThe.LoaiBienThe,
+                    SoLuong = ct.SoLuong
+                }).ToList()
+            }).ToList();
+
+            return new QuanLyDonHangViewModel
+            {
+                DSDonHang = dsDonHang
+            };
+        }
+    }
+}
 

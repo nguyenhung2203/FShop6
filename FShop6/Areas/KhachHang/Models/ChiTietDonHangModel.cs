@@ -15,8 +15,11 @@ namespace FShop6.Areas.KhachHang.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal DonGia { get; set; }
 
+        
         // Khóa ngoại đến DonHang
         public int? DonHang_ID { get; set; }
+
+        [ForeignKey("DonHang_ID")]
         public DonHangModel DonHang { get; set; }
 
         // Khóa ngoại đến BienThe

@@ -1,28 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace FShop6.Areas.Admin.Models
+﻿namespace FShop6.Areas.Admin.Models
 {
     public class ChiTietDonHangModel
     {
-        [Key]
-        public int MaChiTietDH { get; set; }
-
-        [Required]
+        public int MaSanPham { get; set; }
+        public string TenSanPham { get; set; }
+        public string MaSku { get; set; }
+        public string LoaiBienThe { get; set; }
+        public decimal GiaBan { get; set; }
         public int SoLuong { get; set; }
-
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal DonGia { get; set; }
-
-        // Khóa ngoại đến DonHang
-        public int? DonHang_ID { get; set; }
-        public DonHangModel DonHang { get; set; }
-
-        // Khóa ngoại đến BienThe
-        public int? MaBienThe { get; set; }
-
-        [ForeignKey("MaBienThe")]
-        public BienTheModels BienThe { get; set; }
     }
 }

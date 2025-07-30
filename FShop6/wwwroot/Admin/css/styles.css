@@ -1,4 +1,4 @@
-html {
+﻿html {
   position: relative;
   min-height: 100%;
 }
@@ -389,4 +389,53 @@ body.sidebar-toggled footer.sticky-footer {
   text-decoration: none;
   background-color: white;
   cursor: pointer !important;
+}
+
+
+/* Điều chỉnh bộ lọc */
+.bo-loc {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), 0 -3px 6px rgba(0, 0, 0, 0.05), 3px 0 6px rgba(0, 0, 0, 0.05), -3px 0 6px rgba(0, 0, 0, 0.05);
+    border-radius: 7px;
+    display: flex;
+    position: relative;
+    padding: 10px;
+}
+
+.input-group-1 {
+    position: absolute;
+    max-width: 500px;
+    right: 10px;
+    display: flex;
+}
+
+#yearFilter {
+    margin-left: 10px;
+}
+
+.form-control {
+    padding: 0 12px;
+    
+}
+
+.bo-loc-2 {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), 0 -3px 6px rgba(0, 0, 0, 0.05), 3px 0 6px rgba(0, 0, 0, 0.05), -3px 0 6px rgba(0, 0, 0, 0.05);
+    border-radius: 7px;
+    display: flex;
+    position: relative;
+    padding: 10px;
+}
+
+/* Điều chỉnh xem chi tiết sản phẩm */
+@media (min-width: 576px) {
+    .custom-product-modal {
+        max-width: 1400px !important; /* Tùy chỉnh lại nếu muốn rộng hơn */
+        margin: 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+        min-height: calc(100vh - 3.5rem) !important;
+    }
+
+    .custom-product-modal {
+        margin: auto !important;
+    }
 }

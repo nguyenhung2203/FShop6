@@ -1,4 +1,5 @@
-﻿using FShop6.Areas.KhachHang.Services;
+﻿using FShop6.Areas.Admin.Services;
+using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
@@ -15,14 +16,21 @@ builder.Services.AddScoped<IShopService, ShopService>();
 // Đảm bảo đăng ký dịch vụ đúng cách
 builder.Services.AddScoped<ITrangChuService, TrangChuServices>();
 
-// 🟢 Đăng ký dịch vụ CuaHangService
-builder.Services.AddScoped<ICuaHangServices, CuaHangServices>();
 // 🟢 Đăng ký dịch vụ TaiKhoanService
 builder.Services.AddScoped<ITaiKhoanServices, TaiKhoanServices>();
 
+// 🟢 Đăng ký dịch vụ ThongKeService
+builder.Services.AddScoped<IThongKeServices, ThongKeServices>();
+
+// 🟢 Đăng ký dịch vụ QuanLyDonHangService
+builder.Services.AddScoped<IQuanLyDonHangServices, QuanLyDonHangServices>();
+
+// 🟢 Đăng ký dịch vụ QuanLySanPhamService
+builder.Services.AddScoped<IQuanLySanPhamServices, QuanLySanPhamServices>();
+
 var app = builder.Build();
 
-// Cấu hình pipeline
+// Cấu hình pipelinex
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -37,14 +45,14 @@ app.UseAuthorization();
 // 🟡 Định tuyến cho khu vực (Areas) — Quan trọng
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=CuaHang}/{action=ChiTietSanPham}/{id?}"
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
 );
 
 // 🔵 Định tuyến mặc định: Chuyển hướng về KhachHang/TrangChu/Index
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=CuaHang}/{action=ChiTietSanPham}/{id?}",
-    defaults: new { area = "KhachHang" } // 🟢 Mặc định dùng Area KhachHang
+    pattern: "{controller=QuanLySanPham}/{action=QuanLySanPham}/{id?}",
+    defaults: new { area = "Admin" } // 🟢 Mặc định dùng Area KhachHang
 );
 
 app.Run();
