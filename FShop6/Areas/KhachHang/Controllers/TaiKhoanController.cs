@@ -83,6 +83,47 @@ namespace FShop6.Areas.KhachHang.Controllers
             }
             return RedirectToAction("HoSo", "TaiKhoan");
         }
+        [HttpPost]
+        public ActionResult DoiMatKhau(string? matKhauCu, string? matKhauMoi, string? matKhauNhapLai)
+        {
+            if (string.IsNullOrEmpty(matKhauCu) || string.IsNullOrEmpty(matKhauMoi) || string.IsNullOrEmpty(matKhauNhapLai))
+            {
+                TempData["ThongBao"] = "Vui lòng nhập đầy đủ thông tin.";
+                TempData["LoaiThongBao"] = "warning";
+                return RedirectToAction("HoSo", "TaiKhoan");
+            }
+            if (matKhauMoi != matKhauNhapLai)
+            {
+                TempData["ThongBao"] = "Mật khẩu mới và mật khẩu nhập lại không khớp.";
+                TempData["LoaiThongBao"] = "warning";
+                return RedirectToAction("HoSo", "TaiKhoan");
+            }
+            try
+            {
+                bool ketQua = _taiKhoanServices.DoiMatKhau(5, matKhauCu, matKhauMoi);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Đổi mật khẩu thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Mật khẩu cũ không đúng hoặc có lỗi xảy ra.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+            }
+            catch (SqlException ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra Database: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            return RedirectToAction("HoSo", "TaiKhoan");
+        }
         public IActionResult DangNHap()
         {
             return View();

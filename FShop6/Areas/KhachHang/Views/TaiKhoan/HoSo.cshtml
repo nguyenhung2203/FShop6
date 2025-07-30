@@ -111,7 +111,6 @@
                                    class="form__input"
                                    name="nguoiDungModels.DiaChi"
                                    value="@Model.nguoiDungModels.DiaChi" />
-
                             <div class="form__btn">
                                 <button type="submit" class="btn btn--md">Lưu</button>
                             </div>
@@ -121,20 +120,27 @@
                 <div class="tab__content" id="change-password">
                     <h3 class="tab__header">Đổi mật khẩu</h3>
                     <div class="tab__body">
-                        <form class="form grid">
+                        <form action="@Url.Action("DoiMatKhau", "TaiKhoan", new { area = "KhachHang" })" method="post" class="form grid">
                             <input type="password"
                                    placeholder="Mật khẩu hiện tại"
-                                   class="form__input" />
+                                   class="form__input"
+                                   name="matKhauCu"/>
+
                             <input type="password"
                                    placeholder="Mật khẩu mới"
-                                   class="form__input" />
+                                   class="form__input"
+                                   name="matKhauMoi" />
+
                             <input type="password"
                                    placeholder="Xác nhận mật khẩu"
-                                   class="form__input" />
+                                   class="form__input"
+                                   name="matKhauNhapLai" />
+
                             <div class="form__btn">
-                                <button class="btn btn--md">Lưu</button>
+                                <button type="submit" class="btn btn--md">Lưu</button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>

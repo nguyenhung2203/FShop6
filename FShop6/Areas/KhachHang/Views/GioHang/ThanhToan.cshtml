@@ -6,6 +6,7 @@
 <main class="main">
     @using (Html.BeginForm("SanPhamThanhToan", "GioHang", FormMethod.Post, new { area = "KhachHang" }))
     {
+		var TongTien = Model.GioHang.Sum(sp => sp.SoLuong * sp.GiaBan);
         @Html.AntiForgeryToken()
         @for (int i = 0; i < Model.GioHang.Count; i++)
         {
@@ -135,7 +136,7 @@
                         <tbody>
                             <tr class="summary-row">
                                 <td colspan="3" style="text-align: right; padding-right: 15px;"><span class="order__subtitle">Tạm tính</span></td>
-                                <td style="width: 80px; text-align: right;"><span class="table__price">8,900,000đ</span></td>
+                                <td style="width: 80px; text-align: right;"><span class="table__price">@TongTien.ToString("N0")đ</span></td>
                             </tr>
                             <tr class="summary-row">
                                 <td colspan="3" style="text-align: right; padding-right: 15px;"><span class="order__subtitle">Phí vận chuyển</span></td>
@@ -143,7 +144,7 @@
                             </tr>
                             <tr class="summary-row">
                                 <td colspan="3" style="text-align: right; padding-right: 15px;"><span class="order__subtitle">Tổng cộng</span></td>
-                                <td style="width: 80px; text-align: right;"><span class="order__grand-total">8,900,000đ</span></td>
+                                <td style="width: 80px; text-align: right;"><span class="order__grand-total">@TongTien.ToString("N0")đ</span></td>
                             </tr>
                         </tbody>
                     </table>

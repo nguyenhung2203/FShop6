@@ -14,6 +14,7 @@ namespace FShop6.Areas.KhachHang.Services
         Task<HoSoViewModel> LayThongTinHoSo(int nguoiDungId);
         bool HuyDonHang(string donHangId);
         bool CapNhatThongTinHoSo(NguoiDungModel nguoiDungModel);
+        bool DoiMatKhau(int nguoiDungId, string matKhauCu, string matKhauMoi);
     }
     public interface ITaiKhoanServices : ISanPhamYeuThichServices, IHoSoServices
     {
@@ -63,6 +64,25 @@ namespace FShop6.Areas.KhachHang.Services
                     nguoiDung.Email = nguoiDungModel.Email;
                     nguoiDung.SoDienThoai = nguoiDungModel.SoDienThoai;
                     nguoiDung.DiaChi = nguoiDungModel.DiaChi;
+                    _context.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch (SqlException ex)
+            {
+                return false;
+            }
+        }
+
+        public bool DoiMatKhau(int nguoiDungId, string matKhauCu, string matKhauMoi)
+        {
+            try
+            {
+                var nguoiDung = _context.NguoiDung.FirstOrDefault(nd => nd.MaNguoiDung == nguoiDungId);
+                if (nguoiDung != null && nguoiDung.MatKhau == matKhauCu)
+                {
+                    nguoiDung.MatKhau = matKhauMoi;
                     _context.SaveChanges();
                     return true;
                 }
