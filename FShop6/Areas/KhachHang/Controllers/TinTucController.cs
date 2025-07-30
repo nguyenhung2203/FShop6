@@ -1,18 +1,50 @@
 ﻿using FShop6.Areas.KhachHang.Models;
+using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System.Linq;
+
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
     public class TinTucController : Controller
     {
-        public IActionResult TinTuc()
+        private readonly ITinTucService _tinTucService;
+
+        public TinTucController(ITinTucService tinTucService)
         {
-            return View();
+            _tinTucService = tinTucService;
         }
 
-        public IActionResult ChiTietTinTuc()
+
+    
+        public async Task<IActionResult> TinTuc()
         {
-            return View();
+            var danhSachTinTuc = await _tinTucService.LayTinTucHienThiAsync();
+
+            if (danhSachTinTuc == null || !danhSachTinTuc.Any())
+            {
+                ViewBag.ThongBao = "Hiện chưa có tin tức nào.";
+            }
+
+            return View(danhSachTinTuc);
         }
+      public async Task<IActionResult> ChiTietTinTuc(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("ID không hợp lệ.");
+            }
+
+            var tinTuc = await _tinTucService.LayTinTucTheoIdAsync(id);
+            if (tinTuc == null)
+            {
+                return NotFound("Không tìm thấy tin tức.");
+            }
+
+            return View(tinTuc);
+        }
+
+
     }
 }
