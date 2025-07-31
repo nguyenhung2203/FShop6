@@ -34,3 +34,9 @@ document.getElementById('deleteProductModal').addEventListener('show.bs.modal', 
 
     this.querySelector('#product_id_delete').value = id;
 });
+
+document.getElementById('addProductDetails').addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const id = button.getAttribute('data-maSanPham');
+    this.querySelector('#productDetail_id_delete').value = id; // Clear the hidden product ID field
+});

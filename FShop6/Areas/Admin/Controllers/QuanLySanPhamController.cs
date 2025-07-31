@@ -38,5 +38,12 @@ namespace FShop6.Areas.Admin.Controllers
             await _quanLySanPhamServices.XoaSanPhamAsync(MaSanPham);
             return RedirectToAction("QuanLySanPham");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ThemBienThe(IFormCollection form, List<IFormFile> AnhBienThe)
+        {
+            await _quanLySanPhamServices.ThemBienTheAsync(form, AnhBienThe);
+            return RedirectToAction("QuanLySanPham");
+        }
     }
 }

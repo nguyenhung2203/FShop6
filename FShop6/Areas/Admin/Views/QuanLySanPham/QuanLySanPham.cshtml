@@ -179,7 +179,7 @@
                                             Xem
                                         </button>
 
-										<button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#addProductDetails"><i class="fa fa-plus-circle"></i> Thêm </button>
+                                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#addProductDetails" data-maSanPham="@item.SanPham.MaSanPham"><i class="fa fa-plus-circle"></i> Thêm </button>
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editProductModal" 
@@ -370,7 +370,9 @@
                                             <td>
                                                 @foreach (var hinh in bt.AnhBienThe)
                                                 {
-                                                    <img src="~/KhachHang/images/@hinh.URL" alt="Hình ảnh sản phẩm" style="width: 60px; height: 60pxpx; object-fit: cover;" />
+                                                    <a href="~/KhachHang/images/@hinh.URL">
+                                                        <img src="~/KhachHang/images/@hinh.URL" alt="Hình ảnh sản phẩm" style="width: 60px; height: 60pxpx; object-fit: cover;" />
+                                                    </a>
                                                 }
                                             </td>
                                         </tr>
@@ -387,60 +389,66 @@
 		</div>
 
 		<!-- Modal thêm loại sản phẩm -->
-        <div class="modal fade" id="addProductDetails" tabindex="-1" role="dialog" aria-labelledby="addProductDetails"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <form class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="addProductDetailsLabel">Thêm loại sản phẩm mới</h5>
-                        <button class="close text-white" type="button" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="sku_add_detail">Mã Sku</label>
-                            <input type="text" class="form-control mb-2" id="sku_add_detail" required>
-                            <div class="form-row align-items-center mb-2">
-                                <label for="type_add_detail" class="mr-2">Loại sản phẩm</label>
-                                <input type="text" class="form-control mb-2" id="type_add_detail" placeholder="Ví dụ: Đen-Size M"
-                                       required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="price_import_add_detail">Giá nhập</label>
-                            <input type="text" class="form-control mb-2" id="price_import_add_detail" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="price_sell_add_detail">Giá bán</label>
-                            <input type="text" class="form-control mb-2" id="price_sell_add_detail" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity_add_detail">Số lượng còn lại</label>
-                            <input type="text" class="form-control mb-2" id="quantity_add_detail" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="category_input_add">Tình trạng</label>
-                            <input list="category_options_add" class="form-control" id="category_input_add"
-                                   placeholder="Chọn hoặc nhập loại sản phẩm">
+		<div class="modal fade" id="addProductDetails" tabindex="-1" role="dialog" aria-labelledby="addProductDetails"
+			 aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				@using (Html.BeginForm("ThemBienThe", "QuanLySanPham", FormMethod.Post, new { enctype = "multipart/form-data", @class = "modal-content" }))
+				{
+					<div class="modal-header bg-primary text-white">
+						<h5 class="modal-title" id="addProductDetailsLabel">Thêm loại sản phẩm mới</h5>
+						<button class="close text-white" type="button" data-bs-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">×</span>
+						</button>
+					</div>
+					<input type="hidden" name="MaSanPham" id="productDetail_id_delete"></input>
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="sku_add_detail">Mã Sku</label>
+							<input type="text" class="form-control mb-2" id="sku_add_detail" name="MaSku" required>
+							<div class="form-row align-items-center mb-2">
+								<label for="type_add_detail" class="mr-2">Loại sản phẩm</label>
+								<input type="text" class="form-control mb-2" id="type_add_detail" name="LoaiBienThe" placeholder="Ví dụ: Đen-Size M"
+									   required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="price_import_add_detail">Giá nhập</label>
+							<input type="text" class="form-control mb-2" id="price_import_add_detail" name="GiaNhap" required>
+						</div>
+						<div class="form-group">
+							<label for="price_sell_add_detail">Giá bán</label>
+							<input type="text" class="form-control mb-2" id="price_sell_add_detail" name="GiaBan" required>
+						</div>
+						<div class="form-group">
+							<label for="quantity_add_detail">Số lượng còn lại</label>
+							<input type="text" class="form-control mb-2" id="quantity_add_detail" name="SoLuongConLai" required>
+						</div>
+						<div class="form-group">
+							<label for="status_input_add">Tình trạng</label>
+							<input list="status_options_add" class="form-control" id="status_input_add" name="TinhTrang"
+								   placeholder="Chọn hoặc nhập loại sản phẩm">
 
-                            <datalist id="category_options_add">
-                                <option value="Danh mục 1">
-                                <option value="Danh mục 2">
-                            </datalist>
-                        </div>
-                        <div class="form-group">
-                            <label for="details_image_add">Hình ảnh</label>
-                            <input type="file" class="form-control-file" id="details_image_add">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
-                        <button class="btn btn-primary" type="submit">Thêm mới</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+							<datalist id="status_options_add">
+                                <option>Còn hàng</option>
+                                <option>Hết hàng</option>
+								<option>Ngừng kinh doanh</option>
+                                <option>Đang cập nhật</option>
+                                <option>Đã bán hết</option>
+								<option>Đang bảo trì</option>
+							</datalist>
+						</div>
+						<div class="form-group">
+							<label for="details_image_add">Hình ảnh</label>
+							<input type="file" class="form-control-file" id="details_image_add" name="AnhBienThe" multiple>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
+						<button class="btn btn-primary" type="submit">Thêm mới</button>
+					</div>
+				}
+			</div>
+		</div>
 
         <!-- Modal sửa loại sản phẩm -->
         <div class="modal fade" id="editProductDetails" tabindex="-1" role="dialog" aria-labelledby="editProductDetails"
@@ -540,6 +548,5 @@
                 </form>
             </div>
         </div>
-
     </div>
 </div>

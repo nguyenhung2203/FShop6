@@ -11,6 +11,7 @@ namespace FShop6.Areas.Admin.Services
         Task ThemSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
         Task SuaSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
         Task XoaSanPhamAsync(int MaSanPham);
+        Task ThemBienTheAsync(IFormCollection form, List<IFormFile> AnhBienThe);
     }
 
     public class QuanLySanPhamServices : IQuanLySanPhamServices
@@ -108,7 +109,7 @@ namespace FShop6.Areas.Admin.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi khi thêm sản phẩm: {ex.Message}");
+                Console.WriteLine($"Lỗi khi sửa sản phẩm: {ex.Message}");
             }
         }
 
@@ -120,22 +121,70 @@ namespace FShop6.Areas.Admin.Services
                 if (sanPham == null)
                 {
                     return;
-                } 
+                }
                 if (!string.IsNullOrEmpty(sanPham.HinhAnhDaiDien))
                 {
                     var duongDanAnh = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images", sanPham.HinhAnhDaiDien);
                     if (System.IO.File.Exists(duongDanAnh))
                     {
                         System.IO.File.Delete(duongDanAnh);
-                    }    
-                } 
+                    }
+                }
 
                 _context.SanPham.Remove(sanPham);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi khi thêm sản phẩm: {ex.Message}");
+                Console.WriteLine($"Lỗi khi xoá sản phẩm: {ex.Message}");
+            }
+        }
+
+        public async Task ThemBienTheAsync(IFormCollection form, List<IFormFile> AnhBienThe)
+        {
+            try
+            {
+                int maSanPham = int.Parse(form["MaSanPham"]);
+                var sanPham = await _context.SanPham.FindAsync(maSanPham);
+                if (sanPham == null) return;
+                var bienThe = new BienTheModels
+                {
+                    MaSKU = form["MaSKU"],
+                    MaSanPham = maSanPham,
+                    LoaiBienThe = form["LoaiBienThe"],
+                    GiaBan = decimal.Parse(form["GiaBan"]),
+                    GiaNhap = decimal.Parse(form["GiaNhap"]),
+                    TinhTrang = form["TinhTrang"],
+                    SoLuongConLai = int.Parse(form["SoLuongConLai"])
+                };
+                _context.BienThe.Add(bienThe);
+                await _context.SaveChangesAsync();
+                Console.WriteLine(bienThe.MaBienThe);
+                if (AnhBienThe != null && AnhBienThe.Count > 0)
+                {
+                    foreach (var anh in AnhBienThe)
+                    {
+                        var ThoiGianLuuFile = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                        var TenFile = ThoiGianLuuFile + "_" + Path.GetFileName(anh.FileName);
+                        var TaiLenFolder = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images");
+                        var duongDan = Path.Combine(TaiLenFolder, TenFile);
+                        using (var stream = new FileStream(duongDan, FileMode.Create))
+                        {
+                            await anh.CopyToAsync(stream);
+                        }
+                        var anhBienThe = new AnhBienTheModel
+                        {
+                            MaBienThe = bienThe.MaBienThe,
+                            URL = TenFile // Thiết lập mối quan hệ với biến thể
+                        };
+                        _context.AnhBienThe.Add(anhBienThe);
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi thêm biến thể sản phẩm: {ex.Message}");
             }
         }
     }
