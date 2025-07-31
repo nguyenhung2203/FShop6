@@ -7,7 +7,7 @@ namespace FShop6.Areas.KhachHang.Models
     public class SanPhamModel
     {
         [Key]
-        public int MaSanPham { get; set; }
+        public int MaSanPham { get; set; } // ✅ Khóa chính đúng
 
         [Required]
         public int MaDanhMucSP { get; set; }
@@ -20,18 +20,15 @@ namespace FShop6.Areas.KhachHang.Models
         public string MoTa { get; set; }
 
         [Display(Name = "Ảnh đại diện")]
-        public string HinhAnhDaiDien { get; set; }
+        public string HinhAnhDaiDien { get; set; } // ✅ Thuộc tính dùng cho ảnh
 
         [Display(Name = "Ngày tạo")]
         [Column("ThoiGianTao")]
         public DateTime NgayTao { get; set; } = DateTime.Now;
 
-        // Liên kết đến bảng DanhMuc (1 sản phẩm thuộc 1 danh mục)
         [ForeignKey("MaDanhMucSP")]
         public DanhMucModel DanhMuc { get; set; }
 
-        // Danh sách các biến thể (màu sắc, size, v.v.) của sản phẩm
         public ICollection<BienTheModels> BienThes { get; set; } = new List<BienTheModels>();
     }
-
 }

@@ -16,13 +16,17 @@ namespace FShop6.Areas.KhachHang.Models
         public decimal DonGia { get; set; }
 
         // Khóa ngoại đến DonHang
+        [ForeignKey("DonHang")]
         public int? DonHang_ID { get; set; }
+
         public DonHangModel DonHang { get; set; }
 
         // Khóa ngoại đến BienThe
+        [ForeignKey("MaBienThe")]
         public int? MaBienThe { get; set; }
 
-        [ForeignKey("MaBienThe")]
         public BienTheModels BienThe { get; set; }
+        
+
     }
 }

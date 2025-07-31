@@ -22,13 +22,12 @@ namespace FShop6.Areas.KhachHang.Models
 
         [Phone]
         [StringLength(20)]
-        public string SoDienThoai { get; set; }
+        public string? SoDienThoai { get; set; }
 
         [StringLength(500)]
-        public string DiaChi { get; set; }
-
+        public string? DiaChi { get; set; }
         [StringLength(100)]
-        public string TTHoatDong { get; set; }
+        public string? TTHoatDong { get; set; }
 
         public DateTime ThoiGianTao { get; set; } = DateTime.Now;
         public DateTime NgayCapNhat { get; set; } = DateTime.Now;
@@ -36,9 +35,8 @@ namespace FShop6.Areas.KhachHang.Models
         [Required]
         [StringLength(50)]
         public string TenVaiTro { get; set; }
-
         // Quan hệ
-        public ICollection<GioHangModel> GioHangs { get; set; }
+        public ICollection<GioHangModel> GioHangs { get; set; } 
         public ICollection<DonHangModel> DonHangs { get; set; }
     }
 }

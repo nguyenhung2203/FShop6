@@ -36,9 +36,11 @@ namespace FShop6.Areas.KhachHang.Models
 
         public bool NoiBat { get; set; }
 
-        // Navigation property
         [ForeignKey("MaSanPham")]
         public SanPhamModel SanPham { get; set; }
-    }
 
+        // Tên biến thể kết hợp SKU (tùy chọn)
+        [NotMapped]
+        public string TenBienThe => $"{LoaiBienThe} - {MaSKU}";
+    }
 }

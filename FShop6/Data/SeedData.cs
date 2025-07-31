@@ -55,47 +55,50 @@ namespace FShop6.Data
 
                 // 3. Dữ liệu mẫu cho BienTheModels
                 var bienThes = new List<BienTheModels>
-                {
-                    new BienTheModels
-                    {
-                        MaBienThe = 1,
-                        MaSanPham = 1,
-                        MaSKU = "AT-LB-M",
-                        LoaiBienThe = "Size M",
-                        GiaNhap = 120000,
-                        GiaBan = 150000,
-                        SoLuongConLai = 20,
-                        TinhTrang = "Còn hàng",
-                        SanPham = sanPhams[0]
-                    },
-                    new BienTheModels
-                    {
-                        MaBienThe = 2,
-                        MaSanPham = 2,
-                        MaSKU = "GB-BROWN-50",
-                        LoaiBienThe = "Size 50cm",
-                        GiaNhap = 180000,
-                        GiaBan = 220000,
-                        SoLuongConLai = 10,
-                        TinhTrang = "Còn hàng",
-                        SanPham = sanPhams[1]
-                    },
-                    new BienTheModels
-                    {
-                        MaBienThe = 3,
-                        MaSanPham = 3,
-                        MaSKU = "MK-DM-STD",
-                        LoaiBienThe = "Móc khóa tiêu chuẩn",
-                        GiaNhap = 30000,
-                        GiaBan = 50000,
-                        SoLuongConLai = 50,
-                        TinhTrang = "Còn hàng",
-                        SanPham = sanPhams[2]
-                    }
-                };
+{
+    new BienTheModels
+    {
+        MaBienThe = 1,
+        MaSanPham = 1,
+        MaSKU = "AT-LB-M",
+        LoaiBienThe = "Size M",
+        GiaNhap = 120000,
+        GiaBan = 150000,
+        SoLuongConLai = 20,
+        TinhTrang = "Còn hàng",
+        SanPham = sanPhams[0]
+    },
+    new BienTheModels
+    {
+        MaBienThe = 2,
+        MaSanPham = 2,
+        MaSKU = "GB-BROWN-50",
+        LoaiBienThe = "Size 50cm",
+        GiaNhap = 180000,
+        GiaBan = 220000,
+        SoLuongConLai = 10,
+        TinhTrang = "Còn hàng",
+        SanPham = sanPhams[1]
+    },
+    new BienTheModels
+    {
+        MaBienThe = 3,
+        MaSanPham = 3,
+        MaSKU = "MK-DM-STD",
+        LoaiBienThe = "Móc khóa tiêu chuẩn",
+        GiaNhap = 30000,
+        GiaBan = 50000,
+        SoLuongConLai = 50,
+        TinhTrang = "Còn hàng",
+        SanPham = sanPhams[2]
+    }
+};
+
                 _context.BienThe.AddRange(bienThes);
                 _context.SaveChanges();
             }
         }
     }
+
+
 }

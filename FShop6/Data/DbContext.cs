@@ -1,4 +1,6 @@
-﻿using FShop6.Areas.KhachHang.Models;
+﻿using System.ComponentModel;
+using FShop6.Areas.Admin.Models;
+using FShop6.Areas.KhachHang.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FShop6.Data
@@ -7,16 +9,19 @@ namespace FShop6.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+
         }
+     
         public DbSet<DanhMucModel> DanhMucSP { get; set; }
         public DbSet<SanPhamModel> SanPham { get; set; }
         public DbSet<TinTucModel> TinTuc { get; set; }
         public DbSet<BienTheModels> BienThe { get; set; }
-        public DbSet<NguoiDungModel> KhachHang { get; set; }
+        public DbSet<NguoiDungModel> NguoiDung { get; set; }
         public DbSet<DonHangModel> DonHang { get; set; }
         public DbSet<ChiTietDonHangModel> ChiTietDonHang { get; set; }
         public DbSet<GioHangModel> GioHang { get; set; }
+        public DbSet<DanhMucModel> DanhGia { get; set; }
         public DbSet<SPYeuThichModel> SPYeuThich { get; set; }
-
     }
+
 }
