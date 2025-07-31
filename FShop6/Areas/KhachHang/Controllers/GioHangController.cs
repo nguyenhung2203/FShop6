@@ -15,7 +15,6 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             _gioHangServices = gioHangServices;
         }
-
         public async Task<IActionResult> GioHang()
         {
             var model = await _gioHangServices.LayGioHang(5);
@@ -24,14 +23,13 @@ namespace FShop6.Areas.KhachHang.Controllers
                 TempData["ThongBao"] = "Giỏ hàng của bạn hiện đang trống.";
                 TempData["LoaiThongBao"] = "warning";
             }
-
             return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ThanhToan(GioHangViewModel model)
         {
-            var gioCanThanhToan = model.GioHang?.Where(x => x.DuocChon).ToList();
+            var gioCanThanhToan = model.GioHang?.ToList();
             if (gioCanThanhToan == null || gioCanThanhToan.Count == 0)
             {
                 TempData["ThongBao"] = "Bạn chưa chọn sản phẩm nào để thanh toán.";
@@ -41,6 +39,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             var thongTinNguoiNhan = _gioHangServices.ThongTinNguoiNhan(5).Result;
             var viewModel = new GioHangViewModel
             {
+                MaNguoiDung = 5, 
                 GioHang = gioCanThanhToan,
                 DiaChi = model.DiaChi,
                 SoDienThoai = thongTinNguoiNhan.SoDienThoai,
@@ -54,15 +53,16 @@ namespace FShop6.Areas.KhachHang.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SanPhamThanhToan(GioHangViewModel model)
         {
-            if (model == null || model.GioHang.Count == 0)
-            {
-                TempData["ThongBao"] = "Không có sản phẩm nào được chọn để thanh toán.";
-                TempData["LoaiThongBao"] = "warning";
-                return RedirectToAction("GioHang");
-            }
-
             try
             {
+                var gioCanThanhToan = model.GioHang?.Where(x => x.DuocChon).ToList();
+                if (model == null || gioCanThanhToan.Count == 0)
+                {
+                    TempData["ThongBao"] = "Không có sản phẩm nào được chọn để thanh toán.";
+                    TempData["LoaiThongBao"] = "warning";
+                    return RedirectToAction("GioHang");
+                }
+                model.GioHang = gioCanThanhToan;
                 var ketQua = _gioHangServices.ThanhToan(model);
                 if (ketQua)
                 {

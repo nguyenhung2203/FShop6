@@ -45,9 +45,11 @@ namespace FShop6.Areas.KhachHang.Services
                     SoLuong = x.SoLuong,
                     LoaiBienThe = x.BienThe.LoaiBienThe
                 }).ToListAsync();
+            var diaChi = await _context.NguoiDung.Where(nd => nd.MaNguoiDung == maNguoiDung).FirstOrDefaultAsync();
             return new GioHangViewModel
             {
-                GioHang = gioHang
+                GioHang = gioHang,
+                DiaChiMacDinh = diaChi?.DiaChi ?? string.Empty,
             };
         }
 
@@ -104,7 +106,12 @@ namespace FShop6.Areas.KhachHang.Services
         {
             var gioHang = sanPham.GioHang.ToList();
             var diaChi = sanPham.DiaChi;
-            string diaChiChiTiet = diaChi.CuThe;
+            string diaChiChiTiet;
+            if (diaChi == null || string.IsNullOrEmpty(diaChi.CuThe))
+            {
+                diaChiChiTiet = sanPham.DiaChiMacDinh;
+            }
+            diaChiChiTiet = diaChi.CuThe;
             decimal tongTien = gioHang.Sum(x => x.GiaBan * x.SoLuong);
             var thanhToan = sanPham.PhuongThucThanhToan;
             string phuongThucThanhToan = "";
@@ -121,14 +128,14 @@ namespace FShop6.Areas.KhachHang.Services
                 var donHang = new DonHangModel
                 {
                     MaDonHang = Guid.NewGuid().ToString(),
-                    MaNguoiDung = sanPham.MaNguoiDung = 5,
+                    MaNguoiDung = sanPham.MaNguoiDung,
                     DiaChiGiaoHang = diaChiChiTiet,
                     PhuongThucThanhToan = phuongThucThanhToan,
                     TongTien = tongTien,
                     TrangThai = "Chờ xử lý",
                     ThoiGianDatHang = DateTime.Now,
                     NgayCapNhat = DateTime.Now,
-                    GhiChu = sanPham.GhiChu ?? string.Empty,
+                    GhiChu = sanPham.GhiChu ?? "Không",
                 };
                 _context.DonHang.Add(donHang);
                 _context.SaveChanges();

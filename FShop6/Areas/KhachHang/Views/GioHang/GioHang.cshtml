@@ -100,21 +100,42 @@
                 <div>
                     <div class="cart__shipping">
                         <h3 class="section__title">Địa chỉ giao hàng</h3>
-                        <div class="form grid">
-                            <!-- Select để hiển thị, value sẽ là tên -->
-                            <select class="form__input" name="DiaChi.Tinh" id="city-province">
-                                <option value="" disabled selected>Chọn Tỉnh/Thành phố</option>
-                            </select>
 
-                            <select class="form__input" name="DiaChi.Huyen" id="district">
-                                <option value="" disabled selected>Chọn Quận/Huyện</option>
-                            </select>
+                        <!-- Address Options -->
+                        <div class="address-options">
+                            <div class="address-option">
+                                <input type="radio" id="existing-address" name="address-type" value="existing" checked />
+                                <label for="existing-address">Chọn địa chỉ có sẵn</label>
+                            </div>
+                            <div class="address-option">
+                                <input type="radio" id="new-address" name="address-type" value="new" />
+                                <label for="new-address">Nhập địa chỉ mới</label>
+                            </div>
+                        </div>
 
-                            <select class="form__input" name="DiaChi.Xa" id="ward">
-                                <option value="" disabled selected>Chọn Phường/Xã</option>
-                            </select>
+                        <!-- Existing Address Container -->
+                        <div class="existing-address-container hidden" id="existing-address-container">
+                            <input type="text" class="form__input" name="@Model.DiaChiMacDinh" value="@Model.DiaChiMacDinh" placeholder="Số nhà, tên đường..." />
+                        </div>
 
-                            <input type="text" class="form__input" name="DiaChi.CuThe" placeholder="Số nhà, tên đường..." />
+                        <!-- New Address Container -->
+                        <div class="new-address-container" id="new-address-container">
+                            <div class="form grid">
+                                <!-- Select để hiển thị, value sẽ là tên -->
+                                <select class="form__input" name="DiaChi.Tinh" id="city-province">
+                                    <option value="" disabled selected>Chọn Tỉnh/Thành phố</option>
+                                </select>
+
+                                <select class="form__input" name="DiaChi.Huyen" id="district">
+                                    <option value="" disabled selected>Chọn Quận/Huyện</option>
+                                </select>
+
+                                <select class="form__input" name="DiaChi.Xa" id="ward">
+                                    <option value="" disabled selected>Chọn Phường/Xã</option>
+                                </select>
+
+                                <input type="text" class="form__input" name="DiaChi.CuThe" placeholder="Số nhà, tên đường..." />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -144,9 +165,9 @@
     }
 </main>
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Cart functionality
         const selectAllCheckbox = document.getElementById('select-all');
         // Chỉ lấy checkbox chính, không lấy hidden input của CheckBoxFor
         const itemCheckboxes = document.querySelectorAll('.item-checkbox[type="checkbox"]');
@@ -154,6 +175,12 @@
         const grandTotal = document.getElementById('grand-total');
         const selectedCount = document.getElementById('selected-count');
         const checkoutBtn = document.getElementById('checkout-btn');
+
+        // Address functionality
+        const existingAddressRadio = document.getElementById('existing-address');
+        const newAddressRadio = document.getElementById('new-address');
+        const existingAddressContainer = document.getElementById('existing-address-container');
+        const newAddressContainer = document.getElementById('new-address-container');
 
         const shippingFee = 0;
 
@@ -188,6 +215,42 @@
             }
         }
 
+        // Address type switching function
+        function toggleAddressContainer() {
+            if (existingAddressRadio.checked) {
+                existingAddressContainer.classList.remove('hidden');
+                newAddressContainer.classList.add('hidden');
+
+                // Clear new address form when switching to existing
+                const newAddressInputs = newAddressContainer.querySelectorAll('select, input');
+                newAddressInputs.forEach(input => {
+                    if (input.tagName === 'SELECT') {
+                        input.selectedIndex = 0;
+                    } else {
+                        input.value = '';
+                    }
+                });
+            } else if (newAddressRadio.checked) {
+                newAddressContainer.classList.remove('hidden');
+                existingAddressContainer.classList.add('hidden');
+
+                // Clear existing address selection when switching to new
+                const existingSelect = existingAddressContainer.querySelector('select');
+                if (existingSelect) {
+                    existingSelect.selectedIndex = 0;
+                }
+            }
+        }
+
+        // Event listeners for address type switching
+        if (existingAddressRadio && newAddressRadio) {
+            existingAddressRadio.addEventListener('change', toggleAddressContainer);
+            newAddressRadio.addEventListener('change', toggleAddressContainer);
+
+            // Initialize address containers
+            toggleAddressContainer();
+        }
+
         // Set default checked state for all items
         itemCheckboxes.forEach(checkbox => {
             checkbox.checked = false; // Mặc định tất cả đều được tick
@@ -211,6 +274,36 @@
                 selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < itemCheckboxes.length;
 
                 updateTotals();
+            });
+        });
+
+        // Quantity change functionality
+        const quantityInputs = document.querySelectorAll('.quantity');
+        quantityInputs.forEach((input, index) => {
+            input.addEventListener('change', function() {
+                const checkbox = itemCheckboxes[index];
+                if (checkbox) {
+                    // Get base price from original data-price divided by original quantity
+                    const row = this.closest('tr');
+                    const priceText = row.querySelector('.table__price').textContent.replace(/[,₫]/g, '');
+                    const basePrice = parseFloat(priceText);
+                    const newQuantity = parseInt(this.value) || 1;
+                    const newTotal = basePrice * newQuantity;
+
+                    // Update checkbox data-price
+                    checkbox.dataset.price = newTotal;
+
+                    // Update subtotal display
+                    const subtotalSpan = row.querySelector('.subtotal');
+                    if (subtotalSpan) {
+                        subtotalSpan.textContent = newTotal.toLocaleString('vi-VN');
+                    }
+
+                    // Update totals if this item is checked
+                    if (checkbox.checked) {
+                        updateTotals();
+                    }
+                }
             });
         });
 
