@@ -129,9 +129,6 @@ table {
     gap: 1.5rem;
 }
 
-.section {
-    padding-block: 2rem;
-}
 
 .section--lg {
     padding-block: 4rem;
@@ -687,7 +684,7 @@ main {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-bottom: 2rem;
+    margin-top: 3rem;
 }
 
 .tab__btn {
@@ -1084,8 +1081,9 @@ main {
     font-size: var(--normal-font-size);
     border-bottom: 1px solid var(--border-color-alt);
     padding-bottom: 0.75rem;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
     position: relative;
+    margin-top: 3rem;
 }
 
     .showcase__wrapper .section__title::before {
@@ -4118,6 +4116,7 @@ input[type="range"] {
     margin-bottom: 3rem;
     position: relative;
     color: var(--title-color);
+    margin-top: 3rem;
 }
 
     .section__title span {
@@ -4646,9 +4645,6 @@ input[type="range"] {
 }
 
 /* =============== FEATURES SECTION =============== */
-.features {
-    padding: 5rem 0;
-}
 
 .features__grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

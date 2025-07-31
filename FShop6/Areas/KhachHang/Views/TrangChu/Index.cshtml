@@ -83,7 +83,7 @@
     <section class="products container section">
         <div class="tab__btns">
             <span class="tab__btn active-tab" data-target="#featured">Nổi bật</span>
-            <span class="tab__btn" data-target="#popular">Phổ biến</span>
+            <span class="tab__btn" data-target="#popular">Sản phẩm bán chạy</span>
         </div>
 
         <div class="tab__items">
@@ -177,7 +177,7 @@
     </section>
 
     <!--=============== Sản phẩm mới về ===============-->
-    <section class="new__arrivals container section">
+    <section class="new__arrivals container section" tab__btn>
         <h3 class="section__title"><span>Hàng mới về</span></h3>
         <div class="new__container swiper">
             <div class="swiper-wrapper">
@@ -205,7 +205,7 @@
                         <div class="product__bottom-row">
                             <div class="product__price flex">
                                 <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                <span class="old__price">100</span>
+                                @* <span class="old__price">100</span> *@
                             </div>
                             <div class="product-card-actions">
                                 @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
@@ -297,7 +297,10 @@
                         <p class="news__description">
                             @(tinTuc.MoTaNgan + "...")
                         </p>
-                        <a href="blog-post.html" class="news__readmore">Đọc thêm <i class="fi fi-rs-arrow-right"></i></a>
+                        <a href="@Url.Action("ChiTietTinTuc", "TinTuc", new { area = "KhachHang", id = tinTuc.MaTinTuc })" class="news__readmore">
+                            Đọc thêm <i class="fi fi-rs-arrow-right"></i>
+                        </a>
+
                     </div>
                 </div>
             }
@@ -308,7 +311,7 @@
     <section class="showcase section">
     </section>
     <!--=============== SHOWCASE ===============-->
-    <section class="showcase section">
+    @* <section class="showcase section">
         <div class="showcase__container container grid">
             @foreach (var danhMuc in Model.DanhMucSanPhamHienThi)
             {
@@ -336,5 +339,5 @@
                 </div>
             }
         </div>
-    </section>
+    </section> *@
 </main>

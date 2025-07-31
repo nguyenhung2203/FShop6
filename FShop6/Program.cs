@@ -1,4 +1,5 @@
-﻿using FShop6.Areas.KhachHang.Services;
+﻿using FShop6.Areas.Admin.Services;
+using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
 using FShop6.Hubs;
 using Microsoft.EntityFrameworkCore;
@@ -29,11 +30,22 @@ builder.Services.AddScoped<IGioHangServices, GioHangServices>();
 // 🟢 Đăng ký dịch vụ DichVuAIThongMinh
 builder.Services.AddHttpClient<DichVuAIThongMinh>();
 
+// 🟢 Đăng ký dịch vụ ThongKeService
+builder.Services.AddScoped<IThongKeServices, ThongKeServices>();
+
+// 🟢 Đăng ký dịch vụ QuanLyDonHangService
+builder.Services.AddScoped<IQuanLyDonHangServices, QuanLyDonHangServices>();
+
+// 🟢 Đăng ký dịch vụ QuanLySanPhamService
+builder.Services.AddScoped<IQuanLySanPhamServices, QuanLySanPhamServices>();
+// 🟢 Đăng ký dịch vụ TinTucService
+builder.Services.AddScoped<ITinTucService, TinTucService>();
+
 // Đăng ký DichVuAIThongMinh như Scoped service
 builder.Services.AddScoped<DichVuAIThongMinh>();
 var app = builder.Build();
 
-// Cấu hình pipeline
+// Cấu hình pipelinex
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

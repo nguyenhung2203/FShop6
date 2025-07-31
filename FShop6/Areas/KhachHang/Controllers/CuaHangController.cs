@@ -32,7 +32,8 @@ namespace FShop6.Areas.KhachHang.Controllers
             else if (loai == 3 && khoangGia.HasValue)
             {
                 model = await _shopService.LaySanPhamTheoGia(khoangGia.Value, trang);
-            }
+            }    
+
             else
             {
                 model = await _shopService.LaySanPhamTatCa(trang);
@@ -54,6 +55,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             }
             return View(model);
         }
+
         public IActionResult DatHangThanhCong()
         {
             return View();

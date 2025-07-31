@@ -6,9 +6,16 @@ namespace FShop6.Areas.Admin.Controllers
     [Area("Admin")]
     public class QuanLyDonHangController : Controller
     {
-        public IActionResult QuanLyDonHang()
+        private readonly IQuanLyDonHangServices _quanLyDonHangServices;
+        public QuanLyDonHangController(IQuanLyDonHangServices quanLyDonHangServices)
         {
-            return View();
+            _quanLyDonHangServices = quanLyDonHangServices;
+        }
+
+        public async Task<IActionResult> QuanLyDonHang()
+        {
+            var dsDonHang = await _quanLyDonHangServices.LayTatCaDonHangAsync();
+            return View(dsDonHang);
         }
     }
 }

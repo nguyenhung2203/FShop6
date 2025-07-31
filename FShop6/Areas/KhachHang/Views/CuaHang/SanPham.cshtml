@@ -128,7 +128,7 @@
                         {
                             <div class="product__item shop-product__item shop-card">
                                 <div class="product__banner">
-                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaSanPham" class="product__images">
+                                    <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
                                         <img src="@Url.Content("~/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
                                              alt="@sanPham.TenSanPham"
                                              class="product__img default" />
@@ -136,7 +136,7 @@
                                 </div>
                                 <div class="product__content">
                                     <span class="product__category">@sanPham.TenDanhMuc</span>
-                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaSanPham">
+                                    <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                                         <h3 class="product__title">@sanPham.TenSanPham</h3>
                                     </a>
                                     <p class="product__description">@sanPham.MoTaNgan</p>

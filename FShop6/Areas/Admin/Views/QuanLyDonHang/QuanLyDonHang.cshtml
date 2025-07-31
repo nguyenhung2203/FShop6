@@ -2,251 +2,237 @@
     Layout = "~/Areas/Admin/Views/Shared/CustomerLayout.cshtml";
 	ViewData["Title"] = "Quản lý đơn hàng";
 }
-<div id="content-wrapper">
-    <div class="container-fluid">
-        <!-- Breadcrumbs-->
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="index.html">Trang chủ</a>
-            </li>
-            <li class="breadcrumb-item active">Quản lý đơn hàng</li>
-        </ol>
-        <!-- Quản lý đơn hàng -->
-        <div class="card mb-3">
-            <div class="card-header bg-primary text-white">
-                <i class="fa fa-shopping-cart"></i>
-                Quản lý đơn hàng
-                <a href="#" class="text-white" data-toggle="modal" data-target="#addOrderModal">
-                    <span class="float-right">
-                        <i class="fa fa-plus"></i>
-                        Thêm đơn hàng mới
-                    </span>
-                </a>
+@model FShop6.Areas.Admin.Models.QuanLyDonHangViewModel
+<div class="container-fluid">
+    <!-- Breadcrumbs-->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="index.html">Trang chủ</a>
+        </li>
+        <li class="breadcrumb-item active">Quản lý đơn hàng</li>
+    </ol>
+    <!-- Quản lý đơn hàng -->
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+            <i class="fa fa-shopping-cart"></i>
+            Quản lý đơn hàng
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="orderTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Chi tiết đơn hàng</th>
+                            <th>Thông tin người đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Phương thức thanh toán</th>
+                            <th>Thời gian đặt hàng</th>
+                            <th>Ngày cập nhật</th>
+                            <th>Ghi chú</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Ví dụ dữ liệu đơn hàng -->
+                        @foreach(var item in Model.DSDonHang)
+                        {
+                            <tr>
+                                <td>
+                                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#viewOrderModal">
+                                        <i class="fa fa-check"></i> Xem chi tiết
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#viewUserModal"><i class="fa fa-check"></i> Xem chi tiết</button>
+                                </td>
+                                <td>@item.TongTien.ToString("N0")</td>
+                                <td><span class="badge badge-warning">@item.TrangThai</span></td>
+                                <td>@item.PhuongThucThanhToan</td>
+                                <td>@item.ThoiGianDatHang.ToString("dd/MM/yyyy")</td>
+                                <td>@item.NgayCapNhat</td>
+                                <td>@item.GhiChu</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#"><i class="fa fa-check"></i> Duyệt</button>
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editOrderModal"><i class="fa fa-pencil"></i> Sửa</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
+        </div>
+        <div class="card-footer small text-muted"></div>
+    </div>
+
+    <!-- Modal Xem chi tiết đơn hàng -->
+    <div class="modal fade" id="viewOrderModal" tabindex="-1" role="dialog" aria-labelledby="viewOrderModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">Chi tiết đơn hàng</h5>
+                    <button class="close text-white" type="button" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="order_code">Mã đơn hàng</label>
+                                <input type="text" class="form-control" id="view_order_code" required>
+                            </div>
+                        </div>
+                    </div>
                     <table class="table table-bordered" id="orderTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>Mã đơn hàng</th>
-                                <th>Địa chỉ giao hàng</th>
-                                <th>Tổng tiền</th>
-                                <th>Trạng thái</th>
-                                <th>Phương thức thanh toán</th>
-                                <th>Thời gian đặt hàng</th>
-                                <th>Ngày cập nhật</th>
-                                <th>Ghi chú</th>
-                                <th>Thao tác</th>
+                                <th>Tên sản phẩm</th>
+                                <th>SKU</th>
+                                <th>Biến thể</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- Ví dụ dữ liệu đơn hàng -->
                             <tr>
-                                <td>DH001</td>
-                                <td>123 Đường A, Quận B</td>
-                                <td>4,200,000</td>
-                                <td><span class="badge badge-warning">Chờ xử lý</span></td>
-                                <td>Chuyển khoản</td>
-                                <td>01/01/2023 09:00</td>
-                                <td>02/01/2023</td>
-                                <td>Giao buổi sáng</td>
-                                <td>
-                                    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#approveOrderModal"><i class="fa fa-check"></i> Duyệt</button>
-                                    <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editOrderModal"><i class="fa fa-pencil"></i> Sửa</button>
-                                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteOrderModal"><i class="fa fa-trash"></i> Xóa</button>
-                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             <tr>
-                                <td>DH002</td>
-                                <td>456 Đường X, Quận Y</td>
-                                <td>200,000</td>
-                                <td><span class="badge badge-success">Hoàn thành</span></td>
-                                <td>Tiền mặt</td>
-                                <td>15/02/2023 14:30</td>
-                                <td>16/02/2023</td>
-                                <td>Giao tận nơi</td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editOrderModal"><i class="fa fa-pencil"></i> Sửa</button>
-                                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteOrderModal"><i class="fa fa-trash"></i> Xóa</button>
-                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             <!-- ...thêm dữ liệu khác... -->
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div class="card-footer small text-muted"></div>
-        </div>
-
-        <!-- Modal Thêm đơn hàng -->
-        <div class="modal fade" id="addOrderModal" tabindex="-1" role="dialog" aria-labelledby="addOrderLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <form class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="addOrderLabel">Thêm đơn hàng mới</h5>
-                        <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="order_code">Mã đơn hàng</label>
-                                    <input type="text" class="form-control" id="order_code" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_address">Địa chỉ giao hàng</label>
-                                    <input type="text" class="form-control" id="order_address" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_total">Tổng tiền</label>
-                                    <input type="number" class="form-control" id="order_total" min="0" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_status">Trạng thái</label>
-                                    <select class="form-control" id="order_status">
-                                        <option value="pending">Chờ xử lý</option>
-                                        <option value="completed">Hoàn thành</option>
-                                        <option value="cancelled">Đã hủy</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="order_payment">Phương thức thanh toán</label>
-                                    <select class="form-control" id="order_payment">
-                                        <option value="cash">Tiền mặt</option>
-                                        <option value="bank">Chuyển khoản</option>
-                                        <option value="cod">COD</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_time">Thời gian đặt hàng</label>
-                                    <input type="datetime-local" class="form-control" id="order_time" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_update">Ngày cập nhật</label>
-                                    <input type="date" class="form-control" id="order_update" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_note">Ghi chú</label>
-                                    <textarea class="form-control" id="order_note" rows="2" placeholder="Ghi chú thêm nếu có"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-primary" type="submit">Thêm mới</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <!-- Modal Sửa đơn hàng -->
-        <div class="modal fade" id="editOrderModal" tabindex="-1" role="dialog" aria-labelledby="editOrderLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <form class="modal-content">
-                    <div class="modal-header bg-info text-white">
-                        <h5 class="modal-title" id="editOrderLabel">Sửa thông tin đơn hàng</h5>
-                        <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="edit_order_code">Mã đơn hàng</label>
-                                    <input type="text" class="form-control" id="edit_order_code" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_address">Địa chỉ giao hàng</label>
-                                    <input type="text" class="form-control" id="edit_order_address" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_total">Tổng tiền</label>
-                                    <input type="number" class="form-control" id="edit_order_total" min="0" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_status">Trạng thái</label>
-                                    <select class="form-control" id="edit_order_status">
-                                        <option value="pending">Chờ xử lý</option>
-                                        <option value="completed">Hoàn thành</option>
-                                        <option value="cancelled">Đã hủy</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="edit_order_payment">Phương thức thanh toán</label>
-                                    <select class="form-control" id="edit_order_payment">
-                                        <option value="cash">Tiền mặt</option>
-                                        <option value="bank">Chuyển khoản</option>
-                                        <option value="cod">COD</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_time">Thời gian đặt hàng</label>
-                                    <input type="datetime-local" class="form-control" id="edit_order_time" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_update">Ngày cập nhật</label>
-                                    <input type="date" class="form-control" id="edit_order_update" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_note">Ghi chú</label>
-                                    <textarea class="form-control" id="edit_order_note" rows="2" placeholder="Ghi chú thêm nếu có"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-info" type="submit">Lưu thay đổi</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <!-- Modal Duyệt đơn hàng -->
-        <div class="modal fade" id="approveOrderModal" tabindex="-1" role="dialog" aria-labelledby="approveOrderLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <form class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title" id="approveOrderLabel">Duyệt đơn hàng</h5>
-                        <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Bạn có chắc chắn muốn duyệt đơn hàng này không?
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-success" type="submit">Duyệt</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="modal fade" id="deleteOrderModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrderLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <form class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="deleteOrderLabel">Xóa đơn hàng</h5>
-                        <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Bạn có chắc chắn muốn xóa đơn hàng này không?
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-danger" type="submit">Xóa</button>
-                    </div>
-                </form>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Đóng</button>
+                </div>
             </div>
         </div>
     </div>
-    <!-- ...existing code for footer, scripts, etc... -->
+
+    <!-- Modal Xem chi tiết người đặt -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1" role="dialog" aria-labelledby="viewUserModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">Chi tiết Người đặt</h5>
+                    <button class="close text-white" type="button" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="order_code">Tên khách hàng</label>
+                                <input type="text" class="form-control" id="view_order_code" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text" class="form-control" id="view_order_address" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Địa chỉ giao hàng</label>
+                                <input type="number" class="form-control" id="view_order_total" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sửa đơn hàng -->
+    <div class="modal fade" id="editOrderModal" tabindex="-1" role="dialog" aria-labelledby="editOrderLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <form class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="editOrderLabel">Sửa thông tin đơn hàng</h5>
+                    <button class="close text-white" type="button" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="edit_order_code">Mã đơn hàng</label>
+                                <input type="text" class="form-control" id="edit_order_code" readonly>
+                            </div>
+                            
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="edit_order_status">Trạng thái</label>
+                                <select class="form-control" id="edit_order_status">
+                                    <option value="pending">Chờ xử lý</option>
+                                    <option value="completed">Hoàn thành</option>
+                                    <option value="cancelled">Đã hủy</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
+                    <button class="btn btn-info" type="submit">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Modal Duyệt đơn hàng -->
+    <div class="modal fade" id="approveOrderModal" tabindex="-1" role="dialog" aria-labelledby="approveOrderLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="approveOrderLabel">Duyệt đơn hàng</h5>
+                    <button class="close text-white" type="button" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn duyệt đơn hàng này không?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
+                    <button class="btn btn-success" type="submit">Duyệt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteOrderModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrderLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteOrderLabel">Xóa đơn hàng</h5>
+                    <button class="close text-white" type="button" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa đơn hàng này không?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
+                    <button class="btn btn-danger" type="submit">Xóa</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
