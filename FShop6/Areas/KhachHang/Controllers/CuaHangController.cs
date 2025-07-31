@@ -1,14 +1,16 @@
 ﻿using FShop6.Areas.KhachHang.Models;
 using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class CuaHangController : Controller
+    public class CuaHangController : BaseController
     {
         private readonly IShopService _shopService;
-
-        public CuaHangController(IShopService shopService)
+        public CuaHangController(IHeaderServices headerServices, IShopService shopService)
+            : base(headerServices)
         {
             _shopService = shopService;
         }
@@ -23,61 +25,48 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 model = await _shopService.LaySanPhamDanhMuc(maDanhMuc.Value, trang);
             }
-            else if (loai == 2)
+            else if (loai == 2 && loaiXapXep.HasValue)
             {
                 model = await _shopService.LaySanPhamXapXep(loaiXapXep.Value, trang);
             }
-            else if (loai == 3)
+            else if (loai == 3 && khoangGia.HasValue)
             {
                 model = await _shopService.LaySanPhamTheoGia(khoangGia.Value, trang);
             }    
+
             else
             {
                 model = await _shopService.LaySanPhamTatCa(trang);
             }
-
+            ViewBag.loaiXapXep = loaiXapXep;
             ViewBag.MaDanhMuc = maDanhMuc;
             ViewBag.Loai = loai;
             ViewBag.KhoangGia = khoangGia;
 
             return View(model);
         }
+
         public async Task<IActionResult> ChiTietSanPham(int maSanPham)
         {
-            maSanPham = 1;
             var model = await _shopService.LayChiTietSanPhamAsync(maSanPham);
             if (model == null)
             {
                 return NotFound();
             }
-
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ThemVaoGioHang(int maSanPham, int maBienThe, int soLuong)
-        {
-
-            int maNguoiDung = 1;
-
-            if (maBienThe <= 0 || soLuong <= 0)
-            {
-                return BadRequest("Thông tin không hợp lệ.");
-            }
-
-            try
-            {
-                await _shopService.ThemVaoGioHang(maNguoiDung, maBienThe, soLuong);
-                return RedirectToAction("ChiTietSanPham", new { maSanPham = maSanPham });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Lỗi: " + ex.Message);
-            }
-        }
         public IActionResult DatHangThanhCong()
         {
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> TimKiem(string tuKhoa)
+        {
+            var ketQua = await _shopService.TimKiem(tuKhoa);
+            return Json(ketQua);
+        }
+
     }
 }

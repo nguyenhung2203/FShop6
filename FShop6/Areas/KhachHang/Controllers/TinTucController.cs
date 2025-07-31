@@ -7,11 +7,17 @@ using System.Linq;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class TinTucController : Controller
+    public class TinTucController : BaseController
     {
         private readonly ITinTucService _tinTucService;
 
         public TinTucController(ITinTucService tinTucService)
+        public TinTucController(IHeaderServices headerServices, ITinTucService tinTucService)
+        : base(headerServices)
+        {
+            _tinTucService = tinTucService
+        }
+        public IActionResult TinTuc()
         {
             _tinTucService = tinTucService;
         }
