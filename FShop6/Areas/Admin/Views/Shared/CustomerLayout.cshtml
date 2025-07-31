@@ -26,24 +26,29 @@
     <!--=============== FOOTER ===============-->
 
     <!--=============== SCRIPT ===============-->
-    <script src="~/Admin/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/bootstrap.min.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/chart-area-demo-6months.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/chart-area-demo.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/chart-bar-demo.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/chart-pie-demo-3months.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/chart-pie-demo-6months.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/chart-pie-demo.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/chart.min.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/datatables-demo.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/dataTables.bootstrap4.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/jquery.dataTables.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/jquery.easing.min.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/jquery.min.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/popper.min.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/rc-pos.min.js" asp-append-version="true"></script>
-    <script src="~/Admin/js/thongke-nam-chart.js" asp-append-version="true"></script>
-	<script src="~/Admin/js/TruyenGiaTriQuaModal.js" asp-append-version="true"></script>
+    <!-- ✅ Luôn load jQuery đầu tiên -->
+<script src="~/Admin/js/jquery.min.js" asp-append-version="true"></script>
+
+<!-- ✅ Sau đó là Bootstrap -->
+<script src="~/Admin/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+
+<!-- ✅ Các thư viện khác -->
+<script src="~/Admin/js/popper.min.js" asp-append-version="true"></script>
+<script src="~/Admin/js/jquery.easing.min.js" asp-append-version="true"></script>
+<script src="~/Admin/js/jquery.dataTables.js" asp-append-version="true"></script>
+<script src="~/Admin/js/dataTables.bootstrap4.js" asp-append-version="true"></script>
+<script src="~/Admin/js/datatables-demo.js" asp-append-version="true"></script>
+<script src="~/Admin/js/chart.min.js" asp-append-version="true"></script>
+<script src="~/Admin/js/chart-area-demo.js" asp-append-version="true"></script>
+<script src="~/Admin/js/chart-area-demo-6months.js" asp-append-version="true"></script>
+<script src="~/Admin/js/chart-pie-demo.js" asp-append-version="true"></script>
+<script src="~/Admin/js/chart-pie-demo-3months.js" asp-append-version="true"></script>
+<script src="~/Admin/js/chart-pie-demo-6months.js" asp-append-version="true"></script>
+<script src="~/Admin/js/chart-bar-demo.js" asp-append-version="true"></script>
+<script src="~/Admin/js/rc-pos.min.js" asp-append-version="true"></script>
+<!-- ✅ Cuối cùng: render các script riêng của từng trang -->
     @RenderSection("Scripts", required: false)
+
+    
 </body>
 </html>

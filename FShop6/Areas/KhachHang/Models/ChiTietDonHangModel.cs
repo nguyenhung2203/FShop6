@@ -15,12 +15,10 @@ namespace FShop6.Areas.KhachHang.Models
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal DonGia { get; set; }
-
         [Column("DonHang_ID")]
         public int? IDDonHang { get; set; }
         [ForeignKey("IDDonHang")]
         public virtual DonHangModel DonHang { get; set; }
-
         // Khóa ngoại đến BienThe
         public int? MaBienThe { get; set; }
 

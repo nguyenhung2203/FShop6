@@ -6,7 +6,7 @@ namespace FShop6.Areas.KhachHang.Models
     [Table("NguoiDung")]
     public class NguoiDungModel
     {
-        [Key]
+            [Key]
         public int MaNguoiDung { get; set; }
 
         [Required]
@@ -28,10 +28,9 @@ namespace FShop6.Areas.KhachHang.Models
 
         [StringLength(500)]
         public string DiaChi { get; set; }
-
         [StringLength(100)]
         public string TTHoatDong { get; set; }
-
+        
         public DateTime ThoiGianTao { get; set; } = DateTime.Now;
         public DateTime NgayCapNhat { get; set; } = DateTime.Now;
 
