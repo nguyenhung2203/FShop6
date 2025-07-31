@@ -5213,118 +5213,160 @@ input[type="range"] {
         background-color: #17a2b8; /* Xanh dương */
     }
 
-.checkout-wrapper {
-    display: grid;
-    grid-template-columns: 660px 660px; /* Thay đổi từ 1fr 400px thành 1fr 1fr */
-    gap: 2rem;
-    min-height: 100vh;
+/* Container chính với giới hạn kích thước */
+.main .container {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
 }
 
-/* Thêm media query để đảm bảo responsive */
-@media (max-width: 992px) {
-    .checkout-wrapper {
-        grid-template-columns: 1fr;
+.hidden {
+    display: none;
+}
+
+.address-options {
+    margin-bottom: 15px;
+}
+
+.address-option {
+    margin-bottom: 10px;
+}
+
+    .address-option input {
+        margin-right: 8px;
     }
+
+.existing-address-container, .new-address-container {
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
-/* Left Column */
+/* Layout chính của checkout */
+.checkout-wrapper {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    max-width: 1320px;
+    width: 100%;
+}
+
+/* Cột trái - Thông tin vận chuyển và thanh toán */
 .left-column {
-    background: var(--container-color);
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    flex: 1;
+    max-width: 600px;
 }
 
-.shipping-container,
-.payment-container {
-    padding: 2rem;
-    border-bottom: 1px solid var(--border-color);
+/* Cột phải - Tóm tắt đơn hàng */
+.right-column {
+    flex: 0 0 660px;
+    max-width: 660px;
 }
 
-.payment-container {
-    border-bottom: none;
+/* Container thông tin vận chuyển */
+.shipping-container {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border: 1px solid #e8e8e8;
+}
+
+.shipping-header {
+    margin-bottom: 20px;
 }
 
 .section-title {
-    font-size: var(--h2-font-size);
-    font-weight: var(--weight-600);
-    margin-bottom: 1.5rem;
-    color: var(--title-color);
-    border-bottom: 3px solid var(--first-color);
-    padding-bottom: 0.625rem;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
 }
 
-.form-group {
-    margin-bottom: 1.25rem;
+/* Form styling */
+.shipping-form .form-group {
+    margin-bottom: 20px;
 }
 
-.form-input,
-.form-textarea {
+.form-input, .form-textarea {
     width: 100%;
-    padding: 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 0.5rem;
-    font-size: var(--normal-font-size);
-    background-color: var(--container-color);
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
     transition: all 0.3s ease;
-    font-family: var(--body-font);
+    box-sizing: border-box;
 }
 
-    .form-input:focus,
-    .form-textarea:focus {
+    .form-input:focus, .form-textarea:focus {
         outline: none;
-        border-color: var(--first-color);
-        box-shadow: 0 0 0 3px rgba(243, 111, 33, 0.1);
-    }
-
-    .form-input.error {
-        border-color: #e74c3c;
-        background-color: #fdf2f2;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
     }
 
 .form-error {
-    color: #e74c3c;
-    font-size: var(--smaller-font-size);
-    margin-top: 0.3125rem;
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
     display: block;
 }
 
-/* Payment Method */
+/* Container phương thức thanh toán */
+.payment-container {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border: 1px solid #e8e8e8;
+}
+
+.payment-header {
+    margin-bottom: 20px;
+}
+
+/* Phương thức thanh toán */
 .payment-methods {
-    margin-bottom: 2rem;
+    margin-bottom: 25px;
 }
 
 .payment-method {
     display: flex;
     align-items: center;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 0.75rem;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 12px;
     cursor: pointer;
-    background: var(--container-color);
     transition: all 0.3s ease;
+    background: #fff;
 }
 
     .payment-method:hover {
-        border-color: var(--first-color);
-        box-shadow: 0 4px 12px rgba(243, 111, 33, 0.15);
-    }
-
-    .payment-method.selected {
-        border-color: var(--first-color);
-        background: linear-gradient(135deg, #f8fbff 0%, #fff0e8 100%);
-        box-shadow: 0 4px 20px rgba(243, 111, 33, 0.2);
+        border-color: #007bff;
+        background: #f8f9ff;
     }
 
     .payment-method input[type="radio"] {
-        margin-right: 1rem;
+        margin-right: 15px;
         transform: scale(1.2);
     }
 
+        .payment-method input[type="radio"]:checked + .payment-icon + .payment-details .payment-name {
+            color: #007bff;
+            font-weight: 600;
+        }
+
+    .payment-method:has(input[type="radio"]:checked) {
+        border-color: #007bff;
+        background: #f8f9ff;
+    }
+
 .payment-icon {
-    font-size: 1.5rem;
-    margin-right: 1rem;
+    font-size: 24px;
+    margin-right: 15px;
 }
 
 .payment-details {
@@ -5332,97 +5374,116 @@ input[type="range"] {
 }
 
 .payment-name {
-    font-size: var(--large-font-size);
-    font-weight: var(--weight-600);
-    color: var(--title-color);
-    margin-bottom: 0.3125rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
 }
 
 .payment-desc {
-    font-size: var(--smaller-font-size);
-    color: var(--text-color-light);
+    font-size: 13px;
+    color: #666;
 }
 
-/* Confirm Button */
+/* Nút xác nhận */
 .confirm-btn {
     width: 100%;
-    padding: 1.125rem;
-    background: linear-gradient(135deg, var(--first-color) 0%, #e65c00 100%);
-    color: #fff;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
     border: none;
-    border-radius: 0.625rem;
-    font-size: var(--large-font-size);
-    font-weight: var(--weight-600);
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
     transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-    .confirm-btn:hover:not(:disabled) {
-        background: linear-gradient(135deg, #e65c00 0%, #cc4d00 100%);
+    .confirm-btn:hover {
+        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(243, 111, 33, 0.3);
+        box-shadow: 0 5px 15px rgba(0,123,255,0.3);
     }
 
-    .confirm-btn:disabled {
-        background: #bdc3c7;
-        cursor: not-allowed;
-        box-shadow: none;
-        transform: none;
-    }
-
-/* Right Column */
-.right-column {
-    background: var(--container-color);
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-    height: fit-content;
-    position: sticky;
-    top: 1.25rem;
-}
-
+/* Container đơn hàng */
 .order-container {
-    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border: 1px solid #e8e8e8;
+    position: sticky;
+    top: 20px;
 }
 
 .order-header h2 {
-    font-size: var(--h2-font-size);
-    font-weight: var(--weight-600);
-    color: var(--title-color);
-    margin-bottom: 1.25rem;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 15px 0;
 }
 
 .order-divider {
-    height: 3px;
-    background: var(--first-color);
-    border-radius: 2px;
-    margin-bottom: 1.5rem;
+    height: 2px;
+    background: linear-gradient(90deg, #007bff, #e0e0e0);
+    margin-bottom: 20px;
+    border-radius: 1px;
 }
 
-/* Order Table */
+/* Bảng đơn hàng */
 .order__table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 1rem;
+    margin-bottom: 15px;
 }
 
     .order__table th {
         background: #f8f9fa;
-        padding: 0.75rem 0.5rem;
+        padding: 10px 8px;
         text-align: left;
-        font-weight: var(--weight-600);
-        color: var(--title-color);
-        border-bottom: 2px solid var(--border-color);
-        font-size: var(--small-font-size);
+        font-weight: 600;
+        color: #555;
+        font-size: 13px;
+        border-bottom: 2px solid #e0e0e0;
     }
 
+    .order__table td {
+        padding: 12px 8px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+    }
+
+/* Scroll indicator */
+.scroll-indicator {
+    text-align: center;
+    padding: 10px;
+    background: #f8f9fa;
+    color: #666;
+    font-size: 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Container sản phẩm có thể cuộn */
 .products-container {
     max-height: 300px;
     overflow-y: auto;
-    border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 15px;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
 }
 
     .products-container::-webkit-scrollbar {
@@ -5435,134 +5496,257 @@ input[type="range"] {
     }
 
     .products-container::-webkit-scrollbar-thumb {
-        background: var(--first-color);
+        background: #c1c1c1;
         border-radius: 3px;
     }
 
-.product-row {
-    border-bottom: 1px solid var(--border-color-alt);
-    transition: background-color 0.2s ease;
-}
+        .products-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
 
-    .product-row:hover {
-        background-color: #f8f9fa;
-    }
-
-    .product-row td {
-        padding: 0.9375rem 0.5rem;
-        vertical-align: middle;
-    }
-
+/* Hình ảnh sản phẩm */
 .order__img {
-    width: 3.125rem;
-    height: 3.125rem;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
-    border-radius: 0.375rem;
-    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
 }
 
+/* Tên sản phẩm */
 .product-name {
-    font-size: var(--small-font-size);
-    font-weight: var(--weight-600);
-    color: var(--title-color);
-    margin-bottom: 0.3125rem;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
 }
 
 .product-category {
-    font-size: var(--smaller-font-size);
-    color: var(--text-color-light);
-    background: #ecf0f1;
-    padding: 0.125rem 0.5rem;
-    border-radius: 1rem;
+    font-size: 12px;
+    color: #666;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
 }
 
-.product-type {
-    font-size: var(--small-font-size);
-    color: var(--text-color);
-    background: #e8f4f8;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-}
-
-.table__quantity {
-    font-weight: var(--weight-600);
-    color: var(--title-color);
-}
-
-.table__price {
-    font-weight: var(--weight-600);
-    color: #27ae60;
-}
-
-.scroll-indicator {
-    text-align: center;
-    padding: 0.625rem;
-    background: var(--first-color);
-    color: #fff;
-    font-size: var(--tiny-font-size);
-    border-radius: 0.375rem;
-    margin-bottom: 1rem;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.7;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-/* Order Summary */
+/* Tóm tắt đơn hàng */
 .order-summary {
-    border-top: 2px solid var(--border-color);
-    margin-top: 1.25rem;
+    border-top: 2px solid #e0e0e0;
+    margin-top: 15px;
+    padding-top: 15px;
 }
 
 .summary-row td {
-    padding: 0.75rem 0.5rem;
-    border-bottom: 1px solid var(--border-color-alt);
+    padding: 8px 8px;
+    border-bottom: none;
 }
 
 .order__subtitle {
-    font-weight: var(--weight-600);
-    color: var(--title-color);
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+}
+
+.table__price {
+    font-weight: 600;
+    color: #333;
 }
 
 .order__grand-total {
-    font-size: var(--h3-font-size);
-    font-weight: var(--weight-700);
-    color: #e74c3c;
+    font-size: 18px;
+    font-weight: 700;
+    color: #007bff;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Modal thông tin ngân hàng */
+.modal-bank-info {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .modal-bank-info.hidden {
+        display: none;
+    }
+
+.modal-bank-info__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(3px);
+}
+
+.modal-bank-info__content {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    position: relative;
+    z-index: 1001;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+    .modal-bank-info__content h4 {
+        margin: 0 0 20px 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+        text-align: center;
+    }
+
+.modal-bank-info__details {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+    align-items: flex-start;
+}
+
+.modal-bank-info__qr {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.modal-bank-info__details div {
+    flex: 1;
+}
+
+.modal-bank-info__details p {
+    margin: 8px 0;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-bank-info__details strong {
+    color: #555;
+    font-weight: 500;
+}
+
+.modal-bank-info__details span {
+    color: #333;
+    font-weight: 600;
+}
+
+#confirm-transfer-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    #confirm-transfer-btn:hover {
+        background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+    }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
     .checkout-wrapper {
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
+        flex-direction: column;
+        gap: 20px;
     }
 
     .right-column {
-        position: static;
+        flex: none;
+        max-width: none;
     }
 
-    .main {
-        padding: 0.625rem;
+    .order-container {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .main .container {
+        padding: 0 15px;
     }
 
     .shipping-container,
     .payment-container,
     .order-container {
-        padding: 1.25rem;
+        padding: 20px;
+    }
+
+    .checkout-wrapper {
+        margin-top: 20px;
+    }
+
+    .payment-method {
+        padding: 12px;
+    }
+
+    .payment-icon {
+        font-size: 20px;
+        margin-right: 10px;
+    }
+
+    .modal-bank-info__content {
+        padding: 25px;
+        margin: 20px;
+    }
+
+    .modal-bank-info__details {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .modal-bank-info__qr {
+        align-self: center;
     }
 }
-/* Dropdown gợi ý */
+
+@media (max-width: 480px) {
+    .main .container {
+        padding: 0 10px;
+    }
+
+    .shipping-container,
+    .payment-container,
+    .order-container {
+        padding: 15px;
+    }
+
+    .section-title {
+        font-size: 18px;
+    }
+
+    .order-header h2 {
+        font-size: 20px;
+    }
+
+    .form-input, .form-textarea {
+        padding: 10px 12px;
+    }
+
+    .confirm-btn {
+        padding: 12px 20px;
+        font-size: 15px;
+    }
+}
+/* Tìm kiếm xổ */
 .search__suggestions {
     position: absolute;
     background: #fff;
