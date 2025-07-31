@@ -15,6 +15,7 @@ namespace FShop6.Areas.KhachHang.Models
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal DonGia { get; set; }
+
         [Column("DonHang_ID")]
         public int? IDDonHang { get; set; }
         [ForeignKey("IDDonHang")]
