@@ -38,6 +38,8 @@ builder.Services.AddScoped<IQuanLyDonHangServices, QuanLyDonHangServices>();
 
 // 🟢 Đăng ký dịch vụ QuanLySanPhamService
 builder.Services.AddScoped<IQuanLySanPhamServices, QuanLySanPhamServices>();
+// 🟢 Đăng ký dịch vụ TinTucService
+builder.Services.AddScoped<ITinTucService, TinTucService>();
 
 // Đăng ký DichVuAIThongMinh như Scoped service
 builder.Services.AddScoped<DichVuAIThongMinh>();

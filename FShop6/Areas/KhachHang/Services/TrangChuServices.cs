@@ -32,7 +32,7 @@ namespace FShop6.Areas.KhachHang.Services
 
             // Sản phẩm nổi bật
             var sanPhamNoiBat = await _context.SanPham
-                .Where(sp => sp.BienThes.Any(bt => bt.NoiBat))
+                .Where(sp => sp.TrangThai == true && sp.NoiBat == true)
                 .Take(12)
                 .Select(sp => new SanPhamTrangChuViewModel
                 {
@@ -47,6 +47,7 @@ namespace FShop6.Areas.KhachHang.Services
 
             // Sản phẩm mới (dựa trên ngày tạo)
             var sanPhamMoi = await _context.SanPham
+            .Where(sp => sp.TrangThai == true)
             .OrderByDescending(sp => sp.NgayTao)
             .Take(12)
             .Select(sp => new SanPhamTrangChuViewModel
@@ -64,7 +65,7 @@ namespace FShop6.Areas.KhachHang.Services
             var sanPhamPhoBien = await _context.ChiTietDonHang
                 .Include(ct => ct.BienThe)
                     .ThenInclude(bt => bt.SanPham)
-                        .ThenInclude(sp => sp.DanhMuc)
+                 .Where(g => g.BienThe.SanPham.TrangThai == true)
                 .GroupBy(ct => ct.BienThe.MaSanPham)
                 .OrderByDescending(g => g.Sum(x => x.SoLuong))
                 .Take(8)

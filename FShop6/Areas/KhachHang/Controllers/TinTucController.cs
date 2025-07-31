@@ -11,19 +11,12 @@ namespace FShop6.Areas.KhachHang.Controllers
     {
         private readonly ITinTucService _tinTucService;
 
-        public TinTucController(ITinTucService tinTucService)
         public TinTucController(IHeaderServices headerServices, ITinTucService tinTucService)
         : base(headerServices)
-        {
-            _tinTucService = tinTucService
-        }
-        public IActionResult TinTuc()
         {
             _tinTucService = tinTucService;
         }
 
-
-    
         public async Task<IActionResult> TinTuc()
         {
             var danhSachTinTuc = await _tinTucService.LayTinTucHienThiAsync();
