@@ -117,11 +117,26 @@ namespace FShop6.Areas.Admin.Services
         {
             try
             {
-                var sanPham = await _context.SanPham.FindAsync(MaSanPham);
+                var sanPham = await _context.SanPham
+                    .Include(sp => sp.BienThes)
+                    .ThenInclude(bt => bt.AnhBienThe)
+                    .FirstOrDefaultAsync(sp => sp.MaSanPham == MaSanPham);
+
                 if (sanPham == null)
                 {
                     return;
                 }
+
+                var maBienThe = sanPham.BienThes.Select(bt => (int?)bt.MaBienThe);
+                bool coTrongDonHang = await _context.ChiTietDonHang
+                    .AnyAsync(ctdh => maBienThe.Contains(ctdh.MaBienThe) && ctdh.DonHang.TrangThai != "Đã giao hàng");
+
+                if (coTrongDonHang)
+                {
+                    Console.WriteLine("Không thể xoá sản phẩm vì có biến thể đã được đặt hàng.");
+                    return;
+                }
+
                 if (!string.IsNullOrEmpty(sanPham.HinhAnhDaiDien))
                 {
                     var duongDanAnh = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images", sanPham.HinhAnhDaiDien);
@@ -131,6 +146,27 @@ namespace FShop6.Areas.Admin.Services
                     }
                 }
 
+                foreach (var bienThe in sanPham.BienThes)
+                {
+                    // Xoá ảnh biến thể (file + DB)
+                    foreach (var anh in bienThe.AnhBienThe)
+                    {
+                        var duongDanAnhBienThe = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images", anh.URL);
+                        if (System.IO.File.Exists(duongDanAnhBienThe))
+                        {
+                            System.IO.File.Delete(duongDanAnhBienThe);
+                        }
+                        _context.AnhBienThe.Remove(anh);
+                    }
+                    // Xoá chi tiết đơn hàng liên quan đến biến thể này
+                    var chiTietDonHangs = _context.ChiTietDonHang
+                        .Where(ctdh => ctdh.MaBienThe == bienThe.MaBienThe);
+                    _context.ChiTietDonHang.RemoveRange(chiTietDonHangs);
+
+                    // Xoá biến thể
+                    _context.BienThe.Remove(bienThe);
+                }
+                // Cuối cùng xoá sản phẩm
                 _context.SanPham.Remove(sanPham);
                 await _context.SaveChangesAsync();
             }
