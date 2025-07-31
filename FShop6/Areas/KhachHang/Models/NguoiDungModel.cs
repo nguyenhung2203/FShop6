@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FShop6.Areas.KhachHang.Models
 {
+    [Table("NguoiDung")]
     public class NguoiDungModel
     {
             [Key]

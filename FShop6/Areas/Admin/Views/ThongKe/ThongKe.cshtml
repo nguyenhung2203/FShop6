@@ -1,65 +1,99 @@
 ﻿@{
-	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/CustomerLayout.cshtml";
 	ViewData["Title"] = "Thống kê";
 }
-<main>
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="index.html">Trang chủ</a>
-        </li>
-        <li class="breadcrumb-item active">Thống kê đơn hàng</li>
-    </ol>
-    <!-- Biểu đồ thống kê -->
-    <div class="card mb-3">
-        <div class="card-header bg-info text-white">
-            <i class="fa fa-bar-chart"></i>
-            Biểu đồ doanh thu theo tháng (Cột)
+@model FShop6.Areas.Admin.Models.ThongKeViewModel;
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="index.html">Trang chủ</a>
+            </li>
+            <li class="breadcrumb-item active">Thống kê đơn hàng</li>
+        </ol>
+        <!-- Bộ lọc -->
+        @using (Html.BeginForm("ThongKe", "ThongKe", FormMethod.Post))
+        {
+            <div class="bo-loc">
+                <h4 class="loc">Chọn tháng:</h4>
+                <div class="input-group-1">
+                    <!-- Dropdown chọn tháng -->
+                    <select class="form-control" id="monthFilter" name="month">
+                        @foreach (var month in ViewData["Months"] as List<int>)
+                        {
+                            <option value="@month" @(month == DateTime.Now.Month ? "selected" : "")>Tháng @month</option>
+                        }
+                    </select>
+
+                    <!-- Dropdown chọn năm -->
+                    <select class="form-control" id="yearFilter" name="year">
+                        @foreach (var year in ViewData["Years"] as List<int>)
+                        {
+                            <option value="@year" @(year == DateTime.Now.Year ? "selected" : "")>Năm @year</option>
+                        }
+                    </select>
+
+                    <!-- Nút submit -->
+                    <button type="submit" class="submit-thong-ke">Thống kê</button>
+                </div>
+            </div>
+        }
+        <br>
+        <!-- Biểu đồ thống kê -->
+        <div class="card mb-3">
+            <div class="card-header bg-info text-white">
+                <i class="fa fa-bar-chart"></i>
+                Biểu đồ doanh thu theo tháng (Cột)
+            </div>
+            <div class="card-body">
+                <canvas id="yearChart" height="100"></canvas>
+
+                <!-- Nhúng dữ liệu từ Razor vào HTML dưới dạng JSON -->
+                <script type="application/json" id="yearChartData">
+                    @Html.Raw(Json.Serialize(
+                                 Enumerable.Range(1, 12).Select(thang => new
+                                 {
+                                     thang,
+                                     tongDoanhThu = Model.ThongKeTheoNam
+                                         .FirstOrDefault(x => x.Thang == thang)?.TongDoanhThu ?? 0
+                                 })
+                             ))
+                </script>
+            </div>
         </div>
-        <div class="card-body">
-            <canvas id="revenueBarChart" width="100%" height="40"></canvas>
-        </div>
-    </div>
-    <!-- Bảng doanh thu theo ngày -->
-    <div class="card mb-3">
-        <div class="card-header bg-success text-white">
-            <i class="fa fa-calendar"></i>
-            Bảng doanh thu theo ngày
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dailyRevenueTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Ngày</th>
-                            <th>Tổng doanh thu</th>
-                            <th>Số đơn hàng</th>
-                            <th>Ghi chú</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Ví dụ dữ liệu -->
-                        <tr>
-                            <td>20/07/2025</td>
-                            <td>12,000,000</td>
-                            <td>15</td>
-                            <td>Doanh thu cao nhất tuần</td>
-                        </tr>
-                        <tr>
-                            <td>19/07/2025</td>
-                            <td>8,500,000</td>
-                            <td>10</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>18/07/2025</td>
-                            <td>9,200,000</td>
-                            <td>12</td>
-                            <td></td>
-                        </tr>
-                        <!-- ...thêm dữ liệu khác... -->
-                    </tbody>
-                </table>
+        <br>
+        
+        <br>
+        <!-- Bảng doanh thu theo ngày -->
+        <div class="card mb-3">
+            <div class="card-header bg-success text-white">
+                <i class="fa fa-calendar"></i>
+                Bảng doanh thu theo tháng
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Tổng Doanh Thu</th>
+                                <th>Tổng Số Đơn Hàng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ThongKeTheoThang)
+                            {
+                                <tr>
+                                    <td>@item.Ngay.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.TongDoanhThu.ToString("N0")</td>
+                                    <td>@item.TongSoDonHang</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</main>
+</div>

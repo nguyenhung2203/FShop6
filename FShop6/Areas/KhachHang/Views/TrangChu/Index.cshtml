@@ -21,12 +21,45 @@
         </div>
     </section>
 
+    <!--=============== STATS ===============-->
+    <section class="stats section">
+        <div class="stats__container container grid">
+            <div class="stats__item">
+                <i class="fi fi-rs-star stats__icon"></i>
+                <div class="stats__content">
+                    <h3 class="stats__number">CHÍNH HÃNG</h3>
+                    <p class="stats__text">Sản phẩm FPT PolySchool độc quyền</p>
+                </div>
+            </div>
+            <div class="stats__item">
+                <i class="fi fi-rs-heart stats__icon"></i>
+                <div class="stats__content">
+                    <h3 class="stats__number">HANDMADE</h3>
+                    <p class="stats__text">Chất lượng cao cấp</p>
+                </div>
+            </div>
+            <div class="stats__item">
+                <i class="fi fi-rs-rocket stats__icon"></i>
+                <div class="stats__content">
+                    <h3 class="stats__number">EXPRESS</h3>
+                    <p class="stats__text">Giao hàng siêu tốc</p>
+                </div>
+            </div>
+            <div class="stats__item">
+                <i class="fi fi-rs-dollar stats__icon"></i>
+                <div class="stats__content">
+                    <h3 class="stats__number">STUDENT</h3>
+                    <p class="stats__text">Giá ưu đãi sinh viên</p>
+                </div>
+            </div>
+        </div>
+    </section>
     <!--=============== Danh mục phổ biến ===============-->
     <section class="categories container section">
         <h3 class="section__title"><span>Danh mục phổ biến</span></h3>
         <div class="categories__container swiper">
             <div class="swiper-wrapper">
-                 @foreach (var dm in Model.DanhMucPhoBien)
+                @foreach (var dm in Model.DanhMucPhoBien)
                 {
                     <a href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = dm.Id, loai = 1 })" class="category__item swiper-slide">
                         <img src=""
@@ -46,29 +79,33 @@
             </div>
         </div>
     </section>
-
     <!--=============== Sản phẩm nổi bật và phổ biến ===============-->
     <section class="products container section">
         <div class="tab__btns">
             <span class="tab__btn active-tab" data-target="#featured">Nổi bật</span>
-            <span class="tab__btn" data-target="#popular">Phổ biến</span>
+            <span class="tab__btn" data-target="#popular">Sản phẩm bán chạy</span>
         </div>
 
         <div class="tab__items">
             <div class="tab__item active-tab" content id="featured">
                 <div class="products__container grid">
-                   @foreach(var sanPham in Model.SanPhamNoiBat)
+                    @foreach (var sanPham in Model.SanPhamNoiBat)
                     {
-                        <div class="product__item swiper-slide">
+                        <div class="product__item">
                             <div class="product__banner">
-                                <a href="details.html" class="product__images">
+                                <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
                                     <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
                                          alt="@sanPham.TenSanPham"
                                          class="product__img default" />
+
+                                    <!-- Hashtag overlay trên ảnh -->
+                                    <div class="product__hashtag-overlay">
+                                        <span class="hashtag">#Hot</span>
+                                    </div>
                                 </a>
                             </div>
                             <div class="product__content">
-                                <a href="details.html">
+                                <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                                     <h3 class="product__title">@sanPham.TenSanPham</h3>
                                 </a>
                                 <p class="product__description">@sanPham.MoTaNgan</p>
@@ -76,14 +113,17 @@
                             <div class="product__bottom-row">
                                 <div class="product__price flex">
                                     <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                    @* Thêm giá cũ nếu có giảm giá *@
+                                    @* <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan * 1.2)</span> *@
                                 </div>
                                 <div class="product-card-actions">
-                                    <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-                                        <i class="fi fi-rs-shopping-bag-add"></i>
-                                    </a>
-                                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
-                                        <i class="fi fi-rs-heart"></i>
-                                    </a>
+                                    @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                    {
+                                        @Html.Hidden("maSanPham", sanPham.MaSanPham)
+                                        <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
+                                            <i class="fi fi-rs-heart"></i>
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -94,16 +134,21 @@
                 <div class="products__container grid">
                     @foreach (var sanPham in Model.SanPhamPhoBien)
                     {
-                        <div class="product__item swiper-slide">
+                        <div class="product__item">
                             <div class="product__banner">
-                                <a href="details.html" class="product__images">
+                                <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
                                     <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
                                          alt="@sanPham.TenSanPham"
                                          class="product__img default" />
+
+                                    <!-- Hashtag overlay trên ảnh -->
+                                    <div class="product__hashtag-overlay">
+                                        <span class="hashtag">#Hot</span>
+                                    </div>
                                 </a>
                             </div>
                             <div class="product__content">
-                                <a href="details.html">
+                                <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                                     <h3 class="product__title">@sanPham.TenSanPham</h3>
                                 </a>
                                 <p class="product__description">@sanPham.MoTaNgan</p>
@@ -111,14 +156,17 @@
                             <div class="product__bottom-row">
                                 <div class="product__price flex">
                                     <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                    @* Thêm giá cũ nếu có giảm giá *@
+                                    @* <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan * 1.2)</span> *@
                                 </div>
                                 <div class="product-card-actions">
-                                    <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-                                        <i class="fi fi-rs-shopping-bag-add"></i>
-                                    </a>
-                                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
-                                        <i class="fi fi-rs-heart"></i>
-                                    </a>
+                                    @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                    {
+                                        @Html.Hidden("maSanPham", sanPham.MaSanPham)
+                                        <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
+                                            <i class="fi fi-rs-heart"></i>
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -129,7 +177,7 @@
     </section>
 
     <!--=============== Sản phẩm mới về ===============-->
-    <section class="new__arrivals container section">
+    <section class="new__arrivals container section" tab__btn>
         <h3 class="section__title"><span>Hàng mới về</span></h3>
         <div class="new__container swiper">
             <div class="swiper-wrapper">
@@ -137,14 +185,19 @@
                 {
                     <div class="product__item swiper-slide">
                         <div class="product__banner">
-                            <a href="details.html" class="product__images">
+                            <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
                                 <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
                                      alt="@sanPham.TenSanPham"
                                      class="product__img default" />
+
+                                <!-- Hashtag overlay trên ảnh -->
+                                <div class="product__hashtag-overlay">
+                                    <span class="hashtag">#Hot</span>
+                                </div>
                             </a>
                         </div>
                         <div class="product__content">
-                            <a href="details.html">
+                            <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                                 <h3 class="product__title">@sanPham.TenSanPham</h3>
                             </a>
                             <p class="product__description">@sanPham.MoTaNgan</p>
@@ -152,19 +205,20 @@
                         <div class="product__bottom-row">
                             <div class="product__price flex">
                                 <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                @* <span class="old__price">100</span> *@
                             </div>
                             <div class="product-card-actions">
-                                <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-                                    <i class="fi fi-rs-shopping-bag-add"></i>
-                                </a>
-                                <a href="#" class="action__btn" aria-label="Add to Wishlist">
-                                    <i class="fi fi-rs-heart"></i>
-                                </a>
+                                @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                {
+                                    @Html.Hidden("maSanPham", sanPham.MaSanPham)
+                                    <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
+                                        <i class="fi fi-rs-heart"></i>
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
                 }
-            </div>
             </div>
 
             <div class="swiper-button-prev">
@@ -177,7 +231,53 @@
     </section>
     <section class="new__arrivals container section">
     </section>
-
+    <!-- =============== THÊM VÀO TRƯỚC SECTION TIN TỨC =============== -->
+    <!-- Features Section - Ưu điểm nổi bật -->
+    <section class="features section">
+        <div class="features__container container">
+            <h3 class="section__title">
+                <span>Tại sao chọn</span> FShop6?
+            </h3>
+            <div class="features__grid grid">
+                <div class="features__item">
+                    <div class="features__icon-box">
+                        <i class="fi fi-rs-trophy features__icon"></i>
+                    </div>
+                    <div class="features__content">
+                        <h4 class="features__title">Chất lượng đảm bảo</h4>
+                        <p class="features__description">Sản phẩm chính hãng, được kiểm tra kỹ lưỡng trước khi giao đến tay khách hàng.</p>
+                    </div>
+                </div>
+                <div class="features__item">
+                    <div class="features__icon-box">
+                        <i class="fi fi-rs-headphones features__icon"></i>
+                    </div>
+                    <div class="features__content">
+                        <h4 class="features__title">Hỗ trợ 24/7</h4>
+                        <p class="features__description">Đội ngũ tư vấn chuyên nghiệp, sẵn sàng hỗ trợ khách hàng mọi lúc mọi nơi.</p>
+                    </div>
+                </div>
+                <div class="features__item">
+                    <div class="features__icon-box">
+                        <i class="fi fi-rs-refresh features__icon"></i>
+                    </div>
+                    <div class="features__content">
+                        <h4 class="features__title">Đổi trả dễ dàng</h4>
+                        <p class="features__description">Chính sách đổi trả linh hoạt trong 7 ngày, không cần lý do.</p>
+                    </div>
+                </div>
+                <div class="features__item">
+                    <div class="features__icon-box">
+                        <i class="fi fi-rs-dollar features__icon"></i>
+                    </div>
+                    <div class="features__content">
+                        <h4 class="features__title">Giá cả hợp lý</h4>
+                        <p class="features__description">Cam kết giá tốt nhất thị trường với nhiều ưu đãi hấp dẫn cho sinh viên.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <!--=============== TIN TỨC ===============-->
     <section class="news section container">
         <h3 class="section__title"><span>Tin tức</span> & Bài viết</h3>
@@ -186,25 +286,23 @@
             @foreach (var tinTuc in Model.TinTuc)
             {
                 <div class="news__item">
-                @*     <div class="news__banner">
-                    <a href="blog-post.html">
-                        <img src="assets/img/home-img.png" alt="Ảnh tin tức" class="news__img">
-                    </a>
-                </div> *@
-                <div class="news__content">
-                    <div class="news__meta">
-                        <span class="news__author">bởi Admin</span>
-                        <span class="news__date">@tinTuc.ThoiGianTao</span>
+                    <div class="news__content">
+                        <div class="news__meta">
+                            <span class="news__author">bởi Admin</span>
+                            <span class="news__date">@tinTuc.ThoiGianTao</span>
+                        </div>
+                        <a href="blog-post.html">
+                            <h3 class="news__title">@tinTuc.TieuDe</h3>
+                        </a>
+                        <p class="news__description">
+                            @(tinTuc.MoTaNgan + "...")
+                        </p>
+                        <a href="@Url.Action("ChiTietTinTuc", "TinTuc", new { area = "KhachHang", id = tinTuc.MaTinTuc })" class="news__readmore">
+                            Đọc thêm <i class="fi fi-rs-arrow-right"></i>
+                        </a>
+
                     </div>
-                    <a href="blog-post.html">
-                        <h3 class="news__title">@tinTuc.TieuDe</h3>
-                    </a>
-                    <p class="news__description">
-                        @(tinTuc.MoTaNgan + "...")
-                    </p>
-                    <a href="blog-post.html" class="news__readmore">Đọc thêm <i class="fi fi-rs-arrow-right"></i></a>
                 </div>
-            </div>
             }
 
         </div>
@@ -213,7 +311,7 @@
     <section class="showcase section">
     </section>
     <!--=============== SHOWCASE ===============-->
-    <section class="showcase section">
+    @* <section class="showcase section">
         <div class="showcase__container container grid">
             @foreach (var danhMuc in Model.DanhMucSanPhamHienThi)
             {
@@ -241,6 +339,5 @@
                 </div>
             }
         </div>
-    </section>
+    </section> *@
 </main>
-

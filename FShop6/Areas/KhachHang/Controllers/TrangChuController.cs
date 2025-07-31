@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class TrangChuController : Controller
+    public class TrangChuController : BaseController
     {
         private readonly ITrangChuService _trangChuService;
-
-        public TrangChuController(ITrangChuService trangChuService)
+        public TrangChuController(IHeaderServices headerServices, ITrangChuService trangChuService)
+            : base(headerServices)
         {
             _trangChuService = trangChuService;
         }

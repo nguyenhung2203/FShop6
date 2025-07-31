@@ -1,8 +1,8 @@
 ﻿namespace FShop6.Areas.KhachHang.Models
 {
-    public class BienTheTrangChuViewModel
+    public class SanPhamTrangChuViewModel
     {
-        public int MaBienThe { get; set; }
+        public int MaSanPham { get; set; }
         public string TenSanPham { get; set; }
         public string HinhAnhDaiDien { get; set; }
         public decimal GiaBan { get; set; }

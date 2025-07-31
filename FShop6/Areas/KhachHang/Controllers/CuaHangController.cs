@@ -1,17 +1,18 @@
 ﻿using FShop6.Areas.KhachHang.Models;
 using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class CuaHangController : Controller
+    public class CuaHangController : BaseController
     {
-        private readonly ICuaHangServices _cuaHangService;
-
-        public CuaHangController(ICuaHangServices cuaHangService)
+        private readonly IShopService _shopService;
+        public CuaHangController(IHeaderServices headerServices, IShopService shopService)
+            : base(headerServices)
         {
-            _cuaHangService = cuaHangService;
+            _shopService = shopService;
         }
 
         public async Task<IActionResult> SanPham(int? maDanhMuc, int? loai, int? loaiXapXep, decimal? khoangGia, int trang = 1)
@@ -22,26 +23,50 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             if (loai == 1 && maDanhMuc.HasValue && maDanhMuc.Value > 0)
             {
-                model = await _cuaHangService.LaySanPhamDanhMuc(maDanhMuc.Value, trang);
+                model = await _shopService.LaySanPhamDanhMuc(maDanhMuc.Value, trang);
             }
-            else if (loai == 2)
+            else if (loai == 2 && loaiXapXep.HasValue)
             {
-                model = await _cuaHangService.LaySanPhamXapXep(loaiXapXep.Value, trang);
+                model = await _shopService.LaySanPhamXapXep(loaiXapXep.Value, trang);
             }
-            else if (loai == 3)
+            else if (loai == 3 && khoangGia.HasValue)
             {
-                model = await _cuaHangService.LaySanPhamTheoGia(khoangGia.Value, trang);
+                model = await _shopService.LaySanPhamTheoGia(khoangGia.Value, trang);
             }    
+
             else
             {
-                model = await _cuaHangService.LaySanPhamTatCa(trang);
+                model = await _shopService.LaySanPhamTatCa(trang);
             }
-
+            ViewBag.loaiXapXep = loaiXapXep;
             ViewBag.MaDanhMuc = maDanhMuc;
             ViewBag.Loai = loai;
             ViewBag.KhoangGia = khoangGia;
 
             return View(model);
         }
+
+        public async Task<IActionResult> ChiTietSanPham(int maSanPham)
+        {
+            var model = await _shopService.LayChiTietSanPhamAsync(maSanPham);
+            if (model == null)
+            {
+                return NotFound();
+            }
+            return View(model);
+        }
+
+        public IActionResult DatHangThanhCong()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TimKiem(string tuKhoa)
+        {
+            var ketQua = await _shopService.TimKiem(tuKhoa);
+            return Json(ketQua);
+        }
+
     }
 }

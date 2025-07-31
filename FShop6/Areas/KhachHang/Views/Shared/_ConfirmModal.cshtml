@@ -1,0 +1,64 @@
+﻿<!-- Modal HTML -->
+<div id="confirmModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 id="modalTitle" class="modal-title">Xác nhận</h4>
+        </div>
+        <div class="modal-footer">
+            <button id="modalCancel" class="btn btn-secondary">Hủy</button>
+            <button id="modalConfirm" class="btn btn-primary">Xác nhận</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showConfirm(title, actionUrlOrCallback) {
+        const modal = document.getElementById('confirmModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const confirmBtn = document.getElementById('modalConfirm');
+        const cancelBtn = document.getElementById('modalCancel');
+
+        modalTitle.textContent = title;
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+
+        confirmBtn.onclick = function() {
+            hideModal();
+
+            // Kiểm tra nếu là function thì gọi, nếu là URL thì redirect
+            if (typeof actionUrlOrCallback === 'function') {
+                actionUrlOrCallback();
+            } else {
+                window.location.href = actionUrlOrCallback;
+            }
+        };
+
+        cancelBtn.onclick = hideModal;
+
+        modal.onclick = function(e) {
+            if (e.target === modal) hideModal();
+        };
+    }
+
+    function hideModal() {
+        document.getElementById('confirmModal').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    // Xử lý form có class form-huy-don
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (form.classList.contains('form-thong-bao')) {
+                e.preventDefault(); // Ngăn form submit ngay lập tức
+
+                const confirmMessage = form.querySelector('button[data-confirm]').getAttribute('data-confirm');
+
+                showConfirm(confirmMessage, function() {
+                    // Callback khi xác nhận - submit form
+                    form.submit();
+                });
+            }
+        });
+    });
+</script>

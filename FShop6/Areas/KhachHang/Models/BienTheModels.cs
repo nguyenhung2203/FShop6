@@ -34,11 +34,11 @@ namespace FShop6.Areas.KhachHang.Models
         [StringLength(100)]
         public string TinhTrang { get; set; }
 
-        public bool NoiBat { get; set; }
-
         // Navigation property
         [ForeignKey("MaSanPham")]
         public SanPhamModel SanPham { get; set; }
+        // Liên kết với AnhBienThe
+        public ICollection<AnhBienTheModel> AnhBienThe { get; set; } // Mối quan hệ 1-n
     }
 
 }

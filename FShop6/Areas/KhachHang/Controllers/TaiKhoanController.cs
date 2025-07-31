@@ -4,11 +4,14 @@ using FShop6.Data;
 using FShop6.CauHinh; // Giả định EmailHelper nằm ở đây
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Threading.Tasks;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class TaiKhoanController : Controller
+    public class TaiKhoanController : BaseController
     {
         private readonly AppDbContext _context;
         private readonly IKhachHangService _khachHangService;
@@ -92,6 +95,121 @@ namespace FShop6.Areas.KhachHang.Controllers
             HttpContext.Session.SetString("VaiTro", nguoiDung.TenVaiTro);
 
             return RedirectToAction("DangKy", "TaiKhoan", new { area = "KhachHang" });
+            
+        private readonly ITaiKhoanServices _taiKhoanServices;
+        public TaiKhoanController(IHeaderServices headerServices, ITaiKhoanServices taiKhoanServices)
+            : base(headerServices)
+        {
+            _taiKhoanServices = taiKhoanServices;
+        }
+
+
+        public async Task<IActionResult> HoSo()
+        {
+            var moDel = await _taiKhoanServices.LayThongTinHoSo(5);
+            return View(moDel);
+        }
+        [HttpPost]
+        public ActionResult HuyDon(string maDonHang)
+        {
+            try
+            {
+                bool ketQua = _taiKhoanServices.HuyDonHang(maDonHang);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Hủy đơn hàng thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Không thể hủy đơn hàng khi đã được xử lý.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            return RedirectToAction("HoSo", "TaiKhoan");
+        }
+
+        [HttpPost]
+        public ActionResult CapNhatHoSo(HoSoViewModel hoSo)
+        {
+            try
+            {
+                var nguoiDung = hoSo.nguoiDungModels;
+                if (nguoiDung == null || nguoiDung.MaNguoiDung == 0)
+                {
+                    TempData["ThongBao"] = "Dữ liệu người dùng không hợp lệ.";
+                    TempData["LoaiThongBao"] = "warning";
+                    return RedirectToAction("HoSo", "TaiKhoan");
+                }
+                bool ketQua = _taiKhoanServices.CapNhatThongTinHoSo(nguoiDung);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Cập nhật hồ sơ thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Cập nhật hồ sơ thất bại.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+            }
+            catch (SqlException ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra Database: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            return RedirectToAction("HoSo", "TaiKhoan");
+        }
+        [HttpPost]
+        public ActionResult DoiMatKhau(string? matKhauCu, string? matKhauMoi, string? matKhauNhapLai)
+        {
+            if (string.IsNullOrEmpty(matKhauCu) || string.IsNullOrEmpty(matKhauMoi) || string.IsNullOrEmpty(matKhauNhapLai))
+            {
+                TempData["ThongBao"] = "Vui lòng nhập đầy đủ thông tin.";
+                TempData["LoaiThongBao"] = "warning";
+                return RedirectToAction("HoSo", "TaiKhoan");
+            }
+            if (matKhauMoi != matKhauNhapLai)
+            {
+                TempData["ThongBao"] = "Mật khẩu mới và mật khẩu nhập lại không khớp.";
+                TempData["LoaiThongBao"] = "warning";
+                return RedirectToAction("HoSo", "TaiKhoan");
+            }
+            try
+            {
+                bool ketQua = _taiKhoanServices.DoiMatKhau(5, matKhauCu, matKhauMoi);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Đổi mật khẩu thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Mật khẩu cũ không đúng hoặc có lỗi xảy ra.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+            }
+            catch (SqlException ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra Database: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            return RedirectToAction("HoSo", "TaiKhoan");
         }
 
         // GET: Đăng ký
@@ -199,6 +317,38 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("DangNhap");
+        }
+
+         
+        [HttpPost] // Chỉ nhận POST request
+        public ActionResult ThemYeuThich(int maSanPham, int maNguoiDung, string giaoDien)
+        {
+            try
+            {
+                maNguoiDung = 5;
+                bool ketQua = _taiKhoanServices.ThemSanPham(maNguoiDung, maSanPham); 
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Thêm sản phẩm yêu thích thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Sản phẩm đã tồn tại trong danh sách yêu thích.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            if (!string.IsNullOrEmpty(giaoDien))
+            {
+                return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
+            }
+
+            return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
         }
     }
 }

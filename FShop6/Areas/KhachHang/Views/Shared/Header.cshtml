@@ -24,7 +24,6 @@
             </div>
         </div>
     </div>
-
     <nav class="nav container" id="nav-container">
         <div class="nav__menu" id="nav-menu">
             <div class="nav__menu-top">
@@ -70,20 +69,24 @@
                         Giới thiệu</a>
                 </li>
             </ul>
-            <div class="header__search">
-                <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form__input" />
+            <div class="header__search" id="search-box">
+                <input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm..." class="form__input" autocomplete="off" />
                 <button class="search__btn">
                     <img src="~/KhachHang/images/search.png" alt="icon tìm kiếm" />
                 </button>
+
+                <!-- Gợi ý sản phẩm -->
+                <div class="search__suggestions" id="search-suggestions"></div>
             </div>
+
         </div>
 
         <div class="header__user-actions">
             <a href="@Url.Action("SanPhamYeuThich", "TaiKhoan", new { area = "KhachHang" })" class="header__action-btn" title="Yêu thích">
-                <i class="fi fi-rs-heart"></i><span class="count">0</span>
+                <i class="fi fi-rs-heart"></i><span class="count">@ViewBag.TongSoSanPhamYeuThich</span>
             </a>
             <a href="@Url.Action("GioHang", "GioHang", new { area = "KhachHang" })" class="header__action-btn" title="Giỏ hàng">
-                <i class="fi fi-rs-shopping-bag-add"></i><span class="count">0</span>
+                <i class="fi fi-rs-shopping-bag-add"></i><span class="count">@ViewBag.TongSoSanPhamGioHang</span>
             </a>
             <div class="header__action-btn nav__toggle" id="nav-toggle">
                 <img src="~/assets/img/menu-burger.svg" alt="">
@@ -91,3 +94,51 @@
         </div>
     </nav>
 </header>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("search-input");
+        const suggestions = document.getElementById("search-suggestions");
+
+        if (!input || !suggestions) {
+            console.warn("Không tìm thấy input hoặc suggestions");
+            return;
+        }
+
+        input.addEventListener("input", async () => {
+            const keyword = input.value.trim();
+            if (keyword.length < 2) {
+                suggestions.style.display = "none";
+                return;
+            }
+
+            const res = await fetch(`/KhachHang/CuaHang/TimKiem?tuKhoa=${encodeURIComponent(keyword)}`);
+            const data = await res.json();
+
+            suggestions.innerHTML = "";
+            if (data.length > 0) {
+                data.forEach(p => {
+                    const div = document.createElement("div");
+                    div.className = "suggestion__item";
+                    div.innerHTML = `
+                        <img src="${p.anh}" width="40" />
+                        <div>
+                            <strong>${p.ten}</strong><br/>
+                            <span>${p.gia}</span>
+                        </div>
+                    `;
+                    div.onclick = () => location.href = `/KhachHang/CuaHang/ChiTietSanPham?maSanPham=${p.id}`;
+                    suggestions.appendChild(div);
+                });
+                suggestions.style.display = "block";
+            } else {
+                suggestions.style.display = "none";
+            }
+        });
+
+        document.addEventListener("click", e => {
+            if (!e.target.closest("#search-box")) {
+                suggestions.style.display = "none";
+            }
+        });
+    });
+</script>
