@@ -17,7 +17,10 @@ namespace FShop6.Areas.KhachHang.Controllers
         }
         public async Task<IActionResult> GioHang()
         {
-            var model = await _gioHangServices.LayGioHang(5);
+            var maNguoiDung = HttpContext.Session.GetInt32("MaNguoiDung");
+            if (maNguoiDung == null)
+                return RedirectToAction("DangNhap", "TaiKhoan", new { area = "KhachHang"});
+            var model = await _gioHangServices.LayGioHang((int)maNguoiDung);
             if (model == null)
             {
                 TempData["ThongBao"] = "Giỏ hàng của bạn hiện đang trống.";

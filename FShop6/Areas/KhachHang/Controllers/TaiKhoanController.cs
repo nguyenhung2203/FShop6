@@ -1,10 +1,9 @@
 ﻿using FShop6.Areas.KhachHang.Models;
 using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
-using FShop6.CauHinh; // Giả định EmailHelper nằm ở đây
+using FShop6.CauHinh;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Threading.Tasks;
@@ -16,8 +15,10 @@ namespace FShop6.Areas.KhachHang.Controllers
         private readonly AppDbContext _context;
         private readonly IKhachHangService _khachHangService;
         private readonly ILogger<TaiKhoanController> _logger;
+        private readonly ITaiKhoanServices _taiKhoanServices;
 
-        public TaiKhoanController(AppDbContext context, IKhachHangService khachHangService, ILogger<TaiKhoanController> logger)
+        public TaiKhoanController(IHeaderServices headerServices, AppDbContext context, IKhachHangService khachHangService, ILogger<TaiKhoanController> logger)
+             : base(headerServices)
         {
             _context = context;
             _khachHangService = khachHangService;
@@ -52,7 +53,6 @@ namespace FShop6.Areas.KhachHang.Controllers
             }
         }
 
-        // Hồ sơ người dùng
         public IActionResult HoSo()
         {
             var maNguoiDung = HttpContext.Session.GetInt32("MaNguoiDung");
@@ -95,20 +95,14 @@ namespace FShop6.Areas.KhachHang.Controllers
             HttpContext.Session.SetString("VaiTro", nguoiDung.TenVaiTro);
 
             return RedirectToAction("DangKy", "TaiKhoan", new { area = "KhachHang" });
+        }
             
-        private readonly ITaiKhoanServices _taiKhoanServices;
-        public TaiKhoanController(IHeaderServices headerServices, ITaiKhoanServices taiKhoanServices)
-            : base(headerServices)
-        {
-            _taiKhoanServices = taiKhoanServices;
-        }
 
-
-        public async Task<IActionResult> HoSo()
-        {
-            var moDel = await _taiKhoanServices.LayThongTinHoSo(5);
-            return View(moDel);
-        }
+        //public async Task<IActionResult> HoSo()
+        //{
+        //    var moDel = await _taiKhoanServices.LayThongTinHoSo(5);
+        //    return View(moDel);
+        //}
         [HttpPost]
         public ActionResult HuyDon(string maDonHang)
         {
@@ -323,9 +317,12 @@ namespace FShop6.Areas.KhachHang.Controllers
         [HttpPost] // Chỉ nhận POST request
         public ActionResult ThemYeuThich(int maSanPham, int maNguoiDung, string giaoDien)
         {
+            Console.WriteLine($"Thêm sản phẩm yêu thích: MaSanPham={maSanPham}, MaNguoiDung={maNguoiDung}, GiaoDien={giaoDien}");
             try
             {
-                maNguoiDung = 5;
+                maNguoiDung = (int)HttpContext.Session.GetInt32("MaNguoiDung");
+                if (maNguoiDung == null)
+                    return RedirectToAction("DangNhap");
                 bool ketQua = _taiKhoanServices.ThemSanPham(maNguoiDung, maSanPham); 
                 if (ketQua)
                 {
