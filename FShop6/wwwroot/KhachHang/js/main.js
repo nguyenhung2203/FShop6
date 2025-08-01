@@ -150,16 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!accountText || !dropdownContent) return;
 
-    // Fake user nếu chưa có
-    if (!localStorage.getItem('currentUser')) {
-        const fakeUser = {
-            name: "Ngọc",
-            email: "hung@example.com",
-            role: "user"
-        };
-        localStorage.setItem('currentUser', JSON.stringify(fakeUser));
-    }
-
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
     if (currentUser) {

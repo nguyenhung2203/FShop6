@@ -2,8 +2,9 @@
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Sản phẩm";
 }
-}
+
 @model FShop6.Areas.KhachHang.Models.PhanTrangSanPhamViewModel
+
 <main class="main">
     <section class="breadcrumb">
         <ul class="breadcrumb__list flex container">
@@ -18,12 +19,11 @@
             <aside class="shop__sidebar">
                 <div class="sidebar__widget">
                     <h3 class="widget__title">Danh Mục</h3>
-                    <ul class="widget__content filter__list" id="category-filter">
+                    <ul class="widget__content filter__list">
                         @if (Model?.DanhSachDanhMuc != null)
                         {
                             foreach (var dm in Model.DanhSachDanhMuc)
                             {
-                                // Kiểm tra nếu danh mục hiện tại đang được lọc
                                 var isChecked = ViewBag.MaDanhMuc != null && (int)ViewBag.MaDanhMuc == dm.Id;
 
                                 <li>
@@ -42,31 +42,6 @@
                         {
                             <p>Không có danh mục nào.</p>
                         }
-
-                        @section Scripts {
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const checkboxes = document.querySelectorAll('.category-checkbox');
-
-                                    checkboxes.forEach(cb => {
-                                        cb.addEventListener('change', function () {
-                                            const maDanhMuc = this.dataset.id;
-                                            const isChecked = this.checked;
-
-                                            let url = '@Url.Action("SanPham", "CuaHang", new { area = "KhachHang" })';
-
-                                            if (isChecked) {
-                                                // Đang chọn → lọc theo danh mục
-                                                window.location.href = `${url}?maDanhMuc=${maDanhMuc}&loai=1`;
-                                            } else {
-                                                // Click lần nữa → bỏ lọc (loại bỏ maDanhMuc)
-                                                window.location.href = `${url}`;
-                                            }
-                                        });
-                                    });
-                                });
-                            </script>
-                        }
                     </ul>
                 </div>
 
@@ -74,99 +49,51 @@
                     <h3 class="widget__title">Lọc Theo Giá</h3>
                     <div class="widget__content">
                         <div class="price-range">
-                            <input type="range" min="0" max="500000" value="@(ViewBag.khoangGia ?? 500000)" class="price-range__slider" id="price-range-slider">
+                            <input type="range" 
+                                   min="0" 
+                                   max="500000" 
+                                   value="@(ViewBag.KhoangGia ?? 500000)" 
+                                   class="price-range__slider" 
+                                   id="price-range-slider">
                             <span class="price-range__value" id="price-range-value">
                                 Lên đến @(ViewBag.KhoangGia != null ? string.Format("{0:N0}đ", ViewBag.KhoangGia) : "500,000đ")
-                                </span>
+                            </span>
+                            <button type="button" id="apply-price-filter" class="btn btn-primary mt-2">Áp dụng</button>
                         </div>
                     </div>
                 </div>
-                <script>
-                    const slider = document.getElementById("price-range-slider");
-                    const valueDisplay = document.getElementById("price-range-value");
-
-                    // Cập nhật giá trị khi thanh trượt thay đổi
-                    slider.addEventListener("input", function () {
-                        const value = parseInt(this.value);
-                        valueDisplay.textContent = "Lên đến " + value.toLocaleString('vi-VN') + "đ";
-
-                    const baseUrl = '@Url.Action("SanPham", "CuaHang", new { area = "KhachHang" })';
-
-                    const finalUrl = baseUrl + '?khoangGia=' + value + '&loai=3';
-
-                    window.location.href = finalUrl;
-                    });
-                </script>
-
             </aside>
 
             <div class="shop__products">
-                <div class="shop__header" style="width:228px">
-                    <select class="sort-select form__input" id="sort-by" onchange="location = this.value;">
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 1, loai = 2 })" @(ViewBag.LoaiXapXep == 1 ? "selected" : "")>Sắp xếp mặc định</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 2, loai = 2 })" @(ViewBag.LoaiXapXep == 2 ? "selected" : "")>Giá: Thấp đến Cao</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 3, loai = 2 })" @(ViewBag.LoaiXapXep == 3 ? "selected" : "")>Giá: Cao đến Thấp</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 4, loai = 2 })" @(ViewBag.LoaiXapXep == 4 ? "selected" : "")>Tên: A-Z</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 5, loai = 2 })" @(ViewBag.LoaiXapXep == 5 ? "selected" : "")>Tên: Z-A</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 6, loai = 2 })" @(ViewBag.LoaiXapXep == 6 ? "selected" : "")>Mới nhất</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 7, loai = 2 })" @(ViewBag.LoaiXapXep == 7 ? "selected" : "")>Cũ nhất</option>
+                <div class="shop__header" style="width:300px">
+                    <select class="sort-select form__input" id="sort-by">
+                        <option value="1" @(ViewBag.LoaiXapXep == 1 || ViewBag.LoaiXapXep == null ? "selected" : "")>Sắp xếp mặc định</option>
+                        <option value="2" @(ViewBag.LoaiXapXep == 2 ? "selected" : "")>Giá: Thấp đến Cao</option>
+                        <option value="3" @(ViewBag.LoaiXapXep == 3 ? "selected" : "")>Giá: Cao đến Thấp</option>
+                        <option value="4" @(ViewBag.LoaiXapXep == 4 ? "selected" : "")>Tên: A-Z</option>
+                        <option value="5" @(ViewBag.LoaiXapXep == 5 ? "selected" : "")>Tên: Z-A</option>
+                        <option value="6" @(ViewBag.LoaiXapXep == 6 ? "selected" : "")>Mới nhất</option>
+                        <option value="7" @(ViewBag.LoaiXapXep == 7 ? "selected" : "")>Cũ nhất</option>
                     </select>
                 </div>
-                <script>
-                    document.getElementById("sort-by").addEventListener("change", function () {
-                        var selectedUrl = this.value;
-                        if (selectedUrl) {
-                            window.location.href = selectedUrl;
-                        }
-                    });
-                </script>
 
-                <div class="products__container grid" id="shop-products__container">
-                    @if (Model?.DanhSachSanPham != null && Model.DanhSachSanPham.Any())
-                    {
-                        @foreach (var sanPham in Model.DanhSachSanPham)
-                        {
-                            <div class="product__item shop-product__item shop-card">
-                                <div class="product__banner">
-                                    <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
-                                        <img src="@Url.Content("~/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
-                                             alt="@sanPham.TenSanPham"
-                                             class="product__img default" />
-                                    </a>
-                                </div>
-                                <div class="product__content">
-                                    <span class="product__category">@sanPham.TenDanhMuc</span>
-                                    <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
-                                        <h3 class="product__title">@sanPham.TenSanPham</h3>
-                                    </a>
-                                    <p class="product__description">@sanPham.MoTaNgan</p>
-                                </div>
-                                <div class="product__bottom-row">
-                                    <div class="product__price">
-                                        <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                    </div>
-                                    <div class="product-card-actions">
-                                        <a href="#" class="action__btn" aria-label="Thêm yêu thích">
-                                            <i class="fi fi-rs-heart"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <p>Không có sản phẩm để hiển thị.</p>
-                    }
+                <div class="products__container grid">
+                    @await Html.PartialAsync("_DanhSachSanPhamPartial", Model)
                 </div>
-                <div class="pagination" id="pagination">
+
+                <div class="pagination">
                     @if (Model.TongSoTrang > 1)
                     {
                         <!-- Nút « -->
                         <li>
                             <a class="pagination__link icon @(Model.TrangHienTai == 1 ? "disabled" : "")"
                                href="@Url.Action("SanPham", "CuaHang", 
-                               new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, loaiXapXep = ViewBag.loaiXapXep, KhoangGia = ViewBag.KhoangGia, trang = Model.TrangHienTai - 1 })">
+                               new { area = "KhachHang", 
+                                     maDanhMuc = ViewBag.MaDanhMuc, 
+                                     loai = ViewBag.Loai, 
+                                     loaiXapXep = ViewBag.LoaiXapXep, 
+                                     khoangGia = ViewBag.KhoangGia, 
+                                     trang = Model.TrangHienTai - 1 })">
                                 «
                             </a>
                         </li>
@@ -177,7 +104,12 @@
                             <li>
                                 <a class="pagination__link @(Model.TrangHienTai == i ? "active" : "")"
                                    href="@Url.Action("SanPham", "CuaHang", 
-                                   new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loaiXapXep = ViewBag.loaiXapXep, loai = ViewBag.Loai, trang = i })">
+                                   new { area = "KhachHang", 
+                                         maDanhMuc = ViewBag.MaDanhMuc, 
+                                         loaiXapXep = ViewBag.LoaiXapXep, 
+                                         loai = ViewBag.Loai, 
+                                         khoangGia = ViewBag.KhoangGia, 
+                                         trang = i })">
                                     @i
                                 </a>
                             </li>
@@ -187,14 +119,96 @@
                         <li>
                             <a class="pagination__link icon @(Model.TrangHienTai == Model.TongSoTrang ? "disabled" : "")"
                                href="@Url.Action("SanPham", "CuaHang", 
-                               new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, loaiXapXep = ViewBag.loaiXapXep, KhoangGia = ViewBag.KhoangGia, trang = Model.TrangHienTai + 1 })">
+                               new { area = "KhachHang", 
+                                     maDanhMuc = ViewBag.MaDanhMuc, 
+                                     loai = ViewBag.Loai, 
+                                     loaiXapXep = ViewBag.LoaiXapXep, 
+                                     khoangGia = ViewBag.KhoangGia, 
+                                     trang = Model.TrangHienTai + 1 })">
                                 »
                             </a>
                         </li>
                     }
-
                 </div>
             </div>
         </div>
     </section>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Hàm tạo URL với tất cả tham số hiện tại
+        function createUrl(newParams = {}) {
+            const baseUrl = '@Url.Action("SanPham", "CuaHang", new { area = "KhachHang" })';
+            const currentParams = {
+                maDanhMuc: @(ViewBag.MaDanhMuc ?? "null"),
+                loai: @(ViewBag.Loai ?? "null"),
+                loaiXapXep: @(ViewBag.LoaiXapXep ?? "null"),
+                khoangGia: @(ViewBag.KhoangGia ?? "null")
+            };
+            
+            // Merge current params với new params
+            const finalParams = { ...currentParams, ...newParams };
+            
+            // Tạo query string
+            const queryParams = [];
+            Object.keys(finalParams).forEach(key => {
+                if (finalParams[key] !== null && finalParams[key] !== "null") {
+                    queryParams.push(`${key}=${finalParams[key]}`);
+                }
+            });
+            
+            return baseUrl + (queryParams.length > 0 ? '?' + queryParams.join('&') : '');
+        }
+
+        // Xử lý checkbox danh mục
+        const checkboxes = document.querySelectorAll('.category-checkbox');
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function () {
+                const maDanhMuc = this.dataset.id;
+                const isChecked = this.checked;
+
+                if (isChecked) {
+                    // Bỏ check các checkbox khác
+                    checkboxes.forEach(otherCb => {
+                        if (otherCb !== this) {
+                            otherCb.checked = false;
+                        }
+                    });
+                    // Chuyển hướng với danh mục được chọn, giữ nguyên các filter khác
+                    window.location.href = createUrl({ maDanhMuc: maDanhMuc, trang: 1 });
+                } else {
+                    // Bỏ chọn - loại bỏ filter danh mục
+                    window.location.href = createUrl({ maDanhMuc: null, trang: 1 });
+                }
+            });
+        });
+
+        // Xử lý thanh trượt giá
+        const slider = document.getElementById("price-range-slider");
+        const valueDisplay = document.getElementById("price-range-value");
+        const applyButton = document.getElementById("apply-price-filter");
+
+        if (slider && valueDisplay) {
+            slider.addEventListener("input", function () {
+                const value = parseInt(this.value);
+                valueDisplay.textContent = "Lên đến " + value.toLocaleString('vi-VN') + "đ";
+            });
+
+            // Áp dụng filter khi click button
+            applyButton.addEventListener("click", function () {
+                const value = parseInt(slider.value);
+                window.location.href = createUrl({ khoangGia: value, trang: 1 });
+            });
+        }
+
+        // Xử lý dropdown sắp xếp
+        const sortSelect = document.getElementById("sort-by");
+        if (sortSelect) {
+            sortSelect.addEventListener("change", function () {
+                const selectedValue = this.value;
+                window.location.href = createUrl({ loaiXapXep: selectedValue, trang: 1 });
+            });
+        }
+    });
+</script>
