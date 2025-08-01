@@ -29,7 +29,7 @@
                                 <li>
                                     <label>
                                         <input type="checkbox"
-                                               class="category-checkbox"
+                                               class="category-checkbox product-checkbox"
                                                value="@dm.Id"
                                                data-id="@dm.Id"
                                                @(isChecked ? "checked" : "") />
@@ -74,7 +74,7 @@
                     <h3 class="widget__title">Lọc Theo Giá</h3>
                     <div class="widget__content">
                         <div class="price-range">
-                            <input type="range" min="0" max="500000" value="@((int?)ViewBag.KhoangGia ?? 500000)" class="price-range__slider" id="price-range-slider">
+                            <input type="range" min="0" max="500000" value="@(ViewBag.khoangGia ?? 500000)" class="price-range__slider" id="price-range-slider">
                             <span class="price-range__value" id="price-range-value">
                                 Lên đến @(ViewBag.KhoangGia != null ? string.Format("{0:N0}đ", ViewBag.KhoangGia) : "500,000đ")
                                 </span>
@@ -101,15 +101,15 @@
             </aside>
 
             <div class="shop__products">
-                <div class="shop__header">
-                    <select class="sort-select form__input" id="sort-by">
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 1, loai = 2 })">Sắp xếp mặc định</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 2, loai = 2 })">Giá: Thấp đến Cao</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 3, loai = 2 })">Giá: Cao đến Thấp</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 4, loai = 2 })">Tên: A-Z</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 5, loai = 2 })">Tên: Z-A</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 6, loai = 2 })">Mới nhất</option>
-                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 7, loai = 2 })">Cũ nhất</option>
+                <div class="shop__header" style="width:228px">
+                    <select class="sort-select form__input" id="sort-by" onchange="location = this.value;">
+                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 1, loai = 2 })" @(ViewBag.LoaiXapXep == 1 ? "selected" : "")>Sắp xếp mặc định</option>
+                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 2, loai = 2 })" @(ViewBag.LoaiXapXep == 2 ? "selected" : "")>Giá: Thấp đến Cao</option>
+                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 3, loai = 2 })" @(ViewBag.LoaiXapXep == 3 ? "selected" : "")>Giá: Cao đến Thấp</option>
+                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 4, loai = 2 })" @(ViewBag.LoaiXapXep == 4 ? "selected" : "")>Tên: A-Z</option>
+                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 5, loai = 2 })" @(ViewBag.LoaiXapXep == 5 ? "selected" : "")>Tên: Z-A</option>
+                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 6, loai = 2 })" @(ViewBag.LoaiXapXep == 6 ? "selected" : "")>Mới nhất</option>
+                        <option value="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", loaiXapXep = 7, loai = 2 })" @(ViewBag.LoaiXapXep == 7 ? "selected" : "")>Cũ nhất</option>
                     </select>
                 </div>
                 <script>
@@ -128,7 +128,7 @@
                         {
                             <div class="product__item shop-product__item shop-card">
                                 <div class="product__banner">
-                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaSanPham" class="product__images">
+                                    <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
                                         <img src="@Url.Content("~/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
                                              alt="@sanPham.TenSanPham"
                                              class="product__img default" />
@@ -136,7 +136,7 @@
                                 </div>
                                 <div class="product__content">
                                     <span class="product__category">@sanPham.TenDanhMuc</span>
-                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@sanPham.MaSanPham">
+                                    <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                                         <h3 class="product__title">@sanPham.TenSanPham</h3>
                                     </a>
                                     <p class="product__description">@sanPham.MoTaNgan</p>
@@ -165,7 +165,8 @@
                         <!-- Nút « -->
                         <li>
                             <a class="pagination__link icon @(Model.TrangHienTai == 1 ? "disabled" : "")"
-                               href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, trang = Model.TrangHienTai - 1 })">
+                               href="@Url.Action("SanPham", "CuaHang", 
+                               new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, loaiXapXep = ViewBag.loaiXapXep, KhoangGia = ViewBag.KhoangGia, trang = Model.TrangHienTai - 1 })">
                                 «
                             </a>
                         </li>
@@ -175,7 +176,8 @@
                         {
                             <li>
                                 <a class="pagination__link @(Model.TrangHienTai == i ? "active" : "")"
-                                   href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, trang = i })">
+                                   href="@Url.Action("SanPham", "CuaHang", 
+                                   new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loaiXapXep = ViewBag.loaiXapXep, loai = ViewBag.Loai, trang = i })">
                                     @i
                                 </a>
                             </li>
@@ -184,7 +186,8 @@
                         <!-- Nút » -->
                         <li>
                             <a class="pagination__link icon @(Model.TrangHienTai == Model.TongSoTrang ? "disabled" : "")"
-                               href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, trang = Model.TrangHienTai + 1 })">
+                               href="@Url.Action("SanPham", "CuaHang", 
+                               new { area = "KhachHang", maDanhMuc = ViewBag.MaDanhMuc, loai = ViewBag.Loai, loaiXapXep = ViewBag.loaiXapXep, KhoangGia = ViewBag.KhoangGia, trang = Model.TrangHienTai + 1 })">
                                 »
                             </a>
                         </li>

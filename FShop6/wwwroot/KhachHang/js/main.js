@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    if (!currentUser) {
+    if (currentUser) {
         // Đã đăng nhập
         accountText.textContent = `Xin chào, ${currentUser.name}`;
         dropdownContent.innerHTML = `

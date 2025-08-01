@@ -38,33 +38,139 @@ namespace FShop6.Migrations
 
                     b.Property<string>("LoaiBienThe")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("MaSKU")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("MaSanPham")
                         .HasColumnType("int");
 
-                    b.Property<int>("SanPhamMaSanPham")
-                        .HasColumnType("int");
+                    b.Property<bool>("NoiBat")
+                        .HasColumnType("bit");
 
                     b.Property<int>("SoLuongConLai")
                         .HasColumnType("int");
 
                     b.Property<string>("TinhTrang")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("MaBienThe");
 
-                    b.HasIndex("SanPhamMaSanPham");
+                    b.HasIndex("MaSanPham");
 
-                    b.ToTable("BienTheModels");
+                    b.ToTable("BienThe");
+                });
+
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.ChiTietDonHangModel", b =>
+                {
+                    b.Property<int>("MaChiTietDH")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaChiTietDH"));
+
+                    b.Property<decimal>("DonGia")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("DonHangID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DonHang_ID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaBienThe")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SoLuong")
+                        .HasColumnType("int");
+
+                    b.HasKey("MaChiTietDH");
+
+                    b.HasIndex("DonHangID");
+
+                    b.HasIndex("MaBienThe");
+
+                    b.ToTable("ChiTietDonHang");
                 });
 
             modelBuilder.Entity("FShop6.Areas.KhachHang.Models.DanhMucModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("MaDanhMucSP");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("TenDanhMuc")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DanhMucSP");
+                });
+
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.DonHangModel", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("DiaChiGiaoHang")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("GhiChu")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("MaDonHang")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("MaNguoiDung")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("NgayCapNhat")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PhuongThucThanhToan")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("ThoiGianDatHang")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TongTien")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TrangThai")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("MaNguoiDung");
+
+                    b.ToTable("DonHang");
+                });
+
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.GioHangModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,33 +178,105 @@ namespace FShop6.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("TenDanhMuc")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("MaBienThe")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("TrangChuViewModelId")
+                    b.Property<int>("MaNguoiDung")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("NgayThem")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SoLuong")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TrangChuViewModelId");
+                    b.HasIndex("MaBienThe");
 
-                    b.ToTable("DanhMucModel");
+                    b.HasIndex("MaNguoiDung");
+
+                    b.ToTable("GioHang");
                 });
 
-            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.DanhMucSanPhamViewModel", b =>
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.LienHeModel", b =>
                 {
-                    b.Property<string>("TenDanhMuc")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("TrangChuViewModelId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.HasKey("TenDanhMuc");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasIndex("TrangChuViewModelId");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("DanhMucSanPhamViewModel");
+                    b.Property<string>("HoTen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NoiDung")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ThoiGianTao")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LienHe");
+                });
+
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.NguoiDungModel", b =>
+                {
+                    b.Property<int>("MaNguoiDung")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaNguoiDung"));
+
+                    b.Property<string>("DiaChi")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("HoTen")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("MatKhau")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("NgayCapNhat")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SoDienThoai")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("TTHoatDong")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("TenVaiTro")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("ThoiGianTao")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MaNguoiDung");
+
+                    b.ToTable("NguoiDung");
                 });
 
             modelBuilder.Entity("FShop6.Areas.KhachHang.Models.SanPhamModel", b =>
@@ -108,12 +286,6 @@ namespace FShop6.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaSanPham"));
-
-                    b.Property<int>("DanhMucId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DanhMucSanPhamViewModelTenDanhMuc")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("HinhAnhDaiDien")
                         .IsRequired()
@@ -126,32 +298,20 @@ namespace FShop6.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("NgayTao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ThoiGianTao");
+
                     b.Property<string>("TenSanPham")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("TrangChuViewModelId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TrangChuViewModelId1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TrangChuViewModelId2")
-                        .HasColumnType("int");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("MaSanPham");
 
-                    b.HasIndex("DanhMucId");
+                    b.HasIndex("MaDanhMucSP");
 
-                    b.HasIndex("DanhMucSanPhamViewModelTenDanhMuc");
-
-                    b.HasIndex("TrangChuViewModelId");
-
-                    b.HasIndex("TrangChuViewModelId1");
-
-                    b.HasIndex("TrangChuViewModelId2");
-
-                    b.ToTable("SanPhamModel");
+                    b.ToTable("SanPham");
                 });
 
             modelBuilder.Entity("FShop6.Areas.KhachHang.Models.TinTucModel", b =>
@@ -184,120 +344,97 @@ namespace FShop6.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TrangChuViewModelId")
-                        .HasColumnType("int");
-
                     b.Property<string>("TrangThai")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("MaTinTuc");
 
-                    b.HasIndex("TrangChuViewModelId");
-
-                    b.ToTable("TinTucModel");
-                });
-
-            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.TrangChuViewModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.HasKey("Id");
-
-                    b.ToTable("trangChuViewModels");
+                    b.ToTable("TinTuc");
                 });
 
             modelBuilder.Entity("FShop6.Areas.KhachHang.Models.BienTheModels", b =>
                 {
                     b.HasOne("FShop6.Areas.KhachHang.Models.SanPhamModel", "SanPham")
                         .WithMany("BienThes")
-                        .HasForeignKey("SanPhamMaSanPham")
+                        .HasForeignKey("MaSanPham")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("SanPham");
                 });
 
-            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.DanhMucModel", b =>
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.ChiTietDonHangModel", b =>
                 {
-                    b.HasOne("FShop6.Areas.KhachHang.Models.TrangChuViewModel", null)
-                        .WithMany("DanhMucPhoBien")
-                        .HasForeignKey("TrangChuViewModelId");
+                    b.HasOne("FShop6.Areas.KhachHang.Models.DonHangModel", "DonHang")
+                        .WithMany("ChiTietDonHangs")
+                        .HasForeignKey("DonHangID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FShop6.Areas.KhachHang.Models.BienTheModels", "BienThe")
+                        .WithMany()
+                        .HasForeignKey("MaBienThe");
+
+                    b.Navigation("BienThe");
+
+                    b.Navigation("DonHang");
                 });
 
-            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.DanhMucSanPhamViewModel", b =>
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.DonHangModel", b =>
                 {
-                    b.HasOne("FShop6.Areas.KhachHang.Models.TrangChuViewModel", null)
-                        .WithMany("DanhMucSanPhamHienThi")
-                        .HasForeignKey("TrangChuViewModelId");
+                    b.HasOne("FShop6.Areas.KhachHang.Models.NguoiDungModel", "NguoiDung")
+                        .WithMany("DonHangs")
+                        .HasForeignKey("MaNguoiDung");
+
+                    b.Navigation("NguoiDung");
+                });
+
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.GioHangModel", b =>
+                {
+                    b.HasOne("FShop6.Areas.KhachHang.Models.BienTheModels", "BienThe")
+                        .WithMany()
+                        .HasForeignKey("MaBienThe")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FShop6.Areas.KhachHang.Models.NguoiDungModel", "NguoiDung")
+                        .WithMany("GioHangs")
+                        .HasForeignKey("MaNguoiDung")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BienThe");
+
+                    b.Navigation("NguoiDung");
                 });
 
             modelBuilder.Entity("FShop6.Areas.KhachHang.Models.SanPhamModel", b =>
                 {
                     b.HasOne("FShop6.Areas.KhachHang.Models.DanhMucModel", "DanhMuc")
-                        .WithMany("SanPhams")
-                        .HasForeignKey("DanhMucId")
+                        .WithMany()
+                        .HasForeignKey("MaDanhMucSP")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("FShop6.Areas.KhachHang.Models.DanhMucSanPhamViewModel", null)
-                        .WithMany("SanPhams")
-                        .HasForeignKey("DanhMucSanPhamViewModelTenDanhMuc");
-
-                    b.HasOne("FShop6.Areas.KhachHang.Models.TrangChuViewModel", null)
-                        .WithMany("SanPhamMoi")
-                        .HasForeignKey("TrangChuViewModelId");
-
-                    b.HasOne("FShop6.Areas.KhachHang.Models.TrangChuViewModel", null)
-                        .WithMany("SanPhamNoiBat")
-                        .HasForeignKey("TrangChuViewModelId1");
-
-                    b.HasOne("FShop6.Areas.KhachHang.Models.TrangChuViewModel", null)
-                        .WithMany("SanPhamPhoBien")
-                        .HasForeignKey("TrangChuViewModelId2");
 
                     b.Navigation("DanhMuc");
                 });
 
-            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.TinTucModel", b =>
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.DonHangModel", b =>
                 {
-                    b.HasOne("FShop6.Areas.KhachHang.Models.TrangChuViewModel", null)
-                        .WithMany("TinTuc")
-                        .HasForeignKey("TrangChuViewModelId");
+                    b.Navigation("ChiTietDonHangs");
                 });
 
-            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.DanhMucModel", b =>
+            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.NguoiDungModel", b =>
                 {
-                    b.Navigation("SanPhams");
-                });
+                    b.Navigation("DonHangs");
 
-            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.DanhMucSanPhamViewModel", b =>
-                {
-                    b.Navigation("SanPhams");
+                    b.Navigation("GioHangs");
                 });
 
             modelBuilder.Entity("FShop6.Areas.KhachHang.Models.SanPhamModel", b =>
                 {
                     b.Navigation("BienThes");
-                });
-
-            modelBuilder.Entity("FShop6.Areas.KhachHang.Models.TrangChuViewModel", b =>
-                {
-                    b.Navigation("DanhMucPhoBien");
-
-                    b.Navigation("DanhMucSanPhamHienThi");
-
-                    b.Navigation("SanPhamMoi");
-
-                    b.Navigation("SanPhamNoiBat");
-
-                    b.Navigation("SanPhamPhoBien");
-
-                    b.Navigation("TinTuc");
                 });
 #pragma warning restore 612, 618
         }

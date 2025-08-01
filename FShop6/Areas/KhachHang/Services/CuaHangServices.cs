@@ -22,7 +22,7 @@ namespace FShop6.Areas.KhachHang.Services
 
     public interface IShopService : ICuaHangServices, IChiTietSanPhamService
     {
-        Task ThemVaoGioHang(int maNguoiDung, int maBienThe, int soLuong);
+        Task<List<object>> TimKiem(string tuKhoa);
     }
 
 
@@ -199,7 +199,7 @@ namespace FShop6.Areas.KhachHang.Services
         public async Task<PhanTrangSanPhamViewModel> LaySanPhamTheoGia(decimal khoangGia, int trang = 1, int kichThuocTrang = 8)
         {
             var (tongSoTrang, trangHienTai) = PhanTrang(
-                bt => bt.GiaBan < khoangGia,
+                bt => bt.GiaBan <= khoangGia,
                 kichThuocTrang,
                 trang);
             var tongSanPham = await _context.SanPham
@@ -264,28 +264,22 @@ namespace FShop6.Areas.KhachHang.Services
             };
         }
 
-        public async Task ThemVaoGioHang(int maNguoiDung, int maBienThe, int soLuong)
+        public async Task<List<object>> TimKiem(string tuKhoa)
         {
-            var giohang = await _context.GioHang
-                .FirstOrDefaultAsync(g => g.MaNguoiDung == maNguoiDung && g.MaBienThe == maBienThe);
-
-            if (giohang != null)
-            {
-                giohang.SoLuong += soLuong;
-            }
-            else
-            {
-                _context.GioHang.Add(new GioHangModel
+            if (string.IsNullOrWhiteSpace(tuKhoa))
+                return new List<object>();
+            var ketQua = await _context.SanPham
+                .Where(sp => sp.TenSanPham.Contains(tuKhoa))
+                .Select(sp => new
                 {
-                    MaNguoiDung = maNguoiDung,
-                    MaBienThe = maBienThe,
-                    SoLuong = soLuong,
-                    NgayThem = DateTime.Now
-                });
-            }
-
-            await _context.SaveChangesAsync();
+                    id = sp.MaSanPham,
+                    ten = sp.TenSanPham,
+                    gia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan.ToString("N0") + "₫" ,
+                    anh = sp.HinhAnhDaiDien
+                })
+                .Take(5)
+                .ToListAsync();
+            return ketQua.Cast<object>().ToList();
         }
-
     }
 }

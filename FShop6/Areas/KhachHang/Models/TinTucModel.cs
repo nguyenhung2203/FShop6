@@ -15,5 +15,7 @@ namespace FShop6.Areas.KhachHang.Models
 
         public DateTime ThoiGianTao { get; set; }
         public DateTime NgayCapNhat { get; set; }
+        
     }
+
 }
