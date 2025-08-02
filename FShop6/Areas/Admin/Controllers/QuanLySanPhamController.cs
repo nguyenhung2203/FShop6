@@ -17,7 +17,37 @@ namespace FShop6.Areas.Admin.Controllers
             var dsSanPham = await _quanLySanPhamServices.LayTatCaSanPhamAsync();
             return View(dsSanPham);
         }
+        [HttpPost]
+        public ActionResult ThemDanhMuc(string TenDanhMuc)
+        {
+            var KetQua = _quanLySanPhamServices.ThemDanhMuc(TenDanhMuc);
+            if(KetQua)
+            {
+            }
+            return RedirectToAction("QuanLySanPham");
 
+        }
+
+        [HttpPost]
+        public ActionResult SuaDanhMuc(int MaDanhMuc, string TenDanhMuc)
+        {
+            var KetQua = _quanLySanPhamServices.SuaDanhMucAsync(MaDanhMuc, TenDanhMuc);
+            if (KetQua)
+            {
+
+            }    
+            return RedirectToAction("QuanLySanPham");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> XoaDanhMuc(int MaDanhMuc)
+        {
+            var KetQua = await _quanLySanPhamServices.XoaDanhMucAsync(MaDanhMuc);
+            if (KetQua)
+            { 
+            }
+            return RedirectToAction("QuanLySanPham");
+        }
         //[HttpPost]
         //public async Task<IActionResult> ThemSanPham(string TenSanPham, int DanhMucID)
         //{

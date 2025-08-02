@@ -7,8 +7,13 @@ namespace FShop6.Areas.Admin.Services
 {
     public interface IQuanLySanPhamServices
     {
+        Task<QuanLySanPhamViewModel> LayDanhMuc();
         Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync();
         Task<bool> ThemSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
+        bool ThemDanhMuc(string TenDanhMuc);
+        bool SuaDanhMucAsync(int MaDanhMuc, string TenDanhMuc);
+        Task<bool> XoaDanhMucAsync(int MaDanhMuc);
+
     }
 
     public class QuanLySanPhamServices : IQuanLySanPhamServices
@@ -80,5 +85,61 @@ namespace FShop6.Areas.Admin.Services
                 return false;
             }
         }
+        public async Task<QuanLySanPhamViewModel> LayDanhMuc()
+        {
+            var Ds = await _context.DanhMucSP
+                .Select(dm => new DanhMucModel
+                {
+                    Id = dm.Id,
+                    TenDanhMuc = dm.TenDanhMuc,
+                }).ToListAsync();
+            var DsHienThi = new QuanLySanPhamViewModel
+            {
+                DSDanhMuc = Ds
+            };
+            return DsHienThi;
+        }
+        public bool ThemDanhMuc(string TenDanhMuc)
+        {
+            var dm = _context.DanhMucSP.FirstOrDefault(dm => dm.TenDanhMuc == TenDanhMuc);
+            if (dm == null)
+            {
+                var dmsp = new DanhMucModel
+                {
+                    TenDanhMuc = TenDanhMuc
+                };
+                _context.DanhMucSP.Add(dmsp);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+        public bool SuaDanhMucAsync(int MaDanhMuc, string TenDanhMuc)
+        {
+            var dm = _context.DanhMucSP.Find(MaDanhMuc);
+            if (dm != null)
+            {
+                dm.TenDanhMuc = TenDanhMuc;
+                _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> XoaDanhMucAsync(int MaDanhMuc)
+        {
+            var dm = await _context.DanhMucSP.FindAsync(MaDanhMuc);
+            if (dm != null)
+            {
+                _context.DanhMucSP.Remove(dm);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+
+
     }
+
 }
