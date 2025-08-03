@@ -147,7 +147,7 @@ namespace FShop6.Areas.Admin.Services
 
                 var maBienThe = sanPham.BienThes.Select(bt => (int?)bt.MaBienThe);
                 bool coTrongDonHang = await _context.ChiTietDonHang
-                    .AnyAsync(ctdh => maBienThe.Contains(ctdh.MaBienThe) && ctdh.DonHang.TrangThai != "Đã giao hàng");
+                    .AnyAsync(ctdh => maBienThe.Contains(ctdh.MaBienThe));
 
                 if (coTrongDonHang)
                 {
@@ -155,6 +155,7 @@ namespace FShop6.Areas.Admin.Services
                     return;
                 }
 
+                // Xoá ảnh đại diện nếu có
                 if (!string.IsNullOrEmpty(sanPham.HinhAnhDaiDien))
                 {
                     var duongDanAnh = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images", sanPham.HinhAnhDaiDien);
@@ -179,18 +180,16 @@ namespace FShop6.Areas.Admin.Services
                         }
                         _context.AnhBienThe.Remove(anh);
                     }
-                    // Xoá chi tiết đơn hàng liên quan đến biến thể này
-                    var chiTietDonHangs = _context.ChiTietDonHang
-                        .Where(ctdh => ctdh.MaBienThe == bienThe.MaBienThe);
-                    _context.ChiTietDonHang.RemoveRange(chiTietDonHangs);
 
                     // Xoá biến thể
                     _context.BienThe.Remove(bienThe);
                 }
+
                 // Xoá sản phẩm yêu thích liên quan đến sản phẩm này
                 var sanPhamYeuThich = _context.SPYeuThich
                     .Where(spyt => spyt.MaSanPham == MaSanPham);
                 _context.SPYeuThich.RemoveRange(sanPhamYeuThich);
+
                 // Cuối cùng xoá sản phẩm
                 _context.SanPham.Remove(sanPham);
                 await _context.SaveChangesAsync();
@@ -327,10 +326,10 @@ namespace FShop6.Areas.Admin.Services
 
                 // Kiểm tra xem biến thể có trong đơn hàng chưa  
                 var coTrongDonHang = await _context.ChiTietDonHang
-                    .AnyAsync(ctdh => ctdh.MaBienThe == MaBienThe && ctdh.DonHang.TrangThai != "Đã giao hàng");
+                .AnyAsync(ctdh => ctdh.MaBienThe == MaBienThe);
                 if (coTrongDonHang)
                 {
-                    Console.WriteLine("Không thể xoá biến thể vì đã được đặt hàng.");
+                    Console.WriteLine("Không thể xoá biến thể vì đã từng được đặt hàng.");
                     return;
                 }
 
