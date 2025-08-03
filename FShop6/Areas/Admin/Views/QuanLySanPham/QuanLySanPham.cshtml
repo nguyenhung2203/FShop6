@@ -457,7 +457,7 @@
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteProductDetails" 
                                                 data-mabienthe="@bt.MaBienThe" 
-                                                onclick="openEditDetailsModal(this)">
+                                                onclick="openDeleteDetailsModal(this)">
                                                     <i class="fa fa-trash"></i> Xóa
                                                 </button>
                                             </td>
@@ -605,7 +605,9 @@
         <div class="modal fade" id="deleteProductDetails" tabindex="-1" role="dialog"
              aria-labelledby="deleteProductDetails" aria-hidden="true">
             <div class="modal-dialog" role="document">
-                <form class="modal-content">
+                @using (Html.BeginForm("XoaBienThe", "QuanLySanPham", FormMethod.Post, new { @class = "modal-content" }))
+                {
+                    <input type="hidden" id="ma_bien_the_sp_delete" name="MaBienThe" value="" />
                     <div class="modal-header bg-danger text-white">
                         <h5 class="modal-title" id="deleteProductDetailsLabel">Xóa loại sản phẩm</h5>
                         <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
@@ -619,7 +621,7 @@
                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
                         <button class="btn btn-danger" type="submit">Xóa</button>
                     </div>
-                </form>
+                }
             </div>
         </div>
     </div>

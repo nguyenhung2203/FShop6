@@ -14,6 +14,7 @@ namespace FShop6.Areas.Admin.Services
         Task XoaSanPhamAsync(int MaSanPham);
         Task ThemBienTheAsync(IFormCollection form, IFormFile AnhBienThe);
         Task SuaBienTheAsync(IFormCollection form, IFormFile AnhBienThe);
+        Task XoaBienTheAsync(int MaBienThe);
     }
 
     public class QuanLySanPhamServices : IQuanLySanPhamServices
@@ -168,10 +169,13 @@ namespace FShop6.Areas.Admin.Services
                     // Xoá ảnh biến thể (file + DB)
                     foreach (var anh in bienThe.AnhBienThe)
                     {
-                        var duongDanAnhBienThe = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images", anh.URL);
-                        if (System.IO.File.Exists(duongDanAnhBienThe))
+                        if (!string.IsNullOrEmpty(anh.URL))
                         {
-                            System.IO.File.Delete(duongDanAnhBienThe);
+                            var duongDanAnhBienThe = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images", anh.URL);
+                            if (System.IO.File.Exists(duongDanAnhBienThe))
+                            {
+                                System.IO.File.Delete(duongDanAnhBienThe);
+                            }
                         }
                         _context.AnhBienThe.Remove(anh);
                     }
@@ -183,6 +187,10 @@ namespace FShop6.Areas.Admin.Services
                     // Xoá biến thể
                     _context.BienThe.Remove(bienThe);
                 }
+                // Xoá sản phẩm yêu thích liên quan đến sản phẩm này
+                var sanPhamYeuThich = _context.SPYeuThich
+                    .Where(spyt => spyt.MaSanPham == MaSanPham);
+                _context.SPYeuThich.RemoveRange(sanPhamYeuThich);
                 // Cuối cùng xoá sản phẩm
                 _context.SanPham.Remove(sanPham);
                 await _context.SaveChangesAsync();
@@ -260,7 +268,7 @@ namespace FShop6.Areas.Admin.Services
                 if (AnhBienThe != null && AnhBienThe.Length > 0)
                 {
                     // Lấy ảnh cũ từ DB
-                    
+
                     var anhBienTheCu = await _context.AnhBienThe
                         .FirstOrDefaultAsync(anh => anh.MaHinhAnh == maAnhCu);
 
@@ -306,6 +314,54 @@ namespace FShop6.Areas.Admin.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi khi sửa biến thể sản phẩm: {ex}");
+            }
+        }
+        public async Task XoaBienTheAsync(int MaBienThe)
+        {
+            try
+            {
+                var bienThe = await _context.BienThe
+                    .Include(bt => bt.AnhBienThe)
+                    .FirstOrDefaultAsync(bt => bt.MaBienThe == MaBienThe);
+                if (bienThe == null) return;
+
+                // Kiểm tra xem biến thể có trong đơn hàng chưa  
+                var coTrongDonHang = await _context.ChiTietDonHang
+                    .AnyAsync(ctdh => ctdh.MaBienThe == MaBienThe && ctdh.DonHang.TrangThai != "Đã giao hàng");
+                if (coTrongDonHang)
+                {
+                    Console.WriteLine("Không thể xoá biến thể vì đã được đặt hàng.");
+                    return;
+                }
+
+                // Xoá ảnh biến thể  
+                foreach (var anh in bienThe.AnhBienThe)
+                {
+                    var duongDanAnh = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images", anh.URL);
+                    if (System.IO.File.Exists(duongDanAnh))
+                    {
+                        System.IO.File.Delete(duongDanAnh);
+                    }
+                    _context.AnhBienThe.Remove(anh);
+                }
+
+                // Xoá chi tiết đơn hàng liên quan đến biến thể này
+                var chiTietDonHangs = _context.ChiTietDonHang
+                    .Where(ctdh => ctdh.MaBienThe == MaBienThe);
+
+                // Xoá giỏ hàng liên quan đến biến thể này
+                var gioHang = _context.GioHang
+                    .Where(gh => gh.MaBienThe == MaBienThe);
+                _context.GioHang.RemoveRange(gioHang);
+                _context.ChiTietDonHang.RemoveRange(chiTietDonHangs);
+
+                // Xoá biến thể  
+                _context.BienThe.Remove(bienThe);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi xoá biến thể sản phẩm: {ex.Message}");
             }
         }
     }

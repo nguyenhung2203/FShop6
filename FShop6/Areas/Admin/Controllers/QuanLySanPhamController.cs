@@ -52,5 +52,12 @@ namespace FShop6.Areas.Admin.Controllers
             await _quanLySanPhamServices.SuaBienTheAsync(form, AnhBienThe);
             return RedirectToAction("QuanLySanPham");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> XoaBienThe(int MaBienThe)
+        {
+            await _quanLySanPhamServices.XoaBienTheAsync(MaBienThe);
+            return RedirectToAction("QuanLySanPham");
+        }
     }
 }

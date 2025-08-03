@@ -94,3 +94,9 @@ window.openEditDetailsModal = function (button) {
         imgPreview.src = '';
     }
 }
+
+window.openDeleteDetailsModal = function (button) {
+    const maBienThe = button.dataset.mabienthe;
+
+    document.getElementById('ma_bien_the_sp_delete').value = maBienThe;
+}
