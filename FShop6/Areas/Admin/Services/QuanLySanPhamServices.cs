@@ -2,6 +2,7 @@
 using FShop6.Areas.KhachHang.Models;
 using FShop6.Data;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FShop6.Areas.Admin.Services
 {
@@ -11,7 +12,8 @@ namespace FShop6.Areas.Admin.Services
         Task ThemSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
         Task SuaSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
         Task XoaSanPhamAsync(int MaSanPham);
-        Task ThemBienTheAsync(IFormCollection form, List<IFormFile> AnhBienThe);
+        Task ThemBienTheAsync(IFormCollection form, IFormFile AnhBienThe);
+        Task SuaBienTheAsync(IFormCollection form, IFormFile AnhBienThe);
     }
 
     public class QuanLySanPhamServices : IQuanLySanPhamServices
@@ -56,7 +58,9 @@ namespace FShop6.Areas.Admin.Services
                 {
                     TenSanPham = form["TenSanPham"],
                     MoTa = form["MoTa"],
-                    MaDanhMucSP = int.Parse(form["DanhMucID"])
+                    MaDanhMucSP = int.Parse(form["DanhMucID"]),
+                    NoiBat = form["NoiBat"] == "true",
+                    TrangThai = form["TrangThai"] == "true"
                 };
 
                 if (AnhDaiDien != null && AnhDaiDien.Length > 0)
@@ -86,23 +90,36 @@ namespace FShop6.Areas.Admin.Services
         {
             try
             {
-                int maSanPham = int.Parse(form["MaSanPham"]);
+                int maSanPham = int.Parse(form["maSanPham"]);
                 var sanPham = await _context.SanPham.FindAsync(maSanPham);
                 if (sanPham == null) return;
 
-                sanPham.TenSanPham = form["TenSanPham"];
-                sanPham.MaDanhMucSP = int.Parse(form["DanhMucID"]);
-                sanPham.MoTa = form["MoTa"];
+                sanPham.TenSanPham = form["tenSanPham"];
+                sanPham.MaDanhMucSP = int.Parse(form["danhMucId"]);
+                sanPham.MoTa = form["moTa"];
+                sanPham.NoiBat = form["noiBat"] == "true";
+                sanPham.TrangThai = form["trangThai"] == "true";
 
-                var ThoiGianLuuFile = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                var TenFile = ThoiGianLuuFile + "_" + Path.GetFileName(AnhDaiDien.FileName);
-                var TaiLenFolder = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images");
-                var duongDan = Path.Combine(TaiLenFolder, TenFile);
-                using (var stream = new FileStream(duongDan, FileMode.Create))
+                if (AnhDaiDien != null && AnhDaiDien.Length > 0)
                 {
-                    await AnhDaiDien.CopyToAsync(stream);
+                    if (!string.IsNullOrEmpty(sanPham.HinhAnhDaiDien))
+                    {
+                        var anhCu = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images", sanPham.HinhAnhDaiDien);
+                        if (System.IO.File.Exists(anhCu))
+                        {
+                            System.IO.File.Delete(anhCu);
+                        }
+                    }
+                    var ThoiGianLuuFile = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    var TenFile = ThoiGianLuuFile + "_" + Path.GetFileName(AnhDaiDien.FileName);
+                    var TaiLenFolder = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images");
+                    var duongDan = Path.Combine(TaiLenFolder, TenFile);
+                    using (var stream = new FileStream(duongDan, FileMode.Create))
+                    {
+                        await AnhDaiDien.CopyToAsync(stream);
+                    }
+                    sanPham.HinhAnhDaiDien = TenFile;
                 }
-                sanPham.HinhAnhDaiDien = TenFile;
 
                 _context.SanPham.Update(sanPham);
                 await _context.SaveChangesAsync();
@@ -176,7 +193,7 @@ namespace FShop6.Areas.Admin.Services
             }
         }
 
-        public async Task ThemBienTheAsync(IFormCollection form, List<IFormFile> AnhBienThe)
+        public async Task ThemBienTheAsync(IFormCollection form, IFormFile AnhBienThe)
         {
             try
             {
@@ -196,31 +213,99 @@ namespace FShop6.Areas.Admin.Services
                 _context.BienThe.Add(bienThe);
                 await _context.SaveChangesAsync();
                 Console.WriteLine(bienThe.MaBienThe);
-                if (AnhBienThe != null && AnhBienThe.Count > 0)
+                if (AnhBienThe != null && AnhBienThe.Length > 0)
                 {
-                    foreach (var anh in AnhBienThe)
+                    var ThoiGianLuuFile = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    var TenFile = ThoiGianLuuFile + "_" + Path.GetFileName(AnhBienThe.FileName);
+                    var TaiLenFolder = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images");
+                    var duongDan = Path.Combine(TaiLenFolder, TenFile);
+                    using (var stream = new FileStream(duongDan, FileMode.Create))
                     {
-                        var ThoiGianLuuFile = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                        var TenFile = ThoiGianLuuFile + "_" + Path.GetFileName(anh.FileName);
-                        var TaiLenFolder = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images");
-                        var duongDan = Path.Combine(TaiLenFolder, TenFile);
-                        using (var stream = new FileStream(duongDan, FileMode.Create))
-                        {
-                            await anh.CopyToAsync(stream);
-                        }
-                        var anhBienThe = new AnhBienTheModel
-                        {
-                            MaBienThe = bienThe.MaBienThe,
-                            URL = TenFile // Thiết lập mối quan hệ với biến thể
-                        };
-                        _context.AnhBienThe.Add(anhBienThe);
+                        await AnhBienThe.CopyToAsync(stream);
                     }
+                    var anhBienThe = new AnhBienTheModel
+                    {
+                        MaBienThe = bienThe.MaBienThe,
+                        URL = TenFile // Thiết lập mối quan hệ với biến thể
+                    };
+                    _context.AnhBienThe.Add(anhBienThe);
                 }
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi khi thêm biến thể sản phẩm: {ex.Message}");
+            }
+        }
+
+        public async Task SuaBienTheAsync(IFormCollection form, IFormFile AnhBienThe)
+        {
+            try
+            {
+                int maBienThe = int.Parse(form["MaBienThe"]);
+                var bienThe = await _context.BienThe
+                    .Include(bt => bt.AnhBienThe)
+                    .FirstOrDefaultAsync(bt => bt.MaBienThe == maBienThe);
+                if (bienThe == null) return;
+
+                // Cập nhật thông tin biến thể
+                bienThe.MaSKU = form["MaSKU"];
+                bienThe.LoaiBienThe = form["LoaiBienThe"];
+                bienThe.GiaBan = decimal.Parse(form["GiaBan"]);
+                bienThe.GiaNhap = decimal.Parse(form["GiaNhap"]);
+                bienThe.TinhTrang = form["TinhTrang"];
+                bienThe.SoLuongConLai = int.Parse(form["SoLuongConLai"]);
+                var maAnhCu = int.Parse(form["AnhBienTheCu"]);
+
+                if (AnhBienThe != null && AnhBienThe.Length > 0)
+                {
+                    // Lấy ảnh cũ từ DB
+                    
+                    var anhBienTheCu = await _context.AnhBienThe
+                        .FirstOrDefaultAsync(anh => anh.MaHinhAnh == maAnhCu);
+
+                    // Xoá file ảnh cũ nếu có
+                    if (anhBienTheCu != null && !string.IsNullOrEmpty(anhBienTheCu.URL))
+                    {
+                        var duongDanAnhCu = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images", anhBienTheCu.URL);
+                        if (System.IO.File.Exists(duongDanAnhCu))
+                        {
+                            System.IO.File.Delete(duongDanAnhCu);
+                        }
+                    }
+
+                    // Lưu file mới
+                    var ThoiGianLuuFile = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    var TenFile = ThoiGianLuuFile + "_" + Path.GetFileName(AnhBienThe.FileName);
+                    var TaiLenFolder = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images");
+                    var duongDan = Path.Combine(TaiLenFolder, TenFile);
+                    using (var stream = new FileStream(duongDan, FileMode.Create))
+                    {
+                        await AnhBienThe.CopyToAsync(stream);
+                    }
+
+                    // Cập nhật hoặc thêm ảnh mới trong DB
+                    if (anhBienTheCu != null)
+                    {
+                        anhBienTheCu.URL = TenFile;
+                        _context.AnhBienThe.Update(anhBienTheCu);
+                    }
+                    else
+                    {
+                        var anhBienTheMoi = new AnhBienTheModel
+                        {
+                            MaBienThe = bienThe.MaBienThe,
+                            URL = TenFile
+                        };
+                        _context.AnhBienThe.Add(anhBienTheMoi);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi sửa biến thể sản phẩm: {ex}");
             }
         }
     }

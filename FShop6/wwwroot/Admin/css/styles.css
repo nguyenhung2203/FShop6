@@ -329,10 +329,6 @@ body.fixed-nav.sidebar-toggled #content-wrapper {
         color: transparent;
     }
 
-    .form-label-group input::-ms-input-placeholder {
-        color: transparent;
-    }
-
     .form-label-group input::placeholder {
         color: transparent;
     }
@@ -450,4 +446,13 @@ body.sidebar-toggled footer.sticky-footer {
     .custom-product-modal {
         margin: auto !important;
     }
+}
+
+.div_add_detail {
+    position: absolute;
+    right: 100px;
+}
+
+.btn_add_detail {
+    font-weight: bold;
 }
