@@ -15,9 +15,16 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             _gioHangServices = gioHangServices;
         }
+        int maNguoiDung;
         public async Task<IActionResult> GioHang()
         {
-            var model = await _gioHangServices.LayGioHang(5);
+            if (maNguoiDung == 0)
+            {
+                maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            }
+            if (maNguoiDung < 0)
+                return RedirectToAction("DangNhap", "TaiKhoan", new { area = "KhachHang"});
+            var model = await _gioHangServices.LayGioHang(maNguoiDung);
             if (model == null)
             {
                 TempData["ThongBao"] = "Giỏ hàng của bạn hiện đang trống.";
@@ -29,6 +36,10 @@ namespace FShop6.Areas.KhachHang.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ThanhToan(GioHangViewModel model)
         {
+            if (maNguoiDung == 0)
+            {
+                maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            }
             var gioCanThanhToan = model.GioHang?.ToList();
             if (gioCanThanhToan == null || gioCanThanhToan.Count == 0)
             {
@@ -36,14 +47,15 @@ namespace FShop6.Areas.KhachHang.Controllers
                 TempData["LoaiThongBao"] = "warning";
                 return RedirectToAction("GioHang");
             }
-            var thongTinNguoiNhan = _gioHangServices.ThongTinNguoiNhan(5).Result;
+            var thongTinNguoiNhan = _gioHangServices.ThongTinNguoiNhan(maNguoiDung).Result;
             var viewModel = new GioHangViewModel
             {
-                MaNguoiDung = 5, 
+                MaNguoiDung = maNguoiDung, 
                 GioHang = gioCanThanhToan,
                 DiaChi = model.DiaChi,
                 SoDienThoai = thongTinNguoiNhan.SoDienThoai,
                 TenNguoiNhan = thongTinNguoiNhan.TenNguoiNhan,
+                DiaChiMacDinh = thongTinNguoiNhan.DiaChiMacDinh,
             };
 
             return View(viewModel);
@@ -89,13 +101,12 @@ namespace FShop6.Areas.KhachHang.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ThemGioHang(int maNguoiDung, int maBienThe, int soLuong, int maSanPham)
+        public ActionResult ThemGioHang(int maBienThe, int soLuong, int maSanPham)
         {
+            int id = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
             try
             {
-                maNguoiDung = 5;
-
-                bool ketQua = _gioHangServices.ThemVaoGioHang(maNguoiDung, maBienThe, soLuong);
+                bool ketQua = _gioHangServices.ThemVaoGioHang(id, maBienThe, soLuong);
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Thêm sản phẩm vào giỏ hàng thành công.";
@@ -116,11 +127,11 @@ namespace FShop6.Areas.KhachHang.Controllers
         }
 
         [HttpPost]
-        public ActionResult XoaGioHang(int maNguoiDung, int maBienThe)
+        public ActionResult XoaGioHang(int maBienThe)
         {
             try
             {
-                bool ketQua = _gioHangServices.xoaGioHang(maNguoiDung = 5, maBienThe);
+                bool ketQua = _gioHangServices.xoaGioHang(maNguoiDung, maBienThe);
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Xóa sản phẩm khỏi giỏ hàng thành công.";

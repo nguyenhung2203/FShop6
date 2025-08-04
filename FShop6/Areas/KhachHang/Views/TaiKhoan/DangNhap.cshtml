@@ -1,4 +1,5 @@
-﻿@{
+﻿@model FShop6.Areas.KhachHang.Models.DangNhapViewModel
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -19,24 +20,45 @@
             </a>
         </div>
     </header>
+
     <main class="main">
         <section class="login-register section--lg">
             <div class="login-register__container container">
                 <div class="login">
                     <h3 class="section__title">Chào mừng trở lại!</h3>
 
-                    <form action="" class="form grid">
-                        <input type="email" placeholder="Email của bạn" class="form__input" />
-                        <input type="password" placeholder="Mật khẩu" class="form__input" />
+                    @* Form dùng model binding *@
+                    <form asp-action="DangNhap" method="post" class="form grid">
+                        <input name="Email" placeholder="Email của bạn" class="form__input" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+
+                        <input name="MatKhau" placeholder="Mật khẩu" class="form__input" type="password" />
+                        <span asp-validation-for="MatKhau" class="text-danger"></span>
+
                         <a href="@Url.Action("QuenMatKhau", "TaiKhoan", new { area = "KhachHang" })" class="form__forgot">Quên mật khẩu?</a>
+
                         <div class="form__btn">
-                            <button class="btn">Đăng Nhập</button>
+                            <button type="submit" class="btn">Đăng Nhập</button>
+                        </div>
+
+                        <div class="text-danger mt-2">
+                            @ViewBag.ThongBao
                         </div>
                     </form>
-                    <p class="form__switch">Chưa có tài khoản? <a href="@Url.Action("DangKy", "TaiKhoan", new { area = "KhachHang" })">Đăng ký tại đây</a></p>
+
+                    <p class="form__switch">
+                        Chưa có tài khoản? <a href="@Url.Action("DangKy", "TaiKhoan", new { area = "KhachHang" })">Đăng ký tại đây</a>
+                    </p>
                 </div>
             </div>
         </section>
     </main>
+
+    @section Scripts {
+        @* Load validation scripts *@
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
 </body>
 </html>

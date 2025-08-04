@@ -1,0 +1,35 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/CustomerLayout.cshtml";
+    ViewData["Title"] = "Hồ sơ Admin";
+}
+@model FShop6.Areas.Admin.Models.HoSoAdminViewModel;
+<div class="container-fluid">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="TrangChu" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Hồ sơ admin</li>
+    </ol>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-body text-center">
+                    <img src="https://i.imgur.com/4M34hi2.png" class="rounded-circle mb-3" width="120" alt="Admin Avatar" />
+                    <h3 class="card-title mb-1">@Model.HoTen</h3>
+                    <p class="text-muted mb-2">@Model.TenVaiTro</p>
+                    <div class="row mb-3 text-left px-4">
+                        <div class="col-md-6">
+                            <p><i class="fa fa-envelope mr-2"></i> @Model.Email</p>
+                            <p><i class="fa fa-phone mr-2"></i> @Model.SoDienThoai</p>
+                            <p><i class="fa fa-map-marker mr-2"></i> @Model.DiaChi</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><i class="fa fa-calendar mr-2"></i> Ngày tham gia: @Model.ThoiGianTao.ToString("dd/MM/yyyy")</p>
+                            <p><i class="fa fa-clock-o mr-2"></i> Cập nhật: @Model.NgayCapNhat.ToString("dd/MM/yyyy")</p>
+                            <p><i class="fa fa-users mr-2"></i> Vai trò: @Model.TenVaiTro</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>

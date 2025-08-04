@@ -1,4 +1,5 @@
 ﻿using FShop6.Areas.Admin.Services;
+using FShop6.Areas.Admin.Services.Implementations;
 using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
 using FShop6.Hubs;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 var builder = WebApplication.CreateBuilder(args);
 
-//connection db
+// Kết nối cơ sở dữ liệu SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -15,6 +16,24 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
+// Thêm cấu hình Session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Session hết hạn sau 30 phút
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+    options.Secure = CookieSecurePolicy.SameAsRequest; // Chấp nhận http
+});
+// Đăng ký các service
+builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
+builder.Services.AddScoped<ITrangChuAdminServices, TrangChuAdminService>();
+builder.Services.AddScoped<IHoSoService, HoSoService>();
+builder.Services.AddScoped<IKhachHangService, KhachHangService>();
 // 🟢 Đăng ký dịch vụ TrangChuService
 builder.Services.AddScoped<IShopService, ShopService>();
 // Đảm bảo đăng ký dịch vụ đúng cách
@@ -45,30 +64,36 @@ builder.Services.AddScoped<ITinTucService, TinTucService>();
 builder.Services.AddScoped<DichVuAIThongMinh>();
 var app = builder.Build();
 
-// Cấu hình pipelinex
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+app.UseRouting();
+
+app.UseCookiePolicy();
+
+// Bắt buộc thêm dòng này để Session hoạt động
+app.UseSession();
+
+app.UseAuthorization();
 
 app.MapHub<ChatHub>("/chatHub");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthorization();
 
-// 🟡 Định tuyến cho khu vực (Areas) — Quan trọng
+
+
+
+
+// Định tuyến cho Areas
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=TrangChu}/{action=Index}/{id?}"
-);
+    pattern: "{area:exists}/{controller=TrangChu}/{action=Index}/{id?}");
 
-// 🔵 Định tuyến mặc định: Chuyển hướng về KhachHang/TrangChu/Index
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=TrangChu}/{action=Index}/{id?}",
-    defaults: new { area = "KhachHang" } // 🟢 Mặc định dùng Area KhachHang
-);
+    defaults: new { area = "KhachHang" });
 
 app.Run();

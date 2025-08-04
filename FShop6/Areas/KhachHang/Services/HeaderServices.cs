@@ -12,6 +12,7 @@ namespace FShop6.Areas.KhachHang.Services
     {
         public int TongGioHang { get; set; }
         public int TongYeuThich { get; set; }
+        public string HoTen { get; set; }
     }
 
     public class HeaderServices : IHeaderServices
@@ -30,10 +31,15 @@ namespace FShop6.Areas.KhachHang.Services
                 .CountAsync(x => x.MaNguoiDung == maNguoiDung);
             var TongYeuThich = await context.SPYeuThich
                     .CountAsync(x => x.MaNguoiDung == maNguoiDung);
+            var HoTen = await context.NguoiDung
+                .Where(x => x.MaNguoiDung == maNguoiDung)
+                .Select(x => x.HoTen)
+                .FirstOrDefaultAsync();
             var head = new HeaderModel
             {
                 TongGioHang = TongGioHang,
-                TongYeuThich = TongYeuThich
+                TongYeuThich = TongYeuThich,
+                HoTen = HoTen
             };
             return head;
 

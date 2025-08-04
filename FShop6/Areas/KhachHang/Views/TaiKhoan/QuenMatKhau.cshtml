@@ -1,7 +1,6 @@
 ﻿@{
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -12,7 +11,6 @@
     <link rel="stylesheet" href="~/KhachHang/css/styles.css" />
 </head>
 <body>
-    <!-- Header Rút Gọn -->
     <header class="header-minimal">
         <div class="container">
             <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
@@ -20,22 +18,19 @@
             </a>
         </div>
     </header>
+
     <main class="main">
         <section class="login-register section--lg">
             <div class="login-register__container container">
                 <div class="login">
-                    </a>
-
                     <div id="step-get-otp">
                         <h3 class="section__title">Đặt Lại Mật Khẩu</h3>
                         <form id="form-otp" class="form grid">
-                            <input type="email" id="email-input" placeholder="Nhập email của bạn" class="form__input" required>
-
+                            <input type="email" id="email-input" placeholder="Nhập email của bạn" class="form__input" required />
                             <div class="form__group--otp">
-                                <input type="text" id="otp-input" placeholder="Nhập mã OTP" class="form__input" required>
+                                <input type="text" id="otp-input" placeholder="Nhập mã OTP" class="form__input" required />
                                 <button type="button" id="get-otp-btn" class="btn btn--sm btn--outline">Lấy mã</button>
                             </div>
-
                             <div class="form__btn">
                                 <button type="submit" class="btn">Xác Nhận</button>
                             </div>
@@ -45,8 +40,8 @@
                     <div id="step-reset-password" class="hidden">
                         <h3 class="section__title">Tạo Mật Khẩu Mới</h3>
                         <form id="form-new-password" class="form grid">
-                            <input type="password" id="new-password" placeholder="Mật khẩu mới (ít nhất 6 ký tự)" class="form__input" required minlength="6">
-                            <input type="password" id="confirm-new-password" placeholder="Xác nhận mật khẩu mới" class="form__input" required>
+                            <input type="password" id="new-password" placeholder="Mật khẩu mới (ít nhất 6 ký tự)" class="form__input" required minlength="6" />
+                            <input type="password" id="confirm-new-password" placeholder="Xác nhận mật khẩu mới" class="form__input" required />
                             <div class="form__btn">
                                 <button type="submit" class="btn">Lưu Mật Khẩu</button>
                             </div>
@@ -69,50 +64,97 @@
             const otpInput = document.getElementById('otp-input');
             const newPasswordInput = document.getElementById('new-password');
             const confirmNewPasswordInput = document.getElementById('confirm-new-password');
+            const emailInput = document.getElementById('email-input');
 
-            const MOCK_OTP = '123456'; // Mã OTP giả để demo
+            // Đường dẫn Razor
+            const guiMaOtpUrl = '@Url.Action("GuiMaOTP", "TaiKhoan", new { area = "KhachHang" })';
+            const xacNhanOtpUrl = '@Url.Action("XacNhanOTP", "TaiKhoan", new { area = "KhachHang" })';
+            const doiMatKhauUrl = '@Url.Action("DoiMatKhau", "TaiKhoan", new { area = "KhachHang" })';
+            const dangNhapUrl = '@Url.Action("DangNhap", "TaiKhoan", new { area = "KhachHang" })';
 
-            // Xử lý nút Lấy mã và đếm ngược
-            getOtpBtn.addEventListener('click', () => {
-                alert(`Mã OTP (giả) đã được gửi. Mã là: ${MOCK_OTP}`);
-                getOtpBtn.disabled = true;
-                let countdown = 60;
-                getOtpBtn.textContent = `Gửi lại (${countdown}s)`;
-                const interval = setInterval(() => {
-                    countdown--;
+            // Gửi mã OTP
+            getOtpBtn.addEventListener('click', async () => {
+                const email = emailInput.value.trim();
+                if (!email) return alert("Vui lòng nhập email.");
+
+                const response = await fetch(guiMaOtpUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `email=${encodeURIComponent(email)}`
+                });
+
+                const result = await response.json();
+                alert(result.message);
+
+                if (result.success) {
+                    getOtpBtn.disabled = true;
+                    let countdown = 60;
                     getOtpBtn.textContent = `Gửi lại (${countdown}s)`;
-                    if (countdown <= 0) {
-                        clearInterval(interval);
-                        getOtpBtn.textContent = 'Lấy mã';
-                        getOtpBtn.disabled = false;
-                    }
-                }, 1000);
+                    const interval = setInterval(() => {
+                        countdown--;
+                        getOtpBtn.textContent = `Gửi lại (${countdown}s)`;
+                        if (countdown <= 0) {
+                            clearInterval(interval);
+                            getOtpBtn.disabled = false;
+                            getOtpBtn.textContent = 'Lấy mã';
+                        }
+                    }, 1000);
+                }
             });
 
-            // Xử lý form Xác nhận OTP
-            formOtp.addEventListener('submit', (e) => {
+            // Xác nhận OTP
+            formOtp.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (otpInput.value === MOCK_OTP) {
+                const email = emailInput.value.trim();
+                const otp = otpInput.value.trim();
+                if (!otp) return alert("Vui lòng nhập mã OTP.");
+
+                const response = await fetch(xacNhanOtpUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`
+                });
+
+                const result = await response.json();
+                if (result.success) {
                     stepGetOtp.classList.add('hidden');
                     stepResetPassword.classList.remove('hidden');
                 } else {
-                    alert('Mã OTP không chính xác.');
+                    alert(result.message);
                 }
             });
 
-            // Xử lý form Đặt lại mật khẩu
-            formNewPassword.addEventListener('submit', (e) => {
+            // Đổi mật khẩu
+            formNewPassword.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (newPasswordInput.value !== confirmNewPasswordInput.value) {
-                    alert('Mật khẩu xác nhận không khớp.');
-                    return;
+                const email = emailInput.value.trim();
+                const newPassword = newPasswordInput.value;
+                const confirmPassword = confirmNewPasswordInput.value;
+
+                if (newPassword.length < 6) {
+                    return alert('Mật khẩu phải có ít nhất 6 ký tự.');
                 }
-                alert('Đặt lại mật khẩu thành công! Bạn sẽ được chuyển đến trang đăng nhập.');
-                window.location.href = 'login.html';
+                if (newPassword !== confirmPassword) {
+                    return alert('Mật khẩu xác nhận không khớp.');
+                }
+
+                const response = await fetch(doiMatKhauUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `email=${encodeURIComponent(email)}&newPassword=${encodeURIComponent(newPassword)}`
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                    window.location.href = dangNhapUrl;
+                } else {
+                    alert(result.message);
+                }
             });
         });
     </script>
-    <!--=============== SWIPER JS ===============-->
+
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="~/KhachHang/js/include.js"></script>
 </body>

@@ -1,4 +1,5 @@
-﻿using FShop6.Areas.KhachHang.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using FShop6.Areas.KhachHang.Models;
 
 namespace FShop6.Areas.Admin.Models
 {
@@ -8,4 +9,5 @@ namespace FShop6.Areas.Admin.Models
         public DanhMucModel DanhMuc { get; set; } = new DanhMucModel();
         public List<ChiTietSanPhamModel> ChiTietSanPham { get; set; } = new List<ChiTietSanPhamModel>();
     }
+    
 }
