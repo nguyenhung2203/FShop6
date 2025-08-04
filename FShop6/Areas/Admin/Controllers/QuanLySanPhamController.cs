@@ -35,7 +35,9 @@ namespace FShop6.Areas.Admin.Controllers
             if (KetQua)
             {
 
-            }    
+            }
+            return RedirectToAction("QuanLySanPham");
+        }
         [HttpPost]
         public async Task<IActionResult> ThemSanPham(IFormCollection form, IFormFile AnhDaiDien)
         {

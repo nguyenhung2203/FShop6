@@ -80,7 +80,7 @@
                         <div class="flex-grow-1">
                             <h6 class="card-title mb-1 fw-normal">⚠️ Sản phẩm sắp hết hàng</h6>
                             <span class="card-text fs-4 fw-bold mb-1" id="sapHetHang">0</span>
-                            <span class="opacity-75">Cần nhập thêm hàng</span>
+                            @* <span class="opacity-75">Cần nhập thêm hàng</span> *@
                         </div>
                         <div class="ms-2 opacity-75">
                             <i class="fas fa-exclamation-triangle fa-2x"></i>
@@ -102,7 +102,7 @@
                                                                 : "Chưa có")
                             </span>
 
-                            <span class="opacity-75" id="banChayCount"> SL: @(Model.sanPhamBanChayNgay[0].SoLuongBan)</span>
+                            <span class="opacity-75" id="banChayCount"></span>
                         </div>
                         <div class="ms-2 opacity-75">
                             <i class="fas fa-fire fa-2x"></i>
@@ -278,7 +278,7 @@
                                 </tr>
                             </thead>
                             <tbody id="lowProductsList">
-                                @if (Model.SanPhamBanChamNgay == null || !Model.sanPhamBanChayNgay.Any())
+                                @if (Model.SanPhamBanChamNgay == null || !Model.SanPhamBanChamNgay.Any())
                                 {
                                     <tr>
                                         <td colspan="4" class="text-center text-muted">Chưa có dữ liệu</td>
