@@ -30,7 +30,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.Secure = CookieSecurePolicy.SameAsRequest; // Chấp nhận http
 });
 // Đăng ký các service
-builder.Services.AddScoped<ICuaHangServices, CuaHangServices>();
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<ITrangChuAdminServices, TrangChuAdminService>();
 builder.Services.AddScoped<IHoSoService, HoSoService>();
@@ -90,11 +89,11 @@ app.UseStaticFiles();
 // Định tuyến cho Areas
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=TrangChu}/{action=Index}/{id?}");
+    pattern: "{area:exists}/{controller=TaiKhoan}/{action=DangKy}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=TrangChu}/{action=Index}/{id?}",
-    defaults: new { area = "Admin" });
+    pattern: "{controller=TaiKhoan}/{action=DangKy}/{id?}",
+    defaults: new { area = "KhachHang" });
 
 app.Run();

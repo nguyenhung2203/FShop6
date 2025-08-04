@@ -19,19 +19,17 @@ namespace FShop6.Areas.Admin.Controllers
             var danhSach = _taiKhoanService.GetAll();
             return View(danhSach);
         }
-        [HttpPost]
-        public IActionResult CapNhatTrangThai(int MaNguoiDung, string TTHoatDong)
+        public IActionResult CapNhatTrangThai(int MaNguoiDung, string TTHoatDong, string? MatKhau)
         {
-            Console.WriteLine($"MaNguoiDung: {MaNguoiDung}, TTHoatDong: {TTHoatDong}"); // debug
+            var thanhCong = _taiKhoanService.CapNhatTrangThai(MaNguoiDung, TTHoatDong, MatKhau);
 
-            var thanhCong = _taiKhoanService.CapNhatTrangThai(MaNguoiDung, TTHoatDong);
-            if (thanhCong)
-                TempData["Success"] = "Cập nhật thành công!";
-            else
-                TempData["Error"] = "Không tìm thấy người dùng.";
+            TempData[thanhCong ? "Success" : "Error"] = thanhCong ?
+                "Cập nhật thành công!" :
+                "Không tìm thấy người dùng.";
 
             return RedirectToAction("QuanLyTaiKhoan");
         }
+
         [HttpPost]
         public IActionResult XoaTaiKhoan(int MaNguoiDung)
         {

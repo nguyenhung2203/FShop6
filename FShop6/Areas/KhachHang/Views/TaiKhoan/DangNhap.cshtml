@@ -29,11 +29,20 @@
 
                     @* Form dùng model binding *@
                     <form asp-action="DangNhap" method="post" class="form grid">
-                        <input name="Email" placeholder="Email của bạn" class="form__input" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <input name="ThongTinDangNhap" placeholder="Email / Số điện thoại / Tài khoản" class="form__input" />
+<span asp-validation-for="ThongTinDangNhap" class="text-danger"></span>
 
-                        <input name="MatKhau" placeholder="Mật khẩu" class="form__input" type="password" />
-                        <span asp-validation-for="MatKhau" class="text-danger"></span>
+                        <div class="form__input-group" style="position: relative;">
+    <input name="MatKhau" id="passwordInput" placeholder="Mật khẩu" class="form__input" type="password" />
+    <span asp-validation-for="MatKhau" class="text-danger"></span>
+
+    <button type="button"
+            onclick="togglePassword()"
+            title="Hiện/Ẩn mật khẩu"
+            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+        👁
+    </button>
+</div>
 
                         <a href="@Url.Action("QuenMatKhau", "TaiKhoan", new { area = "KhachHang" })" class="form__forgot">Quên mật khẩu?</a>
 
@@ -54,11 +63,12 @@
         </section>
     </main>
 
-    @section Scripts {
-        @* Load validation scripts *@
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    <script>
+        function togglePassword() {
+            var input = document.getElementById("passwordInput");
+            input.type = input.type === "password" ? "text" : "password";
         }
-    }
+    </script>
+
 </body>
 </html>

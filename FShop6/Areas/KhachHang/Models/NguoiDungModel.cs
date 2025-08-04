@@ -17,7 +17,7 @@ namespace FShop6.Areas.KhachHang.Models
         [EmailAddress]
         [StringLength(255)]
         public string Email { get; set; }
-
+        public string TaiKhoan { get; set; } 
         [Required]
         [StringLength(255)]
         public string MatKhau { get; set; } // Nên lưu mật khẩu đã được mã hóa
