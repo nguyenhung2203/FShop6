@@ -36,6 +36,24 @@ namespace FShop6.Areas.Admin.Controllers
             {
 
             }    
+        [HttpPost]
+        public async Task<IActionResult> ThemSanPham(IFormCollection form, IFormFile AnhDaiDien)
+        {
+            await _quanLySanPhamServices.ThemSanPhamAsync(form, AnhDaiDien);
+            return RedirectToAction("QuanLySanPham");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SuaSanPham(IFormCollection form, IFormFile AnhDaiDien)
+        {
+            await _quanLySanPhamServices.SuaSanPhamAsync(form, AnhDaiDien);
+            return RedirectToAction("QuanLySanPham");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> XoaSanPham(int MaSanPham)
+        {
+            await _quanLySanPhamServices.XoaSanPhamAsync(MaSanPham);
             return RedirectToAction("QuanLySanPham");
         }
 
@@ -55,5 +73,10 @@ namespace FShop6.Areas.Admin.Controllers
         //    var dsSanPham = await _quanLySanPhamServices.LayTatCaSanPhamAsync();
         //    return View("QuanLySanPham", dsSanPham);
         //}
+        public async Task<IActionResult> ThemBienThe(IFormCollection form, List<IFormFile> AnhBienThe)
+        {
+            await _quanLySanPhamServices.ThemBienTheAsync(form, AnhBienThe);
+            return RedirectToAction("QuanLySanPham");
+        }
     }
 }

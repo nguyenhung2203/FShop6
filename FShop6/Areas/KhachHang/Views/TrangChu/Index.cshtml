@@ -83,7 +83,7 @@
     <section class="products container section">
         <div class="tab__btns">
             <span class="tab__btn active-tab" data-target="#featured">Nổi bật</span>
-            <span class="tab__btn" data-target="#popular">Phổ biến</span>
+            <span class="tab__btn" data-target="#popular">Sản phẩm bán chạy</span>
         </div>
 
         <div class="tab__items">
@@ -93,30 +93,15 @@
                     {
                         <div class="product__item">
                             <div class="product__banner">
-                                <a href="details.html" class="product__images">
+                                <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
                                     <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
                                          alt="@sanPham.TenSanPham"
                                          class="product__img default" />
-
-                                    <!-- Hashtag overlay trên ảnh -->
-                                    <div class="product__hashtag-overlay">
-                                        <span class="hashtag">#Hot</span>
-                                    </div>
                                 </a>
-                            </div>
-                            <div class="product__content">
-                                <a href="details.html">
-                                    <h3 class="product__title">@sanPham.TenSanPham</h3>
-                                </a>
-                                <p class="product__description">@sanPham.MoTaNgan</p>
-                            </div>
-                            <div class="product__bottom-row">
-                                <div class="product__price flex">
-                                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                    @* Thêm giá cũ nếu có giảm giá *@
-                                    @* <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan * 1.2)</span> *@
-                                </div>
-                                <div class="product-card-actions">
+                                <div class="product__actions">
+                                    <a href="#" class="action__btn cart__btn" aria-label="Thêm giỏ hàng">
+                                        <i class="fi fi-rs-shopping-bag-add"></i>
+                                    </a>
                                     @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
                                     {
                                         @Html.Hidden("maSanPham", sanPham.MaSanPham)
@@ -124,47 +109,104 @@
                                             <i class="fi fi-rs-heart"></i>
                                         </button>
                                     }
+                                    <a href="#" class="action__btn" aria-label="Mua ngay">
+                                        <i class="fi fi-rs-shuffle"></i>
+                                    </a>
+                                </div>
+                                <div class="product__badge light-green">-22%</div>
+                            </div>
+                            <div class="product__content">
+                                <div class="product__content-top">
+                                    <span class="product__category">@sanPham.TenDanhMuc</span>
+                                    <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
+                                        <h3 class="product__title">@sanPham.TenSanPham</h3>
+                                    </a>
+                                </div>
+
+                                <div class="product__content-middle">
+                                    <div class="product__rating">
+                                        <i class="fi fi-rs-star"></i>
+                                        <i class="fi fi-rs-star"></i>
+                                        <i class="fi fi-rs-star"></i>
+                                        <i class="fi fi-rs-star"></i>
+                                        <i class="fi fi-rs-star"></i>
+                                    </div>
+                                    <div class="product__description-wrapper">
+                                        <p class="product__description">@sanPham.MoTaNgan</p>
+                                    </div>
+                                </div>
+
+                                <div class="product__content-bottom">
+                                    <div class="product__price flex">
+                                        <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                        <span class="old__price">10000</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     }
+                    @* Chỗ để đổ dữ liệu mới vào đây *@
                 </div>
             </div>
+        </div>
+
             <div class="tab__item" content id="popular">
                 <div class="products__container grid">
                     @foreach (var sanPham in Model.SanPhamPhoBien)
                     {
-                        <div class="product__item">
-                            <div class="product__banner">
-                                <a href="details.html" class="product__images">
-                                    <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
-                                         alt="@sanPham.TenSanPham"
-                                         class="product__img default" />
-
-                                    <!-- Hashtag overlay trên ảnh -->
-                                    <div class="product__hashtag-overlay">
-                                        <span class="hashtag">#Hot</span>
-                                    </div>
+                    <div class="product__item">
+                        <div class="product__banner">
+                            <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
+                                <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
+                                     alt="@sanPham.TenSanPham"
+                                     class="product__img default" />
+                            </a>
+                            <div class="product__actions">
+                                <a href="#" class="action__btn cart__btn" aria-label="Thêm giỏ hàng">
+                                    <i class="fi fi-rs-shopping-bag-add"></i>
+                                </a>
+                                @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                {
+                                    @Html.Hidden("maSanPham", sanPham.MaSanPham)
+                                    <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
+                                        <i class="fi fi-rs-heart"></i>
+                                    </button>
+                                }
+                                <a href="#" class="action__btn" aria-label="Mua ngay">
+                                    <i class="fi fi-rs-shuffle"></i>
                                 </a>
                             </div>
-                            <div class="product__content">
-                                <a href="details.html">
+                            <div class="product__badge light-green">-22%</div>
+                        </div>
+                        <div class="product__content">
+                            <div class="product__content-top">
+                                <span class="product__category">@sanPham.TenDanhMuc</span>
+                                <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                                     <h3 class="product__title">@sanPham.TenSanPham</h3>
                                 </a>
-                                <p class="product__description">@sanPham.MoTaNgan</p>
                             </div>
-                            <div class="product__bottom-row">
+
+                            <div class="product__content-middle">
+                                <div class="product__rating">
+                                    <i class="fi fi-rs-star"></i>
+                                    <i class="fi fi-rs-star"></i>
+                                    <i class="fi fi-rs-star"></i>
+                                    <i class="fi fi-rs-star"></i>
+                                    <i class="fi fi-rs-star"></i>
+                                </div>
+                                <div class="product__description-wrapper">
+                                    <p class="product__description">@sanPham.MoTaNgan</p>
+                                </div>
+                            </div>
+
+                            <div class="product__content-bottom">
                                 <div class="product__price flex">
                                     <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                    @* <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan * 1.15)</span> *@
-                                </div>
-                                <div class="product-card-actions">
-                                    <a href="#" class="action__btn" aria-label="Thêm yêu thích">
-                                        <i class="fi fi-rs-heart"></i>
-                                    </a>
+                                    <span class="old__price">10</span>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     }
                 </div>
             </div>
@@ -172,7 +214,7 @@
     </section>
 
     <!--=============== Sản phẩm mới về ===============-->
-    <section class="new__arrivals container section">
+    <section class="new__arrivals container section" tab__btn>
         <h3 class="section__title"><span>Hàng mới về</span></h3>
         <div class="new__container swiper">
             <div class="swiper-wrapper">
@@ -180,32 +222,57 @@
                 {
                     <div class="product__item swiper-slide">
                         <div class="product__banner">
-                            <a href="details.html" class="product__images">
+                            <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
                                 <img src="@("/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
                                      alt="@sanPham.TenSanPham"
                                      class="product__img default" />
-
-                                <!-- Hashtag overlay trên ảnh -->
-                                <div class="product__hashtag-overlay">
-                                    <span class="hashtag">#Hot</span>
-                                </div>
                             </a>
+                            <div class="product__actions">
+                                <a href="#" class="action__btn cart__btn" aria-label="Thêm giỏ hàng">
+                                    <i class="fi fi-rs-shopping-bag-add"></i>
+                                </a>
+                                @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                {
+                                    @Html.Hidden("maSanPham", sanPham.MaSanPham)
+                                    <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
+                                        <i class="fi fi-rs-heart"></i>
+                                    </button>
+                                }
+                                <a href="#" class="action__btn" aria-label="Mua ngay">
+                                    <i class="fi fi-rs-shuffle"></i>
+                                </a>
+                            </div>
+                            <div class="product__badge light-green">New</div>
+                            @* <!-- Hashtag overlay trên ảnh -->
+                            <div class="product__hashtag-overlay">
+                                <span class="hashtag">#Hot</span>
+                            </div> *@
                         </div>
                         <div class="product__content">
-                            <a href="details.html">
-                                <h3 class="product__title">@sanPham.TenSanPham</h3>
-                            </a>
-                            <p class="product__description">@sanPham.MoTaNgan</p>
-                        </div>
-                        <div class="product__bottom-row">
-                            <div class="product__price flex">
-                                <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                <span class="old__price">100</span>
-                            </div>
-                            <div class="product-card-actions">
-                                <a href="#" class="action__btn" aria-label="Thêm yêu thích">
-                                    <i class="fi fi-rs-heart"></i>
+                            <div class="product__content-top">
+                                <span class="product__category">@sanPham.TenDanhMuc</span>
+                                <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
+                                    <h3 class="product__title">@sanPham.TenSanPham</h3>
                                 </a>
+                            </div>
+
+                            <div class="product__content-middle">
+                                <div class="product__rating">
+                                    <i class="fi fi-rs-star"></i>
+                                    <i class="fi fi-rs-star"></i>
+                                    <i class="fi fi-rs-star"></i>
+                                    <i class="fi fi-rs-star"></i>
+                                    <i class="fi fi-rs-star"></i>
+                                </div>
+                                <div class="product__description-wrapper">
+                                    <p class="product__description">@sanPham.MoTaNgan</p>
+                                </div>
+                            </div>
+
+                            <div class="product__content-bottom">
+                                <div class="product__price flex">
+                                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -288,7 +355,10 @@
                         <p class="news__description">
                             @(tinTuc.MoTaNgan + "...")
                         </p>
-                        <a href="blog-post.html" class="news__readmore">Đọc thêm <i class="fi fi-rs-arrow-right"></i></a>
+                        <a href="@Url.Action("ChiTietTinTuc", "TinTuc", new { area = "KhachHang", id = tinTuc.MaTinTuc })" class="news__readmore">
+                            Đọc thêm <i class="fi fi-rs-arrow-right"></i>
+                        </a>
+
                     </div>
                 </div>
             }
@@ -299,7 +369,7 @@
     <section class="showcase section">
     </section>
     <!--=============== SHOWCASE ===============-->
-    <section class="showcase section">
+    @* <section class="showcase section">
         <div class="showcase__container container grid">
             @foreach (var danhMuc in Model.DanhMucSanPhamHienThi)
             {
@@ -327,36 +397,5 @@
                 </div>
             }
         </div>
-    </section>
-    <!-- =============== PHẦN HASHTAGS PHổ BIẾN - THÊM VÀO CUỐI TRANG =============== -->
-    <section class="popular-hashtags-section section">
-        <div class="container">
-            <h3 class="section__title">
-                <span>Khám phá</span> theo hashtag
-            </h3>
-            <div class="popular-hashtags">
-                <a href="#" class="popular-hashtag">#FPTStyle</a>
-                <a href="#" class="popular-hashtag">#SinhVienFPT</a>
-                <a href="#" class="popular-hashtag">#TrendingNow</a>
-                <a href="#" class="popular-hashtag">#NewArrivals</a>
-                <a href="#" class="popular-hashtag">#BestSeller</a>
-                <a href="#" class="popular-hashtag">#LimitedEdition</a>
-                <a href="#" class="popular-hashtag">#QualityFirst</a>
-                <a href="#" class="popular-hashtag">#StudentLife</a>
-            </div>
-        </div>
-    </section>
-    <section class="cta section">
-        <div class="cta__container container">
-            <div class="fpt-banner">
-                <div class="banner-content">
-                    <h2>⭐ Độc quyền tại FPT Tây Nguyên!</h2>
-                    <p>Những sản phẩm chỉ có tại trường. Thể hiện tinh thần Sinh Viên đích thực!</p>
-                </div>
-                <div class="banner-cta">
-                    <a href="#exclusive" class="cta-button">Xem ngay</a>
-                </div>
-            </div>
-        </div>
-    </section>
+    </section> *@
 </main>

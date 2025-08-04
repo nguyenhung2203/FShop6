@@ -1,0 +1,222 @@
+﻿<div class="chat-widget">
+    <div class="chat-widget__button" id="chat-widget-button">
+        <i class="fi fi-rs-comment-dots"></i>
+    </div>
+    <div class="chat-widget__window hidden" id="chat-widget-window">
+        <div class="chat-widget__header">
+            <h4>F6 Shop Bot</h4>
+            <button id="chat-widget-close">&times;</button>
+        </div>
+        <div class="chat-widget__body" id="chat-box">
+            <!-- Tin nhắn chào ban đầu sẽ được thêm bởi SignalR -->
+        </div>
+        <div class="chat-widget__footer">
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="Nhập câu hỏi về sản phẩm..." />
+                <button id="sendButton" type="button"><i class="fi fi-rs-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lấy các phần tử DOM
+        const chatButton = document.getElementById("chat-widget-button");
+        const chatWindow = document.getElementById("chat-widget-window");
+        const closeButton = document.getElementById("chat-widget-close");
+        const sendButton = document.getElementById("sendButton");
+        const chatBox = document.getElementById("chat-box");
+        const messageInput = document.getElementById("messageInput");
+
+        // Kiểm tra xem các element có tồn tại không
+        if (!chatButton || !chatWindow || !closeButton || !sendButton || !chatBox || !messageInput) {
+            console.error("Một hoặc nhiều element không tồn tại!");
+            return;
+        }
+
+        // Sự kiện đóng/mở cửa sổ chat
+        chatButton.addEventListener('click', () => {
+            chatWindow.classList.toggle('hidden');
+            if (!chatWindow.classList.contains('hidden')) {
+                messageInput.focus();
+            }
+        });
+
+        closeButton.addEventListener('click', () => {
+            chatWindow.classList.add('hidden');
+        });
+
+        // Kiểm tra SignalR có tồn tại không
+        if (typeof signalR === 'undefined') {
+            console.error("SignalR library không được load! Thêm script SignalR vào trang.");
+            addMessage("Hệ thống", "Lỗi: Thư viện SignalR chưa được tải. Vui lòng liên hệ admin!");
+            sendButton.disabled = true;
+            return;
+        }
+
+        // --- LOGIC SIGNALR ---
+        // 1. Tạo kết nối đến ChatHub
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        // Biến để theo dõi trạng thái kết nối
+        let isConnected = false;
+
+        // 2. Lắng nghe tin nhắn từ Hub
+        connection.on("NhanTinNhan", function (user, message) {
+            addMessage(user, message);
+        });
+
+        // 3. Lắng nghe sự kiện thay thế tin nhắn cuối (để xóa "Đang xử lý...")
+        connection.on("ThayTheTinNhanCuoi", function (user, message) {
+            const lastMessage = chatBox.lastElementChild;
+            if (lastMessage) {
+                lastMessage.remove();
+            }
+            addMessage(user, message);
+        });
+
+        // 4. Khởi động kết nối
+        connection.start()
+            .then(function () {
+                console.log("Kết nối SignalR thành công!");
+                isConnected = true;
+                sendButton.disabled = false; // Kích hoạt nút gửi khi kết nối thành công
+            })
+            .catch(function (err) {
+                console.error("Lỗi kết nối SignalR: ", err.toString());
+                addMessage("Hệ thống", "Không thể kết nối đến server. Vui lòng tải lại trang!");
+                isConnected = false;
+                sendButton.disabled = true;
+            });
+
+        // 5. Hàm thêm tin nhắn vào chat box
+        function addMessage(user, message) {
+            const isMe = (user === "Bạn");
+            const messageClass = isMe ? 'me' : 'bot';
+
+            const messageElement = document.createElement("div");
+            messageElement.className = `chat-message ${messageClass}`;
+
+            // Escape HTML để tránh XSS
+            const safeMessage = message.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const safeUser = user.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            messageElement.innerHTML = `
+                <div class="sender">${safeUser}</div>
+                <div class="message-bubble">${safeMessage}</div>
+            `;
+
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // 6. Hàm gửi tin nhắn (CẢI THIỆN)
+        function sendMessage() {
+            console.log("sendMessage() được gọi");
+
+            const message = messageInput.value.trim();
+            console.log("Nội dung tin nhắn:", message);
+
+            // Kiểm tra tin nhắn trống
+            if (!message) {
+                console.log("Tin nhắn trống, không gửi");
+                messageInput.focus();
+                return;
+            }
+
+            // Kiểm tra kết nối SignalR
+            if (!isConnected || connection.state !== signalR.HubConnectionState.Connected) {
+                console.log("Chưa kết nối SignalR:", connection.state);
+                addMessage("Hệ thống", "Chưa kết nối đến server. Vui lòng tải lại trang!");
+                return;
+            }
+
+            // Kiểm tra nút có bị disabled không
+            if (sendButton.disabled) {
+                console.log("Nút gửi đang bị vô hiệu hóa");
+                return;
+            }
+
+            console.log("Bắt đầu gửi tin nhắn:", message);
+
+            // Vô hiệu hóa nút gửi và input tạm thời
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+
+            // Gọi hàm "GuiTinNhan" trên Hub ở server
+            connection.invoke("GuiTinNhan", message)
+                .then(function() {
+                    console.log("Gửi tin nhắn thành công");
+                    messageInput.value = "";
+                })
+                .catch(function (err) {
+                    console.error("Lỗi gửi tin nhắn: ", err.toString());
+                    addMessage("Hệ thống", "Không thể gửi tin nhắn. Vui lòng thử lại!");
+                })
+                .finally(function() {
+                    // Kích hoạt lại nút gửi và input sau 1 giây
+                    setTimeout(() => {
+                        if (isConnected) {
+                            sendButton.disabled = false;
+                            messageInput.disabled = false;
+                            messageInput.focus();
+                        }
+                    }, 1000);
+                });
+        }
+
+        // 7. Gắn sự kiện cho nút Gửi (CẢI THIỆN)
+        sendButton.addEventListener("click", function(event) {
+            event.preventDefault(); // Ngăn form submit
+            console.log("Nút gửi được click");
+            sendMessage();
+        });
+
+        // 8. Cho phép gửi bằng phím Enter (CẢI THIỆN)
+        messageInput.addEventListener("keydown", function(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault(); // Ngăn form submit mặc định
+                console.log("Phím Enter được nhấn");
+                sendMessage();
+            }
+        });
+
+        // 9. Tự động focus vào input khi mở chat
+        messageInput.addEventListener("focus", function() {
+            setTimeout(() => {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 100);
+        });
+
+        // 10. Xử lý khi mất kết nối (CẢI THIỆN)
+        connection.onclose(function() {
+            console.log("Mất kết nối SignalR");
+            isConnected = false;
+            sendButton.disabled = true;
+            addMessage("Hệ thống", "Mất kết nối đến server. Đang thử kết nối lại...");
+
+            // Thử kết nối lại sau 3 giây
+            setTimeout(() => {
+                connection.start()
+                    .then(() => {
+                        console.log("Kết nối lại thành công");
+                        isConnected = true;
+                        sendButton.disabled = false;
+                        addMessage("Hệ thống", "Đã kết nối lại thành công!");
+                    })
+                    .catch((err) => {
+                        console.error("Không thể kết nối lại: ", err.toString());
+                        isConnected = false;
+                        sendButton.disabled = true;
+                    });
+            }, 3000);
+        });
+
+        // Vô hiệu hóa nút gửi ban đầu cho đến khi kết nối thành công
+        sendButton.disabled = true;
+    });
+</script>

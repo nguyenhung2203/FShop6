@@ -1,6 +1,7 @@
 ﻿using FShop6.Areas.KhachHang.Models;
 using FShop6.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace FShop6.Areas.KhachHang.Services
 {
@@ -31,7 +32,7 @@ namespace FShop6.Areas.KhachHang.Services
 
             // Sản phẩm nổi bật
             var sanPhamNoiBat = await _context.SanPham
-                .Where(sp => sp.BienThes.Any(bt => bt.NoiBat))
+                .Where(sp => sp.TrangThai == true && sp.NoiBat == true)
                 .Take(12)
                 .Select(sp => new SanPhamTrangChuViewModel
                 {
@@ -46,12 +47,12 @@ namespace FShop6.Areas.KhachHang.Services
 
             // Sản phẩm mới (dựa trên ngày tạo)
             var sanPhamMoi = await _context.SanPham
-            .Include(sp => sp.BienThes)
+            .Where(sp => sp.TrangThai == true)
             .OrderByDescending(sp => sp.NgayTao)
             .Take(12)
             .Select(sp => new SanPhamTrangChuViewModel
             {
-                MaSanPham = sp.BienThes.OrderBy(bt => bt.GiaBan).Select(bt => bt.MaBienThe).FirstOrDefault(),
+                MaSanPham = sp.MaSanPham,
                 TenSanPham = sp.TenSanPham,
                 HinhAnhDaiDien = sp.HinhAnhDaiDien,
                 GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).Select(bt => bt.GiaBan).FirstOrDefault(),
@@ -64,13 +65,13 @@ namespace FShop6.Areas.KhachHang.Services
             var sanPhamPhoBien = await _context.ChiTietDonHang
                 .Include(ct => ct.BienThe)
                     .ThenInclude(bt => bt.SanPham)
-                        .ThenInclude(sp => sp.DanhMuc)
+                 .Where(g => g.BienThe.SanPham.TrangThai == true)
                 .GroupBy(ct => ct.BienThe.MaSanPham)
                 .OrderByDescending(g => g.Sum(x => x.SoLuong))
-                .Take(8)
+                .Take(12)
                 .Select(g => new SanPhamTrangChuViewModel
                 {
-                    MaSanPham = g.First().BienThe.MaBienThe,
+                    MaSanPham = g.First().BienThe.SanPham.MaSanPham,
                     TenSanPham = g.First().BienThe.SanPham.TenSanPham,
                     HinhAnhDaiDien = g.First().BienThe.SanPham.HinhAnhDaiDien,
                     GiaBan = g.First().BienThe.GiaBan,
@@ -91,14 +92,14 @@ namespace FShop6.Areas.KhachHang.Services
             // Sản phẩm theo danh mục
             var sanPhamTheoDanhMuc = await _context.SanPham
             .Include(sp => sp.DanhMuc)
-            .Include(sp => sp.BienThes)
             .GroupBy(sp => sp.DanhMuc.TenDanhMuc)
+            .Take(4)
             .Select(group => new DanhMucSanPhamViewModel
             {
                 TenDanhMuc = group.Key,
                 SanPhams = group.Take(3).Select(sp => new SanPhamTrangChuViewModel
                 {
-                    MaSanPham = sp.BienThes.FirstOrDefault().MaBienThe,
+                    MaSanPham = sp.MaSanPham,
                     TenSanPham = sp.TenSanPham,
                     HinhAnhDaiDien = sp.HinhAnhDaiDien,
                     GiaBan = sp.BienThes.FirstOrDefault().GiaBan
@@ -113,7 +114,7 @@ namespace FShop6.Areas.KhachHang.Services
                 SanPhamMoi = sanPhamMoi,
                 SanPhamPhoBien = sanPhamPhoBien,
                 TinTuc = tinTuc,
-                DanhMucSanPhamHienThi = sanPhamTheoDanhMuc
+                DanhMucSanPhamHienThi = sanPhamTheoDanhMuc,
             };
         }
     }
