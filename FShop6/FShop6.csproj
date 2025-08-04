@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="DichVu\" />
-    <Folder Include="wwwroot\Admin\css\" />
     <Folder Include="wwwroot\Admin\images\" />
     <Folder Include="wwwroot\Admin\fonts\" />
     <Folder Include="wwwroot\KhachHang\images\" />

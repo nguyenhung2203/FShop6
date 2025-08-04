@@ -17,11 +17,13 @@ namespace FShop6.Areas.KhachHang.Controllers
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            int maNguoiDung = 5;
+            int maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
             var header = await _headerServices.LayDuLieu(maNguoiDung);
 
             ViewBag.TongSoSanPhamGioHang = header.TongGioHang;
             ViewBag.TongSoSanPhamYeuThich = header.TongYeuThich;
+            ViewBag.MaNguoiDung = maNguoiDung;
+            ViewBag.TenNguoiDung = header.HoTen;
 
             await next(); 
         }

@@ -3152,6 +3152,7 @@ fieldset:disabled a.btn {
     font-size: 0.875rem;
     line-height: 1.5;
     border-radius: 0.2rem;
+    margin-left: 0.5rem;
 }
 
 .btn-block {
@@ -10693,6 +10694,8 @@ a.text-dark:hover, a.text-dark:focus {
 
 .text-muted {
     color: #6c757d !important;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .text-black-50 {
