@@ -100,3 +100,4 @@ window.openDeleteDetailsModal = function (button) {
 
     document.getElementById('ma_bien_the_sp_delete').value = maBienThe;
 }
+
