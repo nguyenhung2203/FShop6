@@ -68,7 +68,7 @@ namespace FShop6.Areas.KhachHang.Services
                  .Where(g => g.BienThe.SanPham.TrangThai == true)
                 .GroupBy(ct => ct.BienThe.MaSanPham)
                 .OrderByDescending(g => g.Sum(x => x.SoLuong))
-                .Take(8)
+                .Take(12)
                 .Select(g => new SanPhamTrangChuViewModel
                 {
                     MaSanPham = g.First().BienThe.SanPham.MaSanPham,

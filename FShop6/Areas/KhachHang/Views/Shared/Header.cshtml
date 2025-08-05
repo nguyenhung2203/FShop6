@@ -1,4 +1,11 @@
-﻿<header class="header">
+﻿@{
+    var ID = ViewBag.MaNguoiDung ?? 0;
+    var HoTen = ViewBag.TenNguoiDung ?? "Khách hàng";
+    const string URL_HO_SO = "/KhachHang/TaiKhoan/HoSo";
+    const string URL_DANG_NHAP = "/KhachHang/TaiKhoan/DangNhap";
+    const string URL_DANG_KY = "/KhachHang/TaiKhoan/DangKy";
+}
+<header class="header">
     <div class="header__top">
         <div class="header__container container">
             <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="nav__logo">
@@ -19,8 +26,25 @@
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                <span id="account-text">Tài khoản</span>
-                <div class="account-dropdown" id="account-dropdown-content"></div>
+                @if (ID > 0)
+                {
+                    <!-- Trường hợp đã đăng nhập -->
+                    <span id="account-text">Xin chào, @HoTen</span>
+                    <div class="account-dropdown" id="account-dropdown-content">
+                        <a href="@URL_HO_SO">Tài khoản của tôi</a>
+                        <a href="#" id="show-logout-modal" class="dropdown-link logout">Đăng xuất</a>
+                    </div>
+                }
+                else
+                {
+                    <!-- Trường hợp chưa đăng nhập -->
+                    <span id="account-text">Tài khoản</span>
+                    <div class="account-dropdown" id="account-dropdown-content">
+                        <a href="@URL_DANG_NHAP" class="dropdown-link">Đăng nhập</a>
+                        <a href="@URL_DANG_KY" class="dropdown-link">Đăng ký</a>
+                    </div>
+                }
+
             </div>
         </div>
     </div>

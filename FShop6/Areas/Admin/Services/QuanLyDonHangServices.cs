@@ -8,6 +8,8 @@ namespace FShop6.Areas.Admin.Services
     public interface IQuanLyDonHangServices
     {
         Task<QuanLyDonHangViewModel> LayTatCaDonHangAsync();
+        Task DuyetDonHang(int id);
+        Task SuaDonHang(IFormCollection form);
     }
 
     public class QuanLyDonHangServices : IQuanLyDonHangServices
@@ -29,24 +31,15 @@ namespace FShop6.Areas.Admin.Services
 
             var dsDonHang = donHang.Select(dh => new QuanLyDonHangModel
             {
-                Id = dh.ID,
-                MaDonHang = dh.MaDonHang,
-                DiaChiGiaoHang = dh.DiaChiGiaoHang,
-                TongTien = dh.TongTien,
-                TrangThai = dh.TrangThai,
-                PhuongThucThanhToan = dh.PhuongThucThanhToan,
-                ThoiGianDatHang = dh.ThoiGianDatHang,
-                NgayCapNhat = dh.NgayCapNhat,
-                GhiChu = dh.GhiChu,
-                TenKhachHang = dh.NguoiDung.HoTen,
+                DonHang = dh,
+                HoTen = dh.NguoiDung.HoTen,
                 SoDienThoai = dh.NguoiDung.SoDienThoai,
-                ChiTietDonHangs = dh.ChiTietDonHangs.Select(ct => new ChiTietDonHangModel
+                ChiTietDonHangs = dh.ChiTietDonHangs.Select(ct => new QuanLyCTDHModel
                 {
-                    MaSanPham = ct.BienThe.MaSanPham,
+                    ChiTietDonHang = ct,
                     TenSanPham = ct.BienThe.SanPham.TenSanPham,
-                    GiaBan = ct.BienThe.GiaBan,
                     LoaiBienThe = ct.BienThe.LoaiBienThe,
-                    SoLuong = ct.SoLuong
+                    MaSku = ct.BienThe.MaSKU
                 }).ToList()
             }).ToList();
 
@@ -54,6 +47,44 @@ namespace FShop6.Areas.Admin.Services
             {
                 DSDonHang = dsDonHang
             };
+        }
+        public async Task DuyetDonHang(int id)
+        {
+            try
+            {
+                var donHang = await _context.DonHang.FindAsync(id);
+                if (donHang != null)
+                {
+                    donHang.TrangThai = "Đang vận chuyển";
+                    donHang.NgayCapNhat = DateTime.Now;
+                    _context.DonHang.Update(donHang);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Lỗi khi duyệt đơn hàng: " + id);
+            }
+        }
+        public async Task SuaDonHang(IFormCollection form)
+        {
+            try
+            {
+                int ID = int.Parse(form["ID"]);
+                var donHang = await _context.DonHang.FindAsync(ID);
+                if (donHang != null)
+                {
+                    donHang.TrangThai = form["TrangThai"];
+                    donHang.GhiChu = form["GhiChu"];
+                    donHang.NgayCapNhat = DateTime.Now;
+                    _context.DonHang.Update(donHang);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi khi sửa đơn hàng: " + ex.Message);
+            }
         }
     }
 }

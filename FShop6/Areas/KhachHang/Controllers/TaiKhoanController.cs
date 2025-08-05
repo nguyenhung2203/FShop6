@@ -1,10 +1,9 @@
 ﻿using FShop6.Areas.KhachHang.Models;
 using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
-using FShop6.CauHinh; // Giả định EmailHelper nằm ở đây
+using FShop6.CauHinh;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Threading.Tasks;
@@ -16,17 +15,17 @@ namespace FShop6.Areas.KhachHang.Controllers
         private readonly AppDbContext _context;
         private readonly IKhachHangService _khachHangService;
         private readonly ILogger<TaiKhoanController> _logger;
-
         private readonly ITaiKhoanServices _taiKhoanServices;
-        public TaiKhoanController(IHeaderServices headerServices, ITaiKhoanServices taiKhoanServices, AppDbContext context, IKhachHangService khachHangService, ILogger<TaiKhoanController> logger
-            )
-            : base(headerServices)
+        public TaiKhoanController(IHeaderServices headerServices, AppDbContext context, IKhachHangService khachHangService, ILogger<TaiKhoanController> logger, ITaiKhoanServices taiKhoanServices)
+             : base(headerServices)
         {
             _taiKhoanServices = taiKhoanServices;
             _context = context;
             _khachHangService = khachHangService;
             _logger = logger;
+            _taiKhoanServices = taiKhoanServices;
         }
+        int maNguoiDung = 0;
 
         // Đổi mật khẩu (từ OTP)
         [HttpPost]
@@ -56,11 +55,6 @@ namespace FShop6.Areas.KhachHang.Controllers
                 return Json(new { success = false, message = "Đã xảy ra lỗi khi cập nhật mật khẩu." });
             }
         }
-
-
-        // Hồ sơ người dùng
-
-
         // GET: Đăng nhập
         [HttpGet]
         public IActionResult DangNhap() => View();
@@ -93,7 +87,6 @@ namespace FShop6.Areas.KhachHang.Controllers
             HttpContext.Session.SetInt32("MaNguoiDung", nguoiDung.MaNguoiDung);
             HttpContext.Session.SetString("HoTen", nguoiDung.HoTen);
             HttpContext.Session.SetString("VaiTro", nguoiDung.TenVaiTro);
-
             // Điều hướng theo vai trò
             var vaiTro = nguoiDung.TenVaiTro?.Trim().ToLower();
             if (vaiTro == "admin")
@@ -104,20 +97,22 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
             }
+            maNguoiDung = nguoiDung.MaNguoiDung;
         }
 
 
         public async Task<IActionResult> HoSo()
         {
-            var moDel = await _taiKhoanServices.LayThongTinHoSo(5);
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            var moDel = await _taiKhoanServices.LayThongTinHoSo(maNguoiDung);
             return View(moDel);
         }
         [HttpPost]
-        public ActionResult HuyDon(string maDonHang)
+        public ActionResult HuyDon(int maDonHang, string noiDungHuy)
         {
             try
             {
-                bool ketQua = _taiKhoanServices.HuyDonHang(maDonHang);
+                bool ketQua = _taiKhoanServices.HuyDonHang(maDonHang, maNguoiDung, noiDungHuy);
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Hủy đơn hàng thành công.";
@@ -190,7 +185,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             }
             try
             {
-                bool ketQua = _taiKhoanServices.DoiMatKhau(5, matKhauCu, matKhauMoi);
+                bool ketQua = _taiKhoanServices.DoiMatKhau(maNguoiDung, matKhauCu, matKhauMoi);
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Đổi mật khẩu thành công.";
@@ -264,14 +259,58 @@ namespace FShop6.Areas.KhachHang.Controllers
         [HttpGet]
         public IActionResult QuenMatKhau() => View();
 
-        // GET: Sản phẩm yêu thích
+        // POST: Gửi mã OTP
+        [HttpPost]
+        public IActionResult GuiMaOTP(string email)
+        {
+            try
+            {
+                var user = _context.NguoiDung.FirstOrDefault(u => u.Email == email);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "Email không tồn tại trong hệ thống." });
+                }
+
+                var otp = new Random().Next(100000, 999999).ToString();
+                HttpContext.Session.SetString("OTP", otp);
+                HttpContext.Session.SetString("OTP_Email", email);
+
+                EmailHelper.GuiMaOTP(email, otp);
+
+                return Json(new { success = true, message = "Mã OTP đã được gửi đến email của bạn." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi gửi OTP");
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi gửi OTP." });
+            }
+        }
+
+        // POST: Xác nhận OTP
+        [HttpPost]
+        public IActionResult XacNhanOTP(string email, string otp)
+        {
+            var sessionOtp = HttpContext.Session.GetString("OTP");
+            var sessionEmail = HttpContext.Session.GetString("OTP_Email");
+
+            if (sessionOtp == null || sessionEmail == null)
+            {
+                return Json(new { success = false, message = "Phiên làm việc đã hết hạn, vui lòng thử lại." });
+            }
+
+            if (sessionEmail != email || sessionOtp != otp)
+            {
+                return Json(new { success = false, message = "Mã OTP không đúng." });
+            }
+
+            return Json(new { success = true });
+        }
         public IActionResult SanPhamYeuThich()
         {
-            var maNguoiDung = HttpContext.Session.GetInt32("MaNguoiDung");
-            if (maNguoiDung == null)
+            if (maNguoiDung <= 0)
                 return RedirectToAction("DangNhap");
 
-            return View(); // TODO: Load danh sách sản phẩm yêu thích
+            return View(); 
         }
 
         // GET: Đăng xuất
@@ -281,14 +320,24 @@ namespace FShop6.Areas.KhachHang.Controllers
             return RedirectToAction("DangNhap");
         }
 
-         
-        [HttpPost] // Chỉ nhận POST request
-        public ActionResult ThemYeuThich(int maSanPham, int maNguoiDung, string giaoDien)
+
+        [HttpPost]
+        public ActionResult ThemYeuThich(int maSanPham, string giaoDien)
         {
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            if (maNguoiDung <= 0)
+            {
+                TempData["ThongBao"] = "Vui lòng đăng nhập để thêm sản phẩm yêu thích.";
+                TempData["LoaiThongBao"] = "warning";
+                if (!string.IsNullOrEmpty(giaoDien))
+                {
+                    return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
+                }
+                return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
+            }
             try
             {
-                maNguoiDung = 5;
-                bool ketQua = _taiKhoanServices.ThemSanPham(maNguoiDung, maSanPham); 
+                bool ketQua = _taiKhoanServices.ThemSanPham(maNguoiDung, maSanPham);
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Thêm sản phẩm yêu thích thành công.";
@@ -305,6 +354,7 @@ namespace FShop6.Areas.KhachHang.Controllers
                 TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
                 TempData["LoaiThongBao"] = "error";
             }
+
             if (!string.IsNullOrEmpty(giaoDien))
             {
                 return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
@@ -390,8 +440,5 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             return Json(new { success = true, message = "Mã OTP hợp lệ. Vui lòng đặt lại mật khẩu." });
         }
-
-
-
     }
 }

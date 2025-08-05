@@ -132,7 +132,8 @@ table {
 
 .section--lg {
     padding-block: 4rem;
-    padding-top:0;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .section__title {
@@ -166,6 +167,7 @@ table {
     color: var(--text-color-light);
     font-size: var(--small-font-size);
     text-decoration: line-through;
+    margin-left: 6rem;
 }
 
 .form {
@@ -863,8 +865,14 @@ main {
     }
 
 .product__content {
-    padding: 0 1.25rem 1.125rem;
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 15px;
+    justify-content: space-between; /* Phân bố đều */
+}
+.product__content-bottom {
+    margin-top: auto; /* Đẩy xuống dưới */
 }
 
 .product__category {
@@ -883,9 +891,15 @@ main {
     margin-bottom: 0.75rem;
 }
 
-.product__price .new__price {
-    font-size: var(--large-font-size);
+.product__price {
+    position: relative;
 }
+
+    .product__price .new__price {
+        position: absolute;
+        right: auto;
+        font-size: var(--large-font-size);
+    }
 .shop-product__item .product__price .new__price {
     font-size: var(--large-font-size);
     margin-left: -2rem;
@@ -3464,7 +3478,6 @@ input[type="range"] {
 }
 
 .product__title {
-    height: 40px;
     overflow: hidden;
 }
 
@@ -3717,6 +3730,7 @@ input[type="range"] {
     transition: all 0.2s var(--transition);
     /* Chừa một khoảng trống cố định ở dưới cho giá và icon */
     padding-bottom: 5.5rem;
+    height: 100%; /* Cố định chiều cao */
 }
 
     .product__item:hover {
@@ -3729,7 +3743,6 @@ input[type="range"] {
 }
 
 .product__title {
-    height: 60px; /* Giới hạn tên sản phẩm trên 2 dòng */
     overflow: hidden;
     margin-bottom: 1rem;
 }
@@ -3769,7 +3782,6 @@ input[type="range"] {
     margin-top: -0.5rem; /* Kéo lên một chút cho gần tên sản phẩm */
     margin-bottom: 1rem;
     /* Giới hạn mô tả chỉ hiển thị trên 2 dòng */
-    height: 4.5em; /* (1.5 line-height * 3 lines) - điều chỉnh nếu cần */
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 3; /* Số dòng tối đa */
@@ -3893,7 +3905,7 @@ input[type="range"] {
     position: relative;
     background: linear-gradient(135deg, var(--first-color) 0%, #ff8c42 100%);
     overflow: hidden;
-    min-height: 100vh;
+    min-height: 50vh;
     display: flex;
     align-items: center;
 }
@@ -4227,7 +4239,7 @@ input[type="range"] {
 }
 
 .product__content {
-    padding: 1.5rem;
+   
 }
 
 .product__title {
@@ -4238,6 +4250,8 @@ input[type="range"] {
     text-decoration: none;
     line-height: 1.3;
     transition: color 0.3s ease;
+    -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
+    min-height: 36px; /* Cố định chiều cao cho 2 dòng */
 }
 
     .product__title:hover {
@@ -4248,7 +4262,9 @@ input[type="range"] {
     color: var(--text-color);
     font-size: var(--normal-font-size);
     line-height: 1.6;
-    margin-bottom: 1.25rem;
+    margin-bottom: 12px;
+    -webkit-line-clamp: 2; /* Cố định 2 dòng */
+    min-height: 36px; /* Cố định chiều cao cho 2 dòng */
 }
 
 .product__bottom-row {
@@ -4587,6 +4603,7 @@ input[type="range"] {
 .news__item,
 .showcase__wrapper {
     will-change: transform;
+    padding-bottom: 12px;
 }
 
     .category__item:active,
@@ -5870,6 +5887,7 @@ input[type="range"] {
     background: linear-gradient(135deg, #f36f21 0%, #e55a0f 100%);
     color: white;
     box-shadow: 0 4px 15px rgba(243, 111, 33, 0.3);
+    margin-top: 0.5rem;
 }
 
     .btn-primary:hover {

@@ -1,99 +1,649 @@
 ﻿@{
     Layout = "~/Areas/Admin/Views/Shared/CustomerLayout.cshtml";
-	ViewData["Title"] = "Thống kê";
+    ViewData["Title"] = "Thống kê tổng quan";
 }
-@model FShop6.Areas.Admin.Models.ThongKeViewModel;
-<div id="content-wrapper">
-    <div class="container-fluid">
-        <!-- Breadcrumbs-->
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="index.html">Trang chủ</a>
-            </li>
-            <li class="breadcrumb-item active">Thống kê đơn hàng</li>
-        </ol>
-        <!-- Bộ lọc -->
-        @using (Html.BeginForm("ThongKe", "ThongKe", FormMethod.Post))
-        {
-            <div class="bo-loc">
-                <h4 class="loc">Chọn tháng:</h4>
-                <div class="input-group-1">
-                    <!-- Dropdown chọn tháng -->
-                    <select class="form-control" id="monthFilter" name="month">
-                        @foreach (var month in ViewData["Months"] as List<int>)
-                        {
-                            <option value="@month" @(month == DateTime.Now.Month ? "selected" : "")>Tháng @month</option>
-                        }
-                    </select>
-
-                    <!-- Dropdown chọn năm -->
-                    <select class="form-control" id="yearFilter" name="year">
-                        @foreach (var year in ViewData["Years"] as List<int>)
-                        {
-                            <option value="@year" @(year == DateTime.Now.Year ? "selected" : "")>Năm @year</option>
-                        }
-                    </select>
-
-                    <!-- Nút submit -->
-                    <button type="submit" class="submit-thong-ke">Thống kê</button>
+@model FShop6.Areas.Admin.Models.ThongKeViewModel
+<div class="container-fluid py-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="index.html">Trang chủ</a>
+        </li>
+        <li class="breadcrumb-item active">Thống kê</li>
+    </ol>
+    <!-- Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">📊 Bảng thống kê tổng quan</h2>
+                <div class="text-muted">
+                    <i class="fas fa-clock"></i> Cập nhật lần cuối: <span id="lastUpdate">--:--</span>
                 </div>
             </div>
-        }
-        <br>
-        <!-- Biểu đồ thống kê -->
-        <div class="card mb-3">
-            <div class="card-header bg-info text-white">
-                <i class="fa fa-bar-chart"></i>
-                Biểu đồ doanh thu theo tháng (Cột)
-            </div>
-            <div class="card-body">
-                <canvas id="yearChart" height="100"></canvas>
+        </div>
+    </div>
 
-                <!-- Nhúng dữ liệu từ Razor vào HTML dưới dạng JSON -->
-                <script type="application/json" id="yearChartData">
-                    @Html.Raw(Json.Serialize(
-                                 Enumerable.Range(1, 12).Select(thang => new
-                                 {
-                                     thang,
-                                     tongDoanhThu = Model.ThongKeTheoNam
-                                         .FirstOrDefault(x => x.Thang == thang)?.TongDoanhThu ?? 0
-                                 })
-                             ))
-                </script>
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+            <div class="card bg-gradient-success text-white shadow-sm stats-card">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title mb-1 fw-normal">💰 Doanh thu</h6>
+                            <p class="card-text fs-4 fw-bold mb-1" id="doanhThu">0 đ</p>
+ 
+                        </div>
+                        <div class="ms-2 opacity-75">
+                            <i class="fas fa-chart-line fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <br>
-        
-        <br>
-        <!-- Bảng doanh thu theo ngày -->
-        <div class="card mb-3">
-            <div class="card-header bg-success text-white">
-                <i class="fa fa-calendar"></i>
-                Bảng doanh thu theo tháng
+
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+            <div class="card bg-gradient-primary text-white shadow-sm stats-card">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title mb-1 fw-normal">🛒 Đơn hàng</h6>
+                            <p class="card-text fs-4 fw-bold mb-1" id="donHang">0</p>
+                        </div>
+                        <div class="ms-2 opacity-75">
+                            <i class="fas fa-shopping-cart fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Ngày</th>
-                                <th>Tổng Doanh Thu</th>
-                                <th>Tổng Số Đơn Hàng</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.ThongKeTheoThang)
-                            {
+        </div>
+
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+            <div class="card bg-gradient-info text-white shadow-sm stats-card">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title mb-1 fw-normal">👥 Khách hàng mới</h6>
+                            <p class="card-text fs-4 fw-bold mb-1" id="khachHangMoi">0</p>
+                        </div>
+                        <div class="ms-2 opacity-75">
+                            <i class="fas fa-user-plus fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+            <div class="card bg-gradient-warning text-white shadow-sm stats-card">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title mb-1 fw-normal">⚠️ Sản phẩm sắp hết hàng</h6>
+                            <span class="card-text fs-4 fw-bold mb-1" id="sapHetHang">0</span>
+                            @* <span class="opacity-75">Cần nhập thêm hàng</span> *@
+                        </div>
+                        <div class="ms-2 opacity-75">
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+            <div class="card bg-gradient-danger text-white shadow-sm stats-card">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title mb-1 fw-normal">🔥 Sản phẩm bán chạy</h6>
+                            <span class="card-text fs-6 fw-bold mb-1" id="banChay">
+                                @(Model.sanPhamBanChayNgay != null && Model.sanPhamBanChayNgay.Any()
+                                                                ? Model.sanPhamBanChayNgay[0].Ten
+                                                                : "Chưa có")
+                            </span>
+
+                            <span class="opacity-75" id="banChayCount"></span>
+                        </div>
+                        <div class="ms-2 opacity-75">
+                            <i class="fas fa-fire fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+            <div class="card bg-gradient-secondary text-white shadow-sm stats-card">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title mb-1 fw-normal">📦 Tổng sản phẩm</h6>
+                            <span class="card-text fs-4 fw-bold mb-1" id="tongSanPham">0</span>
+                            <span class="opacity-75">Trong kho</span>
+                        </div>
+                        <div class="ms-2 opacity-75">
+                            <i class="fas fa-boxes fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Filter Tabs - Improved Design -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body py-3">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between">
+                        <!-- Quick filters -->
+                        <div class="d-flex gap-2 me-3 mb-2 mb-lg-0" id="timeFilterTabs">
+                            <button class="btn btn-primary px-4 time-filter-btn active" data-filter="today">
+                                <i class="fas fa-calendar-day me-1"></i> Hôm nay
+                            </button>
+                            <button class="btn btn-outline-primary px-4 time-filter-btn" data-filter="week">
+                                <i class="fas fa-calendar-week me-1"></i> Tuần này
+                            </button>
+                            <button class="btn btn-outline-primary px-4 time-filter-btn" data-filter="month">
+                                <i class="fas fa-calendar-alt me-1"></i> Tháng này
+                            </button>
+                            <button class="btn btn-outline-primary px-4 time-filter-btn" data-filter="year">
+                                <i class="fas fa-calendar me-1"></i> Năm nay
+                            </button>
+                        </div>
+
+                        <!-- Custom date range -->
+                        @* <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small">Hoặc chọn:</span>
+                            <input type="date" id="fromDate" class="form-control form-control-sm" style="width: 140px;" />
+                            <span class="text-muted">đến</span>
+                            <input type="date" id="toDate" class="form-control form-control-sm" style="width: 140px;" />
+                            <button class="btn btn-sm btn-success" id="btnApplyDate">
+                                <i class="fas fa-search me-1"></i> Lọc
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" id="btnRefresh">
+                                <i class="fas fa-sync-alt me-1"></i> Làm mới
+                            </button>
+                        </div> *@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Lists Section -->
+    <div class="row">
+        <!-- Revenue Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-semibold">📈 Biểu đồ doanh thu</h5>
+                    <div class="d-flex gap-2" role="group">
+                        <button class="btn btn-secondary btn-sm chart-type-btn active" data-type="line">
+                            <i class="fas fa-chart-line me-1"></i> Line
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm chart-type-btn" data-type="bar">
+                            <i class="fas fa-chart-bar me-1"></i> Bar
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Status Chart -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">🧾 Trạng thái đơn hàng</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="orderStatusChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="row">
+        <!-- Top Selling Products -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">🏆 Top sản phẩm bán chạy</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light">
                                 <tr>
-                                    <td>@item.Ngay.ToString("dd/MM/yyyy")</td>
-                                    <td>@item.TongDoanhThu.ToString("N0")</td>
-                                    <td>@item.TongSoDonHang</td>
+                                    <th class="border-0 ps-4">#</th>
+                                    <th class="border-0">Sản phẩm</th>
+                                    <th class="border-0 text-center">Đã bán</th>
+                                    <th class="border-0 text-end pe-4">Doanh thu</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @if (Model.sanPhamBanChayNgay == null || !Model.sanPhamBanChayNgay.Any())
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Chưa có dữ liệu</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @for (int i = 0; i < Model.sanPhamBanChayNgay.Count; i++)
+                                    {
+                                        var product = Model.sanPhamBanChayNgay[i];
+                                        <tr>
+                                            <td class="ps-4">
+                                                <span class="badge bg-primary rounded-pill">@(i + 1)</span>
+                                            </td>
+                                            <td>
+                                                <div class="fw-semibold">@product.Ten</div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-success">@product.SoLuongBan</span>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <span class="fw-semibold text-success">@String.Format("{0:N0} đ", product.DoanhThu)</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Low Selling Products -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">📉 Sản phẩm bán chậm</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="border-0 ps-4">#</th>
+                                    <th class="border-0">Sản phẩm</th>
+                                    <th class="border-0 text-center">Đã bán</th>
+                                    <th class="border-0 text-end pe-4">Tồn kho</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lowProductsList">
+                                @if (Model.SanPhamBanChamNgay == null || !Model.SanPhamBanChamNgay.Any())
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Chưa có dữ liệu</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @for (int i = 0; i < Model.SanPhamBanChamNgay.Count; i++)
+                                    {
+                                        var product = Model.SanPhamBanChamNgay[i];
+                                        <tr>
+                                            <td class="ps-4">
+                                                <span class="badge bg-secondary rounded-pill">@(i + 1)</span>
+                                            </td>
+                                            <td>
+                                                <div class="fw-semibold">@product.Ten</div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-warning">@product.SoLuongBan</span>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <span class="fw-semibold text-danger">@product.SoLuongConLai</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }                              
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let revenueChart, orderStatusChart;
+        let currentFilter = 'today';
+
+        // Sample data structure
+        const sampleData = {
+            today: {
+                revenue: @Html.Raw(Json.Serialize(Model.doanhThuHomNay)),
+                labels: @Html.Raw(Json.Serialize(Model.nhanHomNay)),
+                orders: @Model.TongSoDonHangNgay,
+                revenue_total: @Model.doanhThuHomNay.Sum(),
+                customers: @Model.TongSoKhachHangNgay,
+                low_stock: @Model.TongSoSanPhamSapHet,
+                order_status: @Html.Raw(Json.Serialize(Model.TrangThaiNgay))
+            },
+            week: {
+                revenue: @Html.Raw(Json.Serialize(Model.doanhThuTuan)),
+                labels: @Html.Raw(Json.Serialize(Model.nhanTuan)),
+                orders: @Model.TongSoDonHangTuan,
+                revenue_total: @Model.doanhThuTuan.Sum(),
+                customers: @Model.TongSoKhachHangTuan,
+                low_stock: @Model.TongSoSanPhamSapHet,
+                order_status: @Html.Raw(Json.Serialize(Model.TrangThaiTuan))
+            },
+            month: {
+                revenue: @Html.Raw(Json.Serialize(Model.doanhThuThang)),
+                labels: @Html.Raw(Json.Serialize(Model.nhanThang)),
+                orders: @Model.TongSoDonHangThang,
+                revenue_total: @Model.doanhThuThang.Sum(),
+                customers: @Model.TongSoKhachHangThang,
+                low_stock: @Model.TongSoSanPhamSapHet,
+                order_status: @Html.Raw(Json.Serialize(Model.TrangThaiThang))
+            },
+            year: {
+                revenue: @Html.Raw(Json.Serialize(Model.doanhThuNam)),
+                labels: @Html.Raw(Json.Serialize(Model.nhanNam)),
+                orders: @Model.TongSoDonHangNam,
+                revenue_total: @Model.doanhThuNam.Sum(),
+                customers: @Model.TongSoKhachHangNam,
+                low_stock: @Model.TongSoSanPhamSapHet,
+                order_status: @Html.Raw(Json.Serialize(Model.TrangThaiNam))
+            }
+        };
+
+        // Order status configuration
+        const orderStatusLabels = ["Đã giao", "Đang vận chuyển", "Chờ xác nhận", "Đã hủy"];
+        const orderStatusColors = ['#28a745', '#ffc107', '#17a2b8', '#dc3545'];
+
+        // Initialize charts
+        function initCharts() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: sampleData[currentFilter].labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: sampleData[currentFilter].revenue,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#007bff',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Doanh thu: ' + formatCurrency(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Order Status Chart
+            const orderCtx = document.getElementById('orderStatusChart').getContext('2d');
+            orderStatusChart = new Chart(orderCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: orderStatusLabels,
+                    datasets: [{
+                        data: sampleData[currentFilter].order_status,
+                        backgroundColor: orderStatusColors,
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+            function updateStats(filter) {
+                const data = sampleData[filter] || sampleData.today;
+
+                const doanhThuElement = document.getElementById('doanhThu');
+                const donHangElement = document.getElementById('donHang');
+                const khachHangMoiElement = document.getElementById('khachHangMoi');
+                const sapHetHangElement = document.getElementById('sapHetHang');
+                const tongSanPhamElement = document.getElementById('tongSanPham');
+
+                if (doanhThuElement) doanhThuElement.textContent = formatCurrency(data.revenue_total);
+                if (donHangElement) donHangElement.textContent = data.orders.toLocaleString();
+                if (khachHangMoiElement) khachHangMoiElement.textContent = data.customers.toLocaleString();
+                if (sapHetHangElement) sapHetHangElement.textContent = data.low_stock;
+                if (tongSanPhamElement) tongSanPhamElement.textContent = '@Model.TongSoSanPham';
+        }
+
+        // Update revenue chart
+        function updateRevenueChart(filter) {
+            if (!revenueChart) return;
+
+            const data = sampleData[filter] || sampleData.today;
+            revenueChart.data.labels = data.labels;
+            revenueChart.data.datasets[0].data = data.revenue;
+            revenueChart.update();
+        }
+
+        // Update order status chart
+        function updateOrderStatusChart(filter) {
+            if (!orderStatusChart) return;
+
+            const newData = sampleData[filter].order_status;
+            orderStatusChart.data.datasets[0].data = newData;
+            orderStatusChart.update();
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Update last refresh time
+        function updateLastRefreshTime() {
+            const now = new Date();
+            const lastUpdateElement = document.getElementById('lastUpdate');
+            if (lastUpdateElement) {
+                lastUpdateElement.textContent = now.toLocaleTimeString('vi-VN');
+            }
+        }
+
+        // Set active state for buttons
+        function setActiveButton(container, activeBtn) {
+            if (!container || !activeBtn) return;
+
+            container.querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains('btn-primary')) {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline-primary');
+                }
+                if (btn.classList.contains('btn-secondary')) {
+                    btn.classList.remove('btn-secondary');
+                    btn.classList.add('btn-outline-secondary');
+                }
+            });
+
+            activeBtn.classList.add('active');
+            if (activeBtn.classList.contains('time-filter-btn')) {
+                activeBtn.classList.remove('btn-outline-primary');
+                activeBtn.classList.add('btn-primary');
+            } else if (activeBtn.classList.contains('chart-type-btn')) {
+                activeBtn.classList.remove('btn-outline-secondary');
+                activeBtn.classList.add('btn-secondary');
+            }
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Initialize charts
+                initCharts();
+                updateStats(currentFilter);
+                updateLastRefreshTime();
+
+                // Time filter change events
+                const timeFilterButtons = document.querySelectorAll('.time-filter-btn');
+                timeFilterButtons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        currentFilter = this.dataset.filter;
+                        const container = document.getElementById('timeFilterTabs');
+                        setActiveButton(container, this);
+                        updateStats(currentFilter);
+                        updateRevenueChart(currentFilter);
+                        updateOrderStatusChart(currentFilter);
+                        updateLastRefreshTime();
+                    });
+                });
+
+                // Chart type change events
+                const chartTypeButtons = document.querySelectorAll('.chart-type-btn');
+                chartTypeButtons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const chartContainer = this.parentElement;
+                        setActiveButton(chartContainer, this);
+                        if (revenueChart) {
+                            revenueChart.config.type = this.dataset.type;
+                            revenueChart.update();
+                        }
+                    });
+                });
+
+                // Custom date range
+                const btnApplyDate = document.getElementById('btnApplyDate');
+                if (btnApplyDate) {
+                    btnApplyDate.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const fromDate = document.getElementById('fromDate')?.value;
+                        const toDate = document.getElementById('toDate')?.value;
+
+                        if (fromDate && toDate) {
+                            // Remove active state from all time filter buttons
+                            timeFilterButtons.forEach(btn => {
+                                btn.classList.remove('active', 'btn-primary');
+                                btn.classList.add('btn-outline-primary');
+                            });
+
+                            console.log(`Lọc từ ${fromDate} đến ${toDate}`);
+                            // For demo purposes, use week data
+                            currentFilter = 'week';
+                            updateStats(currentFilter);
+                            updateRevenueChart(currentFilter);
+                            updateOrderStatusChart(currentFilter);
+                            updateLastRefreshTime();
+                        }
+                    });
+                }
+
+                // Refresh button
+                const btnRefresh = document.getElementById('btnRefresh');
+                if (btnRefresh) {
+                    btnRefresh.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        updateStats(currentFilter);
+                        updateRevenueChart(currentFilter);
+                        updateOrderStatusChart(currentFilter);
+                        updateLastRefreshTime();
+
+                        // Add loading animation
+                        const originalHTML = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang tải...';
+                        this.disabled = true;
+
+                        setTimeout(() => {
+                            this.innerHTML = originalHTML;
+                            this.disabled = false;
+                        }, 1000);
+                    });
+                }
+
+                // Set default dates
+                const today = new Date();
+                const weekAgo = new Date(today);
+                weekAgo.setDate(today.getDate() - 7);
+
+                const fromDateElement = document.getElementById('fromDate');
+                const toDateElement = document.getElementById('toDate');
+
+                if (fromDateElement) fromDateElement.value = weekAgo.toISOString().split('T')[0];
+                if (toDateElement) toDateElement.value = today.toISOString().split('T')[0];
+
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (revenueChart) revenueChart.resize();
+            if (orderStatusChart) orderStatusChart.resize();
+        });
+
+        // Export functions for external use if needed
+        window.dashboardFunctions = {
+            updateStats,
+            updateRevenueChart,
+            updateOrderStatusChart,
+            formatCurrency,
+            updateLastRefreshTime
+        };
+    </script>
+}

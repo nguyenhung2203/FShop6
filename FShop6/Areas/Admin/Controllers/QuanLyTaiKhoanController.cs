@@ -1,6 +1,5 @@
 ﻿using FShop6.Areas.Admin.Services;
 using Microsoft.AspNetCore.Mvc;
-using FShop6.Areas.Admin.Models;
 
 namespace FShop6.Areas.Admin.Controllers
 {

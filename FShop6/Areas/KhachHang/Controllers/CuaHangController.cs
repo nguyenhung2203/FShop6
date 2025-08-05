@@ -2,6 +2,7 @@
 using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 namespace FShop6.Areas.KhachHang.Controllers
 {
@@ -17,34 +18,17 @@ namespace FShop6.Areas.KhachHang.Controllers
 
         public async Task<IActionResult> SanPham(int? maDanhMuc, int? loai, int? loaiXapXep, decimal? khoangGia, int trang = 1)
         {
-            if (trang < 1) trang = 1;
+            var viewModel = await _shopService.LaySanPhamDaLoc(maDanhMuc, khoangGia, loaiXapXep, trang);
 
-            PhanTrangSanPhamViewModel model;
-
-            if (loai == 1 && maDanhMuc.HasValue && maDanhMuc.Value > 0)
-            {
-                model = await _shopService.LaySanPhamDanhMuc(maDanhMuc.Value, trang);
-            }
-            else if (loai == 2 && loaiXapXep.HasValue)
-            {
-                model = await _shopService.LaySanPhamXapXep(loaiXapXep.Value, trang);
-            }
-            else if (loai == 3 && khoangGia.HasValue)
-            {
-                model = await _shopService.LaySanPhamTheoGia(khoangGia.Value, trang);
-            }    
-
-            else
-            {
-                model = await _shopService.LaySanPhamTatCa(trang);
-            }
-            ViewBag.loaiXapXep = loaiXapXep;
+            // Truyền tất cả tham số vào ViewBag để view có thể sử dụng
             ViewBag.MaDanhMuc = maDanhMuc;
             ViewBag.Loai = loai;
+            ViewBag.LoaiXapXep = loaiXapXep;
             ViewBag.KhoangGia = khoangGia;
 
-            return View(model);
+            return View(viewModel);
         }
+
 
         public async Task<IActionResult> ChiTietSanPham(int maSanPham)
         {

@@ -132,7 +132,7 @@ namespace FShop6.Areas.KhachHang.Services
                     DiaChiGiaoHang = diaChiChiTiet,
                     PhuongThucThanhToan = phuongThucThanhToan,
                     TongTien = tongTien,
-                    TrangThai = "Chờ xử lý",
+                    TrangThai = "Chờ xác nhận",
                     ThoiGianDatHang = DateTime.Now,
                     NgayCapNhat = DateTime.Now,
                     GhiChu = sanPham.GhiChu ?? "Không",
@@ -182,6 +182,7 @@ namespace FShop6.Areas.KhachHang.Services
             {
                 TenNguoiNhan = nguoiDung?.HoTen ?? string.Empty,
                 SoDienThoai = nguoiDung?.SoDienThoai ?? string.Empty,
+                DiaChiMacDinh = nguoiDung?.DiaChi ?? string.Empty,
             };
             return thongTin;
         }
