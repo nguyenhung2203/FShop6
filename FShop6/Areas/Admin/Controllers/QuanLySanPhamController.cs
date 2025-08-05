@@ -69,7 +69,7 @@ namespace FShop6.Areas.Admin.Controllers
             return RedirectToAction("QuanLySanPham");
         }
         [HttpPost]
-        public async Task<IActionResult> ThemBienThe(IFormCollection form, List<IFormFile> AnhBienThe)
+        public async Task<IActionResult> ThemBienThe(IFormCollection form, IFormFile AnhBienThe)
         {
             await _quanLySanPhamServices.ThemBienTheAsync(form, AnhBienThe);
             return RedirectToAction("QuanLySanPham");
