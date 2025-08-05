@@ -68,13 +68,7 @@ namespace FShop6.Areas.Admin.Controllers
             }
             return RedirectToAction("QuanLySanPham");
         }
-        //[HttpPost]
-        //public async Task<IActionResult> ThemSanPham(string TenSanPham, int DanhMucID)
-        //{
-        //    await _quanLySanPhamServices.ThemSanPhamAsync(form, AnhDaiDien);
-        //    var dsSanPham = await _quanLySanPhamServices.LayTatCaSanPhamAsync();
-        //    return View("QuanLySanPham", dsSanPham);
-        //}
+        [HttpPost]
         public async Task<IActionResult> ThemBienThe(IFormCollection form, List<IFormFile> AnhBienThe)
         {
             await _quanLySanPhamServices.ThemBienTheAsync(form, AnhBienThe);
