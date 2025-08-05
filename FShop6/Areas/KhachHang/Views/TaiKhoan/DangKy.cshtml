@@ -37,11 +37,9 @@
                         @Html.AntiForgeryToken()
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-                        <input name="HoTen" class="form__input" placeholder="Tên của bạn" />
-                        <span class="text-danger" asp-validation-for="HoTen"></span>
+                        <input name="TaiKhoan" class="form__input" placeholder="Tài khoản" />
+                        <span class="text-danger" asp-validation-for="TaiKhoan"></span>
 
-                        <input name="Email" class="form__input" placeholder="Email" />
-                        <span class="text-danger" asp-validation-for="Email"></span>
 
                         <input name="MatKhau" type="password" class="form__input" placeholder="Mật khẩu" />
                         <span class="text-danger" asp-validation-for="MatKhau"></span>

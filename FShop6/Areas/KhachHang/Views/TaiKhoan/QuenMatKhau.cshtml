@@ -26,9 +26,9 @@
                     <div id="step-get-otp">
                         <h3 class="section__title">Đặt Lại Mật Khẩu</h3>
                         <form id="form-otp" class="form grid">
-                            <input type="email" id="email-input" placeholder="Nhập email của bạn" class="form__input" required />
+                            <input type="email" id="email-input" name="Email" placeholder="Nhập email của bạn" class="form__input" required />
                             <div class="form__group--otp">
-                                <input type="text" id="otp-input" placeholder="Nhập mã OTP" class="form__input" required />
+                                <input type="text" id="otp-input" name="MaOTP" placeholder="Nhập mã OTP" class="form__input" required />
                                 <button type="button" id="get-otp-btn" class="btn btn--sm btn--outline">Lấy mã</button>
                             </div>
                             <div class="form__btn">
@@ -66,13 +66,11 @@
             const confirmNewPasswordInput = document.getElementById('confirm-new-password');
             const emailInput = document.getElementById('email-input');
 
-            // Đường dẫn Razor
             const guiMaOtpUrl = '@Url.Action("GuiMaOTP", "TaiKhoan", new { area = "KhachHang" })';
             const xacNhanOtpUrl = '@Url.Action("XacNhanOTP", "TaiKhoan", new { area = "KhachHang" })';
-            const doiMatKhauUrl = '@Url.Action("DoiMatKhau", "TaiKhoan", new { area = "KhachHang" })';
+            const doiMatKhauUrl = '@Url.Action("DoiMatKhauQuaOTP", "TaiKhoan", new { area = "KhachHang" })';
             const dangNhapUrl = '@Url.Action("DangNhap", "TaiKhoan", new { area = "KhachHang" })';
 
-            // Gửi mã OTP
             getOtpBtn.addEventListener('click', async () => {
                 const email = emailInput.value.trim();
                 if (!email) return alert("Vui lòng nhập email.");
@@ -102,7 +100,6 @@
                 }
             });
 
-            // Xác nhận OTP
             formOtp.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = emailInput.value.trim();
@@ -112,7 +109,7 @@
                 const response = await fetch(xacNhanOtpUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`
+                    body: `Email=${encodeURIComponent(email)}&MaOTP=${encodeURIComponent(otp)}`
                 });
 
                 const result = await response.json();
@@ -124,7 +121,6 @@
                 }
             });
 
-            // Đổi mật khẩu
             formNewPassword.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = emailInput.value.trim();
@@ -144,7 +140,14 @@
                     body: `email=${encodeURIComponent(email)}&newPassword=${encodeURIComponent(newPassword)}`
                 });
 
-                const result = await response.json();
+                let result;
+try {
+    result = await response.json();
+} catch {
+    const text = await response.text();
+    alert("Lỗi server:\n" + text);  // ✅ hiện lỗi gốc
+    return;
+}
                 if (result.success) {
                     alert(result.message);
                     window.location.href = dangNhapUrl;

@@ -89,11 +89,11 @@ app.UseStaticFiles();
 // Định tuyến cho Areas
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=TrangChu}/{action=Index}/{id?}");
+    pattern: "{area:exists}/{controller=TaiKhoan}/{action=DangKy}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=QuanLySanPham}/{action=QuanLySanPham}/{id?}",
-    defaults: new { area = "Admin" });
+    pattern: "{controller=TaiKhoan}/{action=DangKy}/{id?}",
+    defaults: new { area = "KhachHang" });
 
 app.Run();

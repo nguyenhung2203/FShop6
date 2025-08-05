@@ -20,7 +20,8 @@ namespace FShop6.Areas.Admin.Services.Implementations
             .Select(u => new TaiKhoanViewModel
             {
                 MaNguoiDung = u.MaNguoiDung,
-                HoTen = u.HoTen,
+                TaiKhoan = u.TaiKhoan,
+                MatKhau = u.MatKhau, 
                 Email = u.Email,
                 SoDienThoai = u.SoDienThoai,
                 DiaChi = u.DiaChi,
@@ -29,15 +30,25 @@ namespace FShop6.Areas.Admin.Services.Implementations
             }).ToList();
         }
 
-        public bool CapNhatTrangThai(int maNguoiDung, string trangThai)
+        public bool CapNhatTrangThai(int maNguoiDung, string trangThai, string? matKhauMoi = null)
         {
             var user = _context.NguoiDung.FirstOrDefault(u => u.MaNguoiDung == maNguoiDung);
             if (user == null) return false;
 
             user.TTHoatDong = trangThai;
+
+            if (!string.IsNullOrWhiteSpace(matKhauMoi))
+            {
+
+                user.MatKhau = matKhauMoi;
+            }
+
+            user.NgayCapNhat = DateTime.Now;
             _context.SaveChanges();
+
             return true;
         }
+
         public bool XoaTaiKhoan(int maNguoiDung)
         {
             var user = _context.NguoiDung.FirstOrDefault(x => x.MaNguoiDung == maNguoiDung);

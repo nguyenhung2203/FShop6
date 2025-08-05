@@ -16,10 +16,10 @@ namespace FShop6.Areas.KhachHang.Controllers
         private readonly IKhachHangService _khachHangService;
         private readonly ILogger<TaiKhoanController> _logger;
         private readonly ITaiKhoanServices _taiKhoanServices;
-
         public TaiKhoanController(IHeaderServices headerServices, AppDbContext context, IKhachHangService khachHangService, ILogger<TaiKhoanController> logger, ITaiKhoanServices taiKhoanServices)
              : base(headerServices)
         {
+            _taiKhoanServices = taiKhoanServices;
             _context = context;
             _khachHangService = khachHangService;
             _logger = logger;
@@ -29,22 +29,23 @@ namespace FShop6.Areas.KhachHang.Controllers
 
         // Đổi mật khẩu (từ OTP)
         [HttpPost]
-        public IActionResult DoiMatKhau(string email, string newPassword)
+        public IActionResult DoiMatKhauQuaOTP(string email, string newPassword)
         {
             try
             {
                 var user = _context.NguoiDung.FirstOrDefault(u => u.Email == email);
                 if (user == null)
                 {
-                    return Json(new { success = false, message = "Email không tồn tại." });
+                    return Json(new { success = false, message = "Không tìm thấy tài khoản." });
                 }
 
-                // Gợi ý: nên mã hóa mật khẩu
-                user.MatKhau = newPassword;
+                user.MatKhau = newPassword; // Gợi ý: Mã hóa mật khẩu
                 _context.SaveChanges();
 
+                // Xóa session liên quan đến OTP
                 HttpContext.Session.Remove("OTP");
                 HttpContext.Session.Remove("OTP_Email");
+                HttpContext.Session.Remove("OTP_HetHan");
 
                 return Json(new { success = true, message = "Mật khẩu đã được cập nhật." });
             }
@@ -54,7 +55,6 @@ namespace FShop6.Areas.KhachHang.Controllers
                 return Json(new { success = false, message = "Đã xảy ra lỗi khi cập nhật mật khẩu." });
             }
         }
-
         // GET: Đăng nhập
         [HttpGet]
         public IActionResult DangNhap() => View();
@@ -66,24 +66,38 @@ namespace FShop6.Areas.KhachHang.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            var thongTin = model.ThongTinDangNhap?.Trim().ToLowerInvariant();
+            var matKhau = model.MatKhau?.Trim();
+
             var nguoiDung = _context.NguoiDung
-                .FirstOrDefault(x => x.Email == model.Email && x.MatKhau == model.MatKhau && x.TTHoatDong == "Hoạt động");
+                .FirstOrDefault(x =>
+                    (x.Email.ToLower() == thongTin ||
+                     x.TaiKhoan.ToLower() == thongTin ||
+                     x.SoDienThoai == thongTin)
+                    && x.MatKhau == matKhau
+                    && x.TTHoatDong == "Hoạt động");
 
             if (nguoiDung == null)
             {
-                TempData["ThongBao"] = "Email hoặc mật khẩu không đúng.";
-                TempData["LoaiThongBao"] = "warning";
+                ViewBag.ThongBao = "Thông tin đăng nhập không đúng hoặc tài khoản bị khóa.";
                 return View(model);
             }
 
+            // Lưu session
             HttpContext.Session.SetInt32("MaNguoiDung", nguoiDung.MaNguoiDung);
             HttpContext.Session.SetString("HoTen", nguoiDung.HoTen);
             HttpContext.Session.SetString("VaiTro", nguoiDung.TenVaiTro);
-
+            // Điều hướng theo vai trò
+            var vaiTro = nguoiDung.TenVaiTro?.Trim().ToLower();
+            if (vaiTro == "admin")
+            {
+                return RedirectToAction("Index", "TrangChu", new { area = "Admin" });
+            }
+            else
+            {
+                return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
+            }
             maNguoiDung = nguoiDung.MaNguoiDung;
-            TempData["ThongBao"] = "Đăng nhập thành công!";
-            TempData["LoaiThongBao"] = "success";
-            return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
         }
 
 
@@ -202,26 +216,31 @@ namespace FShop6.Areas.KhachHang.Controllers
 
         // POST: Đăng ký
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult DangKy(DangKyViewModel model)
         {
-            Console.WriteLine($"Đăng ký với Email: {model.Email}, Họ tên: {model.HoTen}");
             if (!ModelState.IsValid)
-                return View(model);
-
-            var emailExists = _context.NguoiDung.Any(x => x.Email == model.Email);
-            if (emailExists)
             {
-                ViewBag.ThongBao = "Email đã được sử dụng.";
                 return View(model);
             }
 
+            // Kiểm tra trùng tài khoản
+            bool taiKhoanTonTai = _context.NguoiDung.Any(x => x.TaiKhoan.ToLower() == model.TaiKhoan.Trim().ToLower());
+            if (taiKhoanTonTai)
+            {
+                ViewBag.ThongBao = "Tài khoản đã tồn tại. Vui lòng chọn tên khác.";
+                return View(model);
+            }
+
+            // Tạo mới người dùng với dữ liệu tạm
             var nguoiDungMoi = new NguoiDungModel
             {
-                HoTen = model.HoTen,
-                Email = model.Email,
-                MatKhau = model.MatKhau, // Gợi ý: mã hóa
-                SoDienThoai = null,
-                DiaChi = null,
+                TaiKhoan = model.TaiKhoan.Trim(),
+                MatKhau = model.MatKhau.Trim(),
+                HoTen = "Khách " + model.TaiKhoan,            // Tên tạm
+                Email = model.TaiKhoan + "@gmail.com",         // Email tạm dựa trên tài khoản
+                SoDienThoai = "0000000000",                   // Số điện thoại tạm
+                DiaChi = "Chưa cập nhật",                     // Địa chỉ tạm
                 TTHoatDong = "Hoạt động",
                 TenVaiTro = "Khách hàng",
                 ThoiGianTao = DateTime.Now,
@@ -231,7 +250,8 @@ namespace FShop6.Areas.KhachHang.Controllers
             _context.NguoiDung.Add(nguoiDungMoi);
             _context.SaveChanges();
 
-            ViewBag.ThongBao = "Đăng ký thành công! Vui lòng đăng nhập.";
+            TempData["ThongBao"] = "Đăng ký thành công! Vui lòng đăng nhập.";
+            TempData["LoaiThongBao"] = "success";
             return RedirectToAction("DangNhap");
         }
 
@@ -342,6 +362,83 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
         }
+        [HttpPost]
+        public async Task<IActionResult> GuiMaOTP(string email)
+        {
+            // Kiểm tra giới hạn thời gian gửi lại
+            var lanGuiGanNhat = HttpContext.Session.GetString("ThoiGianGuiGanNhat");
+            if (DateTime.TryParse(lanGuiGanNhat, out var lanTruoc))
+            {
+                if ((DateTime.Now - lanTruoc).TotalSeconds < 60)
+                {
+                    return Json(new { success = false, message = "Vui lòng chờ ít nhất 1 phút để gửi lại mã." });
+                }
+            }
 
+            // Tìm người dùng theo email
+            var nguoiDung = _context.NguoiDung.FirstOrDefault(u => u.Email == email);
+            if (nguoiDung == null)
+            {
+                return Json(new { success = false, message = "Email không tồn tại." });
+            }
+
+            // Tạo mã OTP
+            var otp = new Random().Next(100000, 999999).ToString();
+
+            // Lưu session
+            HttpContext.Session.SetString("OTP", otp);
+            HttpContext.Session.SetString("OTP_Email", email);
+            HttpContext.Session.SetString("ThoiGianGuiGanNhat", DateTime.Now.ToString());
+            HttpContext.Session.SetString("OTP_HetHan", DateTime.Now.AddMinutes(15).ToString());
+
+            // Gửi email
+            try
+            {
+                await EmailHelper.SendEmailAsync(email, "Mã xác thực FShop",
+                    $"Mã xác thực của bạn là: {otp}\nMã này có hiệu lực trong 15 phút.");
+
+                return Json(new { success = true, message = "Mã OTP đã được gửi về email của bạn." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi gửi email.");
+                return Json(new { success = false, message = "Không thể gửi email. Vui lòng thử lại." });
+            }
+        }
+        [HttpPost]
+        public IActionResult XacNhanOTP(XacNhanOTPViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "Vui lòng nhập đầy đủ thông tin." });
+            }
+
+            var otpSession = HttpContext.Session.GetString("OTP");
+            var emailSession = HttpContext.Session.GetString("OTP_Email");
+            var hetHan = HttpContext.Session.GetString("OTP_HetHan");
+
+            if (otpSession == null || emailSession == null || hetHan == null)
+            {
+                return Json(new { success = false, message = "OTP không hợp lệ hoặc đã hết hạn." });
+            }
+
+            if (emailSession != model.Email.Trim())
+            {
+                return Json(new { success = false, message = "Email không khớp với mã OTP đã gửi." });
+            }
+
+            if (DateTime.TryParse(hetHan, out var thoiGian) && DateTime.Now > thoiGian)
+            {
+                HttpContext.Session.Clear();
+                return Json(new { success = false, message = "Mã OTP đã hết hạn." });
+            }
+
+            if (otpSession != model.MaOTP.Trim())
+            {
+                return Json(new { success = false, message = "Mã OTP không chính xác." });
+            }
+
+            return Json(new { success = true, message = "Mã OTP hợp lệ. Vui lòng đặt lại mật khẩu." });
+        }
     }
 }
