@@ -1,8 +1,6 @@
 ﻿@{
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Tài khoản";
-    string tab = Context.Request.Query["tab"];
-    tab = string.IsNullOrEmpty(tab) ? "dashboard" : tab;
 }
 @model FShop6.Areas.KhachHang.Models.HoSoViewModel
 <main class="main">

@@ -17,13 +17,15 @@ namespace FShop6.Areas.KhachHang.Controllers
         private readonly ILogger<TaiKhoanController> _logger;
         private readonly ITaiKhoanServices _taiKhoanServices;
 
-        public TaiKhoanController(IHeaderServices headerServices, AppDbContext context, IKhachHangService khachHangService, ILogger<TaiKhoanController> logger)
+        public TaiKhoanController(IHeaderServices headerServices, AppDbContext context, IKhachHangService khachHangService, ILogger<TaiKhoanController> logger, ITaiKhoanServices taiKhoanServices)
              : base(headerServices)
         {
             _context = context;
             _khachHangService = khachHangService;
             _logger = logger;
+            _taiKhoanServices = taiKhoanServices;
         }
+        int maNguoiDung = 0;
 
         // Đổi mật khẩu (từ OTP)
         [HttpPost]
@@ -53,23 +55,6 @@ namespace FShop6.Areas.KhachHang.Controllers
             }
         }
 
-        public IActionResult HoSo()
-        {
-            var maNguoiDung = HttpContext.Session.GetInt32("MaNguoiDung");
-            if (maNguoiDung == null)
-            {
-                return RedirectToAction("DangNhap");
-            }
-
-            var nguoiDung = _context.NguoiDung.FirstOrDefault(x => x.MaNguoiDung == maNguoiDung);
-            if (nguoiDung == null)
-            {
-                return RedirectToAction("DangNhap");
-            }
-
-            return View(nguoiDung);
-        }
-
         // GET: Đăng nhập
         [HttpGet]
         public IActionResult DangNhap() => View();
@@ -86,7 +71,8 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             if (nguoiDung == null)
             {
-                ViewBag.ThongBao = "Email hoặc mật khẩu không đúng.";
+                TempData["ThongBao"] = "Email hoặc mật khẩu không đúng.";
+                TempData["LoaiThongBao"] = "warning";
                 return View(model);
             }
 
@@ -94,21 +80,25 @@ namespace FShop6.Areas.KhachHang.Controllers
             HttpContext.Session.SetString("HoTen", nguoiDung.HoTen);
             HttpContext.Session.SetString("VaiTro", nguoiDung.TenVaiTro);
 
-            return RedirectToAction("DangKy", "TaiKhoan", new { area = "KhachHang" });
+            maNguoiDung = nguoiDung.MaNguoiDung;
+            TempData["ThongBao"] = "Đăng nhập thành công!";
+            TempData["LoaiThongBao"] = "success";
+            return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
         }
-            
 
-        //public async Task<IActionResult> HoSo()
-        //{
-        //    var moDel = await _taiKhoanServices.LayThongTinHoSo(5);
-        //    return View(moDel);
-        //}
+
+        public async Task<IActionResult> HoSo()
+        {
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            var moDel = await _taiKhoanServices.LayThongTinHoSo(maNguoiDung);
+            return View(moDel);
+        }
         [HttpPost]
         public ActionResult HuyDon(string maDonHang)
         {
             try
             {
-                bool ketQua = _taiKhoanServices.HuyDonHang(maDonHang);
+                bool ketQua = _taiKhoanServices.HuyDonHang(maDonHang, maNguoiDung);
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Hủy đơn hàng thành công.";
@@ -181,7 +171,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             }
             try
             {
-                bool ketQua = _taiKhoanServices.DoiMatKhau(5, matKhauCu, matKhauMoi);
+                bool ketQua = _taiKhoanServices.DoiMatKhau(maNguoiDung, matKhauCu, matKhauMoi);
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Đổi mật khẩu thành công.";
@@ -295,15 +285,12 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             return Json(new { success = true });
         }
-
-        // GET: Sản phẩm yêu thích
         public IActionResult SanPhamYeuThich()
         {
-            var maNguoiDung = HttpContext.Session.GetInt32("MaNguoiDung");
             if (maNguoiDung == null)
                 return RedirectToAction("DangNhap");
 
-            return View(); // TODO: Load danh sách sản phẩm yêu thích
+            return View(); 
         }
 
         // GET: Đăng xuất
@@ -313,17 +300,24 @@ namespace FShop6.Areas.KhachHang.Controllers
             return RedirectToAction("DangNhap");
         }
 
-         
-        [HttpPost] // Chỉ nhận POST request
-        public ActionResult ThemYeuThich(int maSanPham, int maNguoiDung, string giaoDien)
+
+        [HttpPost]
+        public ActionResult ThemYeuThich(int maSanPham, string giaoDien)
         {
-            Console.WriteLine($"Thêm sản phẩm yêu thích: MaSanPham={maSanPham}, MaNguoiDung={maNguoiDung}, GiaoDien={giaoDien}");
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            if (maNguoiDung <= 0 || maNguoiDung == null)
+            {
+                TempData["ThongBao"] = "Vui lòng đăng nhập để thêm sản phẩm yêu thích.";
+                TempData["LoaiThongBao"] = "warning";
+                if (!string.IsNullOrEmpty(giaoDien))
+                {
+                    return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
+                }
+                return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
+            }
             try
             {
-                maNguoiDung = (int)HttpContext.Session.GetInt32("MaNguoiDung");
-                if (maNguoiDung == null)
-                    return RedirectToAction("DangNhap");
-                bool ketQua = _taiKhoanServices.ThemSanPham(maNguoiDung, maSanPham); 
+                bool ketQua = _taiKhoanServices.ThemSanPham(maNguoiDung, maSanPham);
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Thêm sản phẩm yêu thích thành công.";
@@ -340,6 +334,7 @@ namespace FShop6.Areas.KhachHang.Controllers
                 TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
                 TempData["LoaiThongBao"] = "error";
             }
+
             if (!string.IsNullOrEmpty(giaoDien))
             {
                 return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
@@ -347,5 +342,6 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
         }
+
     }
 }

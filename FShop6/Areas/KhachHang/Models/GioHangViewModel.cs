@@ -8,7 +8,7 @@
         public string TenNguoiNhan { get; set; } = string.Empty;
         public string SoDienThoai { get; set; } = string.Empty;
         public string? GhiChu { get; set; }
-        public string DiaChiMacDinh { get; set; } = string.Empty;
+        public string DiaChiMacDinh { get; set; } 
         public bool PhuongThucThanhToan { get; set; } // true: Chuyển khoản, false: Thanh toán khi nhận hàng
     }
 }

@@ -51,7 +51,7 @@
                                 <input type="text" name="DiaChi.CuThe"
                                        value="@(Model.DiaChi != null && !string.IsNullOrEmpty(Model.DiaChi.CuThe)
                                            ? $"{Model.DiaChi.CuThe}, {Model.DiaChi.Xa}, {Model.DiaChi.Huyen}, {Model.DiaChi.Tinh}"
-                                           : (Model.DiaChiMacDinh ?? ""))"
+                                           : (Model.DiaChiMacDinh ?? "Lỗi"))"
                                        placeholder="Địa chỉ nhận hàng *" class="form-input" required />
                                 <span class="form-error" id="address-error"></span>
                             </div>
@@ -164,18 +164,219 @@
                 <div class="modal-bank-info__content">
                     <h4>Thông tin chuyển khoản</h4>
                     <div class="modal-bank-info__details">
-                        <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=120&h=120&fit=crop" alt="QR chuyển khoản" class="modal-bank-info__qr">
-                        <div>
-                            <p><strong>Ngân hàng:</strong> <span>TPBank</span></p>
-                            <p><strong>Số tài khoản:</strong> <span>123456789</span></p>
-                            <p><strong>Chủ tài khoản:</strong> <span>Nguyễn Văn A</span></p>
-                            <p><strong>Nội dung:</strong> <span>SDT_Hoten</span></p>
-                            <p><strong>Số tiền:</strong> <span>8,900,000đ</span></p>
+                        <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=180&h=180&fit=crop"
+                             alt="QR chuyển khoản" class="modal-bank-info__qr">
+                        <div class="bank-info-text">
+                            <p>
+                                <strong>Ngân hàng:</strong>
+                                <span>TPBank</span>
+                            </p>
+                            <p>
+                                <strong>Số tài khoản:</strong>
+                                <span>123456789</span>
+                            </p>
+                            <p>
+                                <strong>Chủ tài khoản:</strong>
+                                <span>Nguyễn Văn A</span>
+                            </p>
+                            <p>
+                                <strong>Nội dung:</strong>
+                                <span>SDT_Hoten</span>
+                            </p>
+                            <p class="bank-amount">
+                                <strong>Số tiền:</strong>
+                                <span>@TongTien.ToString("N0")đ</span>
+                            </p>
                         </div>
                     </div>
-                    <button id="confirm-transfer-btn" class="btn">Tôi đã chuyển khoản</button>
+                    <button id="confirm-transfer-btn" class="btn">
+                        Tôi đã chuyển khoản
+                    </button>
                 </div>
             </div>
         }
     </div>
 </main>
+
+<script>
+        // JavaScript để xử lý modal chuyển khoản
+    document.addEventListener('DOMContentLoaded', function() {
+        const bankRadio = document.getElementById('bank');
+        const codRadio = document.getElementById('cod');
+        const bankModal = document.getElementById('bank-info-modal');
+        const modalOverlay = document.querySelector('.modal-bank-info__overlay');
+        const confirmTransferBtn = document.getElementById('confirm-transfer-btn');
+        const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+
+        // Hiển thị modal khi chọn chuyển khoản
+        bankRadio.addEventListener('change', function() {
+            if (this.checked) {
+                bankModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Ngăn scroll body
+            }
+        });
+
+        // Ẩn modal khi chọn COD
+        codRadio.addEventListener('change', function() {
+            if (this.checked) {
+                bankModal.classList.add('hidden');
+                document.body.style.overflow = 'auto'; // Cho phép scroll lại
+            }
+        });
+
+        // Đóng modal khi click overlay
+        modalOverlay.addEventListener('click', function() {
+            bankModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            // Chuyển về COD khi đóng modal
+            codRadio.checked = true;
+        });
+
+        // Xử lý khi xác nhận đã chuyển khoản
+        confirmTransferBtn.addEventListener('click', function() {
+            // Có thể thêm logic xác nhận ở đây
+            bankModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+
+            // Có thể submit form hoặc thực hiện các hành động khác
+            // confirmOrderBtn.click(); // Uncomment nếu muốn tự động submit
+        });
+
+        // Ngăn submit form khi chưa xác nhận chuyển khoản (nếu cần)
+        confirmOrderBtn.addEventListener('click', function(e) {
+            if (bankRadio.checked) {
+                // Có thể thêm logic kiểm tra xác nhận chuyển khoản ở đây
+                // e.preventDefault();
+                // alert('Vui lòng xác nhận đã chuyển khoản trước khi đặt hàng');
+            }
+        });
+    });
+
+    // CSS để đảm bảo modal hoạt động đúng cách
+    const style = document.createElement('style');
+    style.textContent = `
+        .modal-bank-info {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-bank-info.hidden {
+            display: none;
+        }
+
+        .modal-bank-info__overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+
+        .modal-bank-info__content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 550px;
+            width: 90%;
+            position: relative;
+            z-index: 1001;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .modal-bank-info__content h4 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .modal-bank-info__details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .modal-bank-info__qr {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid #f0f0f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .bank-info-text {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .modal-bank-info__details p {
+            margin: 0;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+        }
+
+        .modal-bank-info__details strong {
+            color: #555;
+            font-weight: 600;
+            min-width: 130px;
+            text-align: left;
+        }
+
+        .modal-bank-info__details span {
+            color: #333;
+            font-weight: 500;
+            text-align: right;
+            flex: 1;
+        }
+
+        .bank-amount {
+            background: #e3f2fd !important;
+            border: 2px solid #2196f3;
+        }
+
+        .bank-amount span {
+            color: #1976d2 !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+        }
+
+        #confirm-transfer-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        #confirm-transfer-btn:hover {
+            background-color: #0056b3;
+        }
+    `;
+    document.head.appendChild(style);
+</script>

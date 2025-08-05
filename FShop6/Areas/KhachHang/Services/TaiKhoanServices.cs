@@ -12,7 +12,7 @@ namespace FShop6.Areas.KhachHang.Services
     public interface IHoSoServices
     {
         Task<HoSoViewModel> LayThongTinHoSo(int nguoiDungId);
-        bool HuyDonHang(string donHangId);
+        bool HuyDonHang(string donHangId, int maNguoiDung);
         bool CapNhatThongTinHoSo(NguoiDungModel nguoiDungModel);
         bool DoiMatKhau(int nguoiDungId, string matKhauCu, string matKhauMoi);
     }
@@ -29,6 +29,7 @@ namespace FShop6.Areas.KhachHang.Services
         }
         public bool ThemSanPham(int nguoiDungId, int sanPhamId)
         {
+            Console.WriteLine($"Thêm sản phẩm yêu thích: Người dùng {nguoiDungId}, Sản phẩm {sanPhamId}");
             try
             {
                 var daTonTai = KiemTraSanPhamYeuThich(nguoiDungId, sanPhamId);
@@ -36,7 +37,7 @@ namespace FShop6.Areas.KhachHang.Services
                 {
                     var yeuThich = new SPYeuThichModel
                     {
-                        MaNguoiDung = 5,
+                        MaNguoiDung = nguoiDungId,
                         MaSanPham = sanPhamId,
                         NgayThem = DateTime.Now
                     };
@@ -120,11 +121,11 @@ namespace FShop6.Areas.KhachHang.Services
             return hoSo;
         }
 
-        public bool HuyDonHang(string donHangId)
+        public bool HuyDonHang(string donHangId, int maNguoiDung)
         {
             try
             {
-                var donHang = _context.DonHang.Where(dh => dh.MaDonHang == donHangId && dh.TrangThai == "Chờ xử lý").FirstOrDefault();
+                var donHang = _context.DonHang.Where(dh => dh.MaDonHang == donHangId && dh.TrangThai == "Chờ xác nhận" && dh.MaNguoiDung == maNguoiDung).FirstOrDefault();
                 if (donHang != null)
                 {
                     donHang.TrangThai = "Đã hủy";

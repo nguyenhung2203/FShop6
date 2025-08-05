@@ -32,41 +32,42 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @if (Model.DSDanhMuc == null)
+                            {
+                                <p>Không tìm thấy sản phẩm</p>
+                            }
                             <!-- Ví dụ dữ liệu -->
-                            <tr>
-                                <td>Danh mục 1</td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editCategoryModal">
-                                        <i class="fa fa-pencil"></i> Sửa
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCategoryModal">
-                                        <i class="fa fa-trash"></i> Xóa
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Danh mục 2</td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editCategoryModal">
-                                        <i class="fa fa-pencil"></i> Sửa
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCategoryModal">
-                                        <i class="fa fa-trash"></i> Xóa
-                                    </button>
-                                </td>
-                            </tr>
-                            <!-- ...thêm dữ liệu khác... -->
+                            @foreach (var item in Model.SanPhamList)
+                            {
+                                <tr>
+                                    <td>@item.DanhMuc.TenDanhMuc</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info edit-category-btn"
+                                                data-id="@item.DanhMuc.Id"
+                                                data-ten="@item.DanhMuc.TenDanhMuc"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editCategoryModal">
+                                            <i class="fa fa-pencil"></i> Sửa
+                                        </button>
+
+                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal">
+                                            <i class="fa fa-trash"></i> Xóa
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
+
         <!-- Modal Thêm danh mục -->
         <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryLabel"
         aria-hidden="true">
             <div class="modal-dialog" role="document">
-                <form class="modal-content">
+                <form action="@Url.Action("ThemDanhMuc", "QuanLySanPham", new{area = "Admin"})" method="post" class="modal-content">
                     <div class="modal-header bg-info text-white">
                         <h5 class="modal-title" id="addCategoryLabel">Thêm danh mục</h5>
                         <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
@@ -76,7 +77,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="new_category_name">Tên danh mục</label>
-                            <input type="text" class="form-control" id="new_category_name" required>
+                            <input name="TenDanhMuc" type="text" class="form-control" id="new_category_name" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -91,7 +92,7 @@
         <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryLabel"
         aria-hidden="true">
             <div class="modal-dialog" role="document">
-                <form class="modal-content">
+                <form action="@Url.Action("SuaDanhMuc", "QuanLySanPham", new{area = "Admin"})" method="post" class="modal-content">
                     <div class="modal-header bg-info text-white">
                         <h5 class="modal-title" id="editCategoryLabel">Sửa danh mục</h5>
                         <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
@@ -101,7 +102,8 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="edit_category_name">Tên danh mục</label>
-                            <input type="text" class="form-control" id="edit_category_name" required>
+                            <input name="MaDanhMuc" type="hidden" id="edit_category_id">
+                            <input name="TenDanhMuc" type="text" class="form-control" id="edit_category_name" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -116,7 +118,7 @@
         <div class="modal fade" id="deleteCategoryModal" tabindex="-1" role="dialog" aria-labelledby="deleteCategoryLabel"
         aria-hidden="true">
             <div class="modal-dialog" role="document">
-                <form class="modal-content">
+                <form action="@Url.Action("XoaDanhMuc", "QuanLySanPham", new{area = "Admin"})" method="post" class="modal-content">
                     <div class="modal-header bg-danger text-white">
                         <h5 class="modal-title" id="deleteCategoryLabel">Xóa danh mục</h5>
                         <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
@@ -124,11 +126,13 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <input name="MaDanhMuc" type="hidden" id="delete_category_id">
                         Bạn có chắc chắn muốn xóa danh mục này không?
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-danger" type="submit">Xóa</button>
+                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal">
+                            <i class="fa fa-trash"></i> Xóa</button>
                     </div>
                 </form>
             </div>
@@ -626,3 +630,30 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.edit-category-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const ten = this.getAttribute('data-ten');
+
+            document.getElementById('edit_category_id').value = id;
+            document.getElementById('edit_category_name').value = ten;
+        });
+    });
+
+</script>
+
+<script>
+    document.querySelectorAll('.delete-category-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            document.getElementById('delete_category_id').value = id;
+        });
+    });
+</script>
+
+
+
+
+
