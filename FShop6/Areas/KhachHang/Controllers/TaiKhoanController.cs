@@ -304,9 +304,16 @@ namespace FShop6.Areas.KhachHang.Controllers
         [HttpPost]
         public ActionResult ThemYeuThich(int maSanPham, string giaoDien)
         {
-            if (maNguoiDung == 0)
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            if (maNguoiDung <= 0 || maNguoiDung == null)
             {
-                maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+                TempData["ThongBao"] = "Vui lòng đăng nhập để thêm sản phẩm yêu thích.";
+                TempData["LoaiThongBao"] = "warning";
+                if (!string.IsNullOrEmpty(giaoDien))
+                {
+                    return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
+                }
+                return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
             }
             try
             {
