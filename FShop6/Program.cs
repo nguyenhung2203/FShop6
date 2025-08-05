@@ -93,7 +93,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=TrangChu}/{action=Index}/{id?}",
-    defaults: new { area = "KhachHang" });
+    pattern: "{controller=QuanLySanPham}/{action=QuanLySanPham}/{id?}",
+    defaults: new { area = "Admin" });
 
 app.Run();
