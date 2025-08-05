@@ -94,11 +94,11 @@ namespace FShop6.Areas.KhachHang.Controllers
             return View(moDel);
         }
         [HttpPost]
-        public ActionResult HuyDon(string maDonHang)
+        public ActionResult HuyDon(int maDonHang, string noiDungHuy)
         {
             try
             {
-                bool ketQua = _taiKhoanServices.HuyDonHang(maDonHang, maNguoiDung);
+                bool ketQua = _taiKhoanServices.HuyDonHang(maDonHang, maNguoiDung, noiDungHuy);
                 if (ketQua)
                 {
                     TempData["ThongBao"] = "Hủy đơn hàng thành công.";
@@ -287,7 +287,7 @@ namespace FShop6.Areas.KhachHang.Controllers
         }
         public IActionResult SanPhamYeuThich()
         {
-            if (maNguoiDung == null)
+            if (maNguoiDung <= 0)
                 return RedirectToAction("DangNhap");
 
             return View(); 
@@ -305,7 +305,7 @@ namespace FShop6.Areas.KhachHang.Controllers
         public ActionResult ThemYeuThich(int maSanPham, string giaoDien)
         {
             maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
-            if (maNguoiDung <= 0 || maNguoiDung == null)
+            if (maNguoiDung <= 0)
             {
                 TempData["ThongBao"] = "Vui lòng đăng nhập để thêm sản phẩm yêu thích.";
                 TempData["LoaiThongBao"] = "warning";

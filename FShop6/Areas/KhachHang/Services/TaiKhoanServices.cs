@@ -12,7 +12,7 @@ namespace FShop6.Areas.KhachHang.Services
     public interface IHoSoServices
     {
         Task<HoSoViewModel> LayThongTinHoSo(int nguoiDungId);
-        bool HuyDonHang(string donHangId, int maNguoiDung);
+        bool HuyDonHang(int donHangId, int maNguoiDung, string noiDungHuy);
         bool CapNhatThongTinHoSo(NguoiDungModel nguoiDungModel);
         bool DoiMatKhau(int nguoiDungId, string matKhauCu, string matKhauMoi);
     }
@@ -117,28 +117,44 @@ namespace FShop6.Areas.KhachHang.Services
                 nguoiDungModels = nguoiDung,
                 donHangModels = donHang
             };
-
             return hoSo;
         }
 
-        public bool HuyDonHang(string donHangId, int maNguoiDung)
+        public bool HuyDonHang(int donHangId, int maNguoiDung, string noiDungHuy)
         {
             try
             {
-                var donHang = _context.DonHang.Where(dh => dh.MaDonHang == donHangId && dh.TrangThai == "Chờ xác nhận" && dh.MaNguoiDung == maNguoiDung).FirstOrDefault();
+                var donHang = _context.DonHang.FirstOrDefault(dh => dh.ID == donHangId && dh.TrangThai == "Chờ xác nhận" && dh.MaNguoiDung == maNguoiDung);
+
                 if (donHang != null)
                 {
                     donHang.TrangThai = "Đã hủy";
+                    donHang.GhiChu = noiDungHuy;
+                    donHang.NgayCapNhat = DateTime.Now;
+                    _context.DonHang.Update(donHang);
+
+                    var chiTietDonHangs = _context.ChiTietDonHang
+                        .Where(ct => ct.IDDonHang == donHangId)
+                        .ToList();
+
+                    foreach (var ct in chiTietDonHangs)
+                    {
+                        var bienThe = _context.BienThe.FirstOrDefault(bt => bt.MaBienThe == ct.MaBienThe);
+                        if (bienThe != null)
+                        {
+                            bienThe.SoLuongConLai += ct.SoLuong;
+                            _context.BienThe.Update(bienThe);
+                        }
+                    }
                     _context.SaveChanges();
                     return true;
                 }
                 return false;
             }
-            catch(SqlException ex)
+            catch (SqlException ex)
             {
                 return false;
             }
-
         }
 
         public bool KiemTraSanPhamYeuThich(int nguoiDungId, int sanPhamId)
