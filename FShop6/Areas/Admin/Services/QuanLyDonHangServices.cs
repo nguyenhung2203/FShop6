@@ -8,8 +8,8 @@ namespace FShop6.Areas.Admin.Services
     public interface IQuanLyDonHangServices
     {
         Task<QuanLyDonHangViewModel> LayTatCaDonHangAsync();
-        Task DuyetDonHang(int id);
-        Task SuaDonHang(IFormCollection form);
+        Task<bool> DuyetDonHang(int id);
+        Task<bool> SuaDonHang(IFormCollection form);
     }
 
     public class QuanLyDonHangServices : IQuanLyDonHangServices
@@ -48,7 +48,7 @@ namespace FShop6.Areas.Admin.Services
                 DSDonHang = dsDonHang
             };
         }
-        public async Task DuyetDonHang(int id)
+        public async Task<bool> DuyetDonHang(int id)
         {
             try
             {
@@ -57,33 +57,58 @@ namespace FShop6.Areas.Admin.Services
                 {
                     donHang.TrangThai = "Đang vận chuyển";
                     donHang.NgayCapNhat = DateTime.Now;
+
                     _context.DonHang.Update(donHang);
                     await _context.SaveChangesAsync();
+
+                    return true;
                 }
+
+                return false; // Không tìm thấy đơn hàng
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Lỗi khi duyệt đơn hàng: " + id);
+                Console.WriteLine("Lỗi khi duyệt đơn hàng: " + ex.Message);
+                return false;
             }
         }
-        public async Task SuaDonHang(IFormCollection form)
+        public async Task<bool> SuaDonHang(IFormCollection form)
         {
             try
             {
                 int ID = int.Parse(form["ID"]);
                 var donHang = await _context.DonHang.FindAsync(ID);
-                if (donHang != null)
+
+                if (donHang == null)
+                    return false;
+                var trangThai = form["TrangThai"];
+                if (trangThai == "Đã hủy")
                 {
-                    donHang.TrangThai = form["TrangThai"];
-                    donHang.GhiChu = form["GhiChu"];
-                    donHang.NgayCapNhat = DateTime.Now;
-                    _context.DonHang.Update(donHang);
-                    await _context.SaveChangesAsync();
+                    var chiTietDonHang = await _context.ChiTietDonHang
+                        .Where(ct => ct.IDDonHang == ID)
+                        .ToListAsync();
+
+                    foreach (var ct in chiTietDonHang)
+                    {
+                        var bienThe = await _context.BienThe.FindAsync(ct.MaBienThe);
+                        if (bienThe != null)
+                        {
+                            bienThe.SoLuongConLai += ct.SoLuong;
+                            _context.BienThe.Update(bienThe);
+                        }
+                    }
                 }
+                donHang.TrangThai = trangThai;
+                donHang.GhiChu = form["GhiChu"];
+                donHang.NgayCapNhat = DateTime.Now;
+                _context.DonHang.Update(donHang);
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Lỗi khi sửa đơn hàng: " + ex.Message);
+                return false;
             }
         }
     }

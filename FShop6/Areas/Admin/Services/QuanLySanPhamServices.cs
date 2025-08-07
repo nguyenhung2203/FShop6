@@ -1,4 +1,5 @@
-﻿using FShop6.Areas.Admin.Models;
+﻿using System.Threading.Tasks;
+using FShop6.Areas.Admin.Models;
 using FShop6.Areas.KhachHang.Models;
 using FShop6.Data;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,14 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FShop6.Areas.Admin.Services
 {
+    public class KetQuaXuLy
+    {
+        public bool ThanhCong { get; set; }
+        public string? ThongBao { get; set; }
+
+        public static KetQuaXuLy Loi(string thongBao) => new KetQuaXuLy { ThanhCong = false, ThongBao = thongBao };
+        public static KetQuaXuLy ThanhCongXuLy(string thongBao = "Thành công.") => new KetQuaXuLy { ThanhCong = true, ThongBao = thongBao };
+    }
     public interface IQuanLySanPhamServices
     {
         Task<QuanLySanPhamViewModel> LayDanhMuc();
@@ -14,12 +23,12 @@ namespace FShop6.Areas.Admin.Services
         bool SuaDanhMucAsync(int MaDanhMuc, string TenDanhMuc);
         Task<bool> XoaDanhMucAsync(int MaDanhMuc);
 
-        Task ThemSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
-        Task SuaSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
-        Task XoaSanPhamAsync(int MaSanPham);
-        Task ThemBienTheAsync(IFormCollection form, IFormFile AnhBienThe);
-        Task SuaBienTheAsync(IFormCollection form, IFormFile AnhBienThe);
-        Task XoaBienTheAsync(int MaBienThe);
+        Task<KetQuaXuLy> ThemSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
+        Task<KetQuaXuLy> SuaSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien);
+        Task<KetQuaXuLy> XoaSanPhamAsync(int MaSanPham);
+        Task<KetQuaXuLy> ThemBienTheAsync(IFormCollection form, IFormFile AnhBienThe);
+        Task<KetQuaXuLy> SuaBienTheAsync(IFormCollection form, IFormFile AnhBienThe);
+        Task<KetQuaXuLy> XoaBienTheAsync(int MaBienThe);
     }
 
     public class QuanLySanPhamServices : IQuanLySanPhamServices
@@ -56,7 +65,7 @@ namespace FShop6.Areas.Admin.Services
             };
         }
 
-        public async Task ThemSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien)
+        public async Task<KetQuaXuLy> ThemSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien)
         {
             try
             {
@@ -84,21 +93,22 @@ namespace FShop6.Areas.Admin.Services
 
                 _context.SanPham.Add(sanPham);
                 await _context.SaveChangesAsync();
+                return KetQuaXuLy.ThanhCongXuLy("Thêm sản phẩm thành công.");
             }
             catch (Exception ex)
             {
                 // Xử lý lỗi nếu cần thiết
-                Console.WriteLine($"Lỗi khi thêm sản phẩm: {ex.Message}");
+                return KetQuaXuLy.Loi("Lỗi khi thêm sản phẩm: " + ex.Message);
             }
         }
 
-        public async Task SuaSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien)
+        public async Task<KetQuaXuLy> SuaSanPhamAsync(IFormCollection form, IFormFile AnhDaiDien)
         {
             try
             {
                 int maSanPham = int.Parse(form["maSanPham"]);
                 var sanPham = await _context.SanPham.FindAsync(maSanPham);
-                if (sanPham == null) return;
+                if (sanPham == null) return KetQuaXuLy.Loi("Không tìm thấy sản phẩm cần sửa.");
 
                 sanPham.TenSanPham = form["tenSanPham"];
                 sanPham.MaDanhMucSP = int.Parse(form["danhMucId"]);
@@ -129,14 +139,15 @@ namespace FShop6.Areas.Admin.Services
 
                 _context.SanPham.Update(sanPham);
                 await _context.SaveChangesAsync();
+                return KetQuaXuLy.ThanhCongXuLy("Sửa sản phẩm thành công.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi khi sửa sản phẩm: {ex.Message}");
+                return KetQuaXuLy.Loi("Lỗi khi sửa sản phẩm: " + ex.Message);
             }
         }
 
-        public async Task XoaSanPhamAsync(int MaSanPham)
+        public async Task<KetQuaXuLy> XoaSanPhamAsync(int MaSanPham)
         {
             try
             {
@@ -147,7 +158,7 @@ namespace FShop6.Areas.Admin.Services
 
                 if (sanPham == null)
                 {
-                    return;
+                    return KetQuaXuLy.Loi("Không tìm thấy sản phẩm cần xoá.");
                 }
 
                 var maBienThe = sanPham.BienThes.Select(bt => (int?)bt.MaBienThe);
@@ -156,8 +167,7 @@ namespace FShop6.Areas.Admin.Services
 
                 if (coTrongDonHang)
                 {
-                    Console.WriteLine("Không thể xoá sản phẩm vì có biến thể đã được đặt hàng.");
-                    return;
+                    return KetQuaXuLy.Loi("Không thể xoá sản phẩm đã có giao dịch.");
                 }
 
                 // Xoá ảnh đại diện nếu có
@@ -198,20 +208,21 @@ namespace FShop6.Areas.Admin.Services
                 // Cuối cùng xoá sản phẩm
                 _context.SanPham.Remove(sanPham);
                 await _context.SaveChangesAsync();
+                return KetQuaXuLy.ThanhCongXuLy("Đã xoá sản phẩm thành công.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi khi xoá sản phẩm: {ex.Message}");
+                return KetQuaXuLy.Loi("Lỗi khi xoá sản phẩm: " + ex.Message);
             }
         }
 
-        public async Task ThemBienTheAsync(IFormCollection form, IFormFile AnhBienThe)
+        public async Task<KetQuaXuLy> ThemBienTheAsync(IFormCollection form, IFormFile AnhBienThe)
         {
             try
             {
                 int maSanPham = int.Parse(form["MaSanPham"]);
                 var sanPham = await _context.SanPham.FindAsync(maSanPham);
-                if (sanPham == null) return;
+                if (sanPham == null) return KetQuaXuLy.Loi("Không tìm thấy sản phẩm để thêm biến thể.");
                 var bienThe = new BienTheModels
                 {
                     MaSKU = form["MaSKU"],
@@ -243,14 +254,15 @@ namespace FShop6.Areas.Admin.Services
                     _context.AnhBienThe.Add(anhBienThe);
                 }
                 await _context.SaveChangesAsync();
+                return KetQuaXuLy.ThanhCongXuLy("Thêm biến thể sản phẩm thành công.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi khi thêm biến thể sản phẩm: {ex.Message}");
+                return KetQuaXuLy.Loi("Lỗi khi thêm biến thể sản phẩm: " + ex.Message);
             }
         }
 
-        public async Task SuaBienTheAsync(IFormCollection form, IFormFile AnhBienThe)
+        public async Task<KetQuaXuLy> SuaBienTheAsync(IFormCollection form, IFormFile AnhBienThe)
         {
             try
             {
@@ -258,7 +270,7 @@ namespace FShop6.Areas.Admin.Services
                 var bienThe = await _context.BienThe
                     .Include(bt => bt.AnhBienThe)
                     .FirstOrDefaultAsync(bt => bt.MaBienThe == maBienThe);
-                if (bienThe == null) return;
+                if (bienThe == null) return KetQuaXuLy.Loi("Không tìm thấy biến thể cần sửa.");
 
                 // Cập nhật thông tin biến thể
                 bienThe.MaSKU = form["MaSKU"];
@@ -314,28 +326,28 @@ namespace FShop6.Areas.Admin.Services
                 }
 
                 await _context.SaveChangesAsync();
+                return KetQuaXuLy.ThanhCongXuLy("Sửa biến thể sản phẩm thành công.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi khi sửa biến thể sản phẩm: {ex}");
+                return KetQuaXuLy.Loi("Lỗi khi sửa biến thể sản phẩm: " + ex.Message);
             }
         }
-        public async Task XoaBienTheAsync(int MaBienThe)
+        public async Task<KetQuaXuLy> XoaBienTheAsync(int MaBienThe)
         {
             try
             {
                 var bienThe = await _context.BienThe
                     .Include(bt => bt.AnhBienThe)
                     .FirstOrDefaultAsync(bt => bt.MaBienThe == MaBienThe);
-                if (bienThe == null) return;
+                if (bienThe == null) return KetQuaXuLy.Loi("Không tìm thấy biến thể cần xoá.");
 
                 // Kiểm tra xem biến thể có trong đơn hàng chưa  
                 var coTrongDonHang = await _context.ChiTietDonHang
                 .AnyAsync(ctdh => ctdh.MaBienThe == MaBienThe);
                 if (coTrongDonHang)
                 {
-                    Console.WriteLine("Không thể xoá biến thể vì đã từng được đặt hàng.");
-                    return;
+                    return KetQuaXuLy.Loi("Không thể xoá biến thể đã có giao dịch.");
                 }
 
                 // Xoá ảnh biến thể  
@@ -362,10 +374,12 @@ namespace FShop6.Areas.Admin.Services
                 // Xoá biến thể  
                 _context.BienThe.Remove(bienThe);
                 await _context.SaveChangesAsync();
+                return KetQuaXuLy.ThanhCongXuLy("Đã xoá biến thể sản phẩm thành công.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi khi xoá biến thể sản phẩm: {ex.Message}");
+                return KetQuaXuLy.Loi("Lỗi khi xoá biến thể sản phẩm: " + ex.Message);
             }
         }
         public async Task<QuanLySanPhamViewModel> LayDanhMuc()
@@ -420,9 +434,6 @@ namespace FShop6.Areas.Admin.Services
             }
             return false;
         }
-
-
-
     }
 
 }

@@ -129,6 +129,7 @@ namespace FShop6.Areas.KhachHang.Services
                     .Include(sp => sp.BienThes)
                         .ThenInclude(b => b.AnhBienThe)
                     .FirstOrDefaultAsync(sp => sp.MaSanPham == maSanPham);
+                    
 
             if (sanPham == null)
             {
