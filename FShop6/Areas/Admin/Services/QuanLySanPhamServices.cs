@@ -271,22 +271,19 @@ namespace FShop6.Areas.Admin.Services
                     .Include(bt => bt.AnhBienThe)
                     .FirstOrDefaultAsync(bt => bt.MaBienThe == maBienThe);
                 if (bienThe == null) return KetQuaXuLy.Loi("Không tìm thấy biến thể cần sửa.");
-
                 // Cập nhật thông tin biến thể
                 bienThe.MaSKU = form["MaSKU"];
                 bienThe.LoaiBienThe = form["LoaiBienThe"];
-                bienThe.GiaBan = decimal.Parse(form["GiaBan"]);
-                bienThe.GiaNhap = decimal.Parse(form["GiaNhap"]);
+                bienThe.GiaBan = decimal.Parse(form["GiaBan"].ToString().Replace(",", "").Trim());
+                bienThe.GiaNhap = decimal.Parse(form["GiaNhap"].ToString().Replace(",", "").Trim());
                 bienThe.TinhTrang = form["TinhTrang"];
                 bienThe.SoLuongConLai = int.Parse(form["SoLuongConLai"]);
-                var maAnhCu = int.Parse(form["AnhBienTheCu"]);
 
                 if (AnhBienThe != null && AnhBienThe.Length > 0)
                 {
                     // Lấy ảnh cũ từ DB
-
                     var anhBienTheCu = await _context.AnhBienThe
-                        .FirstOrDefaultAsync(anh => anh.MaHinhAnh == maAnhCu);
+                        .FirstOrDefaultAsync(anh => anh.MaBienThe == maBienThe);
 
                     // Xoá file ảnh cũ nếu có
                     if (anhBienTheCu != null && !string.IsNullOrEmpty(anhBienTheCu.URL))

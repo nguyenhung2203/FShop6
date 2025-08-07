@@ -247,7 +247,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="product_name_add">Tên sản phẩm</label>
-                            <input type="text" class="form-control mb-2" id="product_name_add" name="TenSanPham" required itle="Không được nhập số hoặc ký tự đặc biệt như @, $ hoặc .">
+                            <input type="text" class="form-control mb-2" id="product_name_add" name="TenSanPham" required>
                             <div class="form-row align-items-center mb-2">
                                 <div class="col-md-8">
                                     <label for="category_select_add" class="mr-2">Chọn danh mục</label>
@@ -454,7 +454,6 @@
                                                 data-giaban="@bt.GiaBan.ToString("N0")"
                                                 data-soluongconlai="@bt.SoLuongConLai"
                                                 data-tinhtrang="@bt.TinhTrang"
-                                                data-maanhbtcu="@bt.AnhBienThe.FirstOrDefault()?.MaHinhAnh"
                                                 data-urlanhbtcu="@bt.AnhBienThe.FirstOrDefault()?.URL"
                                                 onclick="openEditDetailsModal(this)">
                                                     <i class="fa fa-pencil"></i> Sửa
@@ -504,15 +503,15 @@
 						</div>
 						<div class="form-group">
 							<label for="price_import_add_detail">Giá nhập</label>
-							<input type="text" class="form-control mb-2" id="price_import_add_detail" name="GiaNhap" required>
+							<input type="text" class="form-control mb-2" id="price_import_add_detail" name="GiaNhap" pattern="^[0-9,]+$" title="Giá phải lớn hơn hoặc bằng 0" required>
 						</div>
 						<div class="form-group">
 							<label for="price_sell_add_detail">Giá bán</label>
-							<input type="text" class="form-control mb-2" id="price_sell_add_detail" name="GiaBan" required>
+                            <input type="text" class="form-control mb-2" id="price_sell_add_detail" name="GiaBan" pattern="^[0-9,]+$" title="Giá phải lớn hơn hoặc bằng 0" required>
 						</div>
 						<div class="form-group">
 							<label for="quantity_add_detail">Số lượng còn lại</label>
-							<input type="text" class="form-control mb-2" id="quantity_add_detail" name="SoLuongConLai" required>
+							<input type="number" min="0" class="form-control mb-2" id="quantity_add_detail" name="SoLuongConLai" required>
 						</div>
 						<div class="form-group">
 							<label for="status_input_add">Tình trạng</label>
@@ -558,7 +557,7 @@
                         <div class="form-group">
                             <div class="form-row align-items-center mb-2">
                                 <label for="Sku_edit_detail" class="mr-2">Mã Sku</label>
-                                <input type="text" class="form-control mb-2" id="sku_edit_detail" name="MaSKU" required>
+                                <input type="text" class="form-control mb-2" id="sku_edit_detail" name="MaSKU" readonly>
                             </div>
                             <label for="type_edit_detail" class="mr-2">Loại sản phẩm</label>
                             <input type="text" class="form-control mb-2" id="type_edit_detail" placeholder="Ví dụ: Đen-Size M" name="LoaiBienThe"
@@ -566,15 +565,15 @@
                         </div>
                         <div class="form-group">
                             <label for="price_import_edit_detail">Giá nhập</label>
-                            <input type="text" class="form-control mb-2" id="price_import_edit_detail" name="GiaNhap" required>
+                            <input type="text" class="form-control mb-2" id="price_import_edit_detail" name="GiaNhap" pattern="^[0-9,]+$" title="Giá phải lớn hơn hoặc bằng 0" required>
                         </div>
                         <div class="form-group">
                             <label for="price_sell_edit_detail">Giá bán</label>
-                            <input type="text" class="form-control mb-2" id="price_sell_edit_detail" name="GiaBan" required>
+                            <input type="text" class="form-control mb-2" id="price_sell_edit_detail" name="GiaBan" pattern="^[0-9,]+$" title="Giá phải lớn hơn hoặc bằng 0" required>
                         </div>
                         <div class="form-group">
                             <label for="quantity_edit_detail">Số lượng còn lại</label>
-                            <input type="text" class="form-control mb-2" id="quantity_edit_detail" name="SoLuongConLai" required>
+                            <input type="number" min="0" class="form-control mb-2" id="quantity_edit_detail" name="SoLuongConLai" required>
                         </div>
                         <div class="form-group">
                             <label for="category_input_edit">Tình trạng</label>
@@ -591,7 +590,6 @@
                             </datalist>
                         </div>
                         <div class="form-group">
-							<input type="hidden" id="ma_anh_bien_the_cu" name="AnhBienTheCu" value="" />
                             <img id="anhBTCu" class="img-thumbnail mt-2" style="max-height: 100px;" />
                             <label for="details_image_edit">Hình ảnh</label>
                             <input type="file" class="form-control-file" id="details_image_edit" name="AnhBienThe">

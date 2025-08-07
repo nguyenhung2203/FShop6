@@ -86,7 +86,6 @@ window.openEditDetailsModal = function (button) {
     document.getElementById('price_import_edit_detail').value = giaNhap;
     document.getElementById('quantity_edit_detail').value = soLuong;
     document.getElementById('status_input_edit').value = tinhTrang;
-    document.getElementById('ma_anh_bien_the_cu').value = maAnhBTCu;
     const imgPreview = document.getElementById('anhBTCu');
     if (imgPreview && urlAnhBTCu) {
         imgPreview.src = '/KhachHang/images/' + urlAnhBTCu;
