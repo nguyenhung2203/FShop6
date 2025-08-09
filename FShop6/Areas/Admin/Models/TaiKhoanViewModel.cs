@@ -3,6 +3,8 @@
     public class TaiKhoanViewModel
     {
         public int MaNguoiDung { get; set; }
+        public string TaiKhoan { get; set; }
+        public string MatKhau { get; set; } 
         public string HoTen { get; set; }
         public string Email { get; set; }
         public string SoDienThoai { get; set; }

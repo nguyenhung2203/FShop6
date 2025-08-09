@@ -5,28 +5,51 @@
     @foreach (var sanPham in Model.DanhSachSanPham)
     {
         <div class="product__item shop-product__item shop-card">
-            <div class="product__banner">
+            <div class="product__banner shop">
                 <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })" class="product__images">
                     <img src="@Url.Content("~/KhachHang/images/" + sanPham.HinhAnhDaiDien)"
                          alt="@sanPham.TenSanPham"
                          class="product__img default" />
                 </a>
+                <div class="product__actions">
+                    @* <a href="#" class="action__btn cart__btn" aria-label="Thêm giỏ hàng">
+                        <i class="fi fi-rs-shopping-bag-add"></i>
+                    </a> *@
+                    @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                    {
+                        @Html.Hidden("maSanPham", sanPham.MaSanPham)
+                        <input type="hidden" name="giaoDien" value="sanpham" />
+                        <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
+                            <i class="fi fi-rs-heart"></i>
+                        </button>
+                    }
+                    @* <a href="#" class="action__btn" aria-label="Mua ngay">
+                        <i class="fi fi-rs-shuffle"></i>
+                    </a> *@
+                </div>
             </div>
             <div class="product__content">
                 <span class="product__category">@sanPham.TenDanhMuc</span>
                 <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                     <h3 class="product__title">@sanPham.TenSanPham</h3>
                 </a>
-                <p class="product__description">@sanPham.MoTaNgan</p>
-            </div>
-            <div class="product__bottom-row">
-                <div class="product__price">
-                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                <div class="product__content-middle">
+                    @* <div class="product__rating">
+                        <i class="fi fi-rs-star"></i>
+                        <i class="fi fi-rs-star"></i>
+                        <i class="fi fi-rs-star"></i>
+                        <i class="fi fi-rs-star"></i>
+                        <i class="fi fi-rs-star"></i>
+                    </div> *@
+                    <div class="product__description-wrapper">
+                        <p class="product__description">@sanPham.MoTaNgan</p>
+                    </div>
                 </div>
-                <div class="product-card-actions">
-                    <a href="#" class="action__btn" aria-label="Thêm yêu thích">
-                        <i class="fi fi-rs-heart"></i>
-                    </a>
+            </div>
+            <div class="product__content-bottom">
+                <div class="product__price flex shop">
+                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                    <span class="old__price">100000</span>
                 </div>
             </div>
         </div>

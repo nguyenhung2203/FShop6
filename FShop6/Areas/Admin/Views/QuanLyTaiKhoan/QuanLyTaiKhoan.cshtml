@@ -28,8 +28,10 @@
                             <thead>
     <tr>
         <th>Mã người dùng</th>
-        <th>Họ và tên</th>
+        <th>Tài khoản</th>
+                <th>Mật khẩu</th>
         <th>Email</th>
+        <th>Số điện thoại</th>
         <th>Quyền hạn</th>
         <th>Trạng thái</th>
         <th>Thao tác</th>
@@ -37,12 +39,14 @@
 </thead>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.Where(x => x.TenVaiTro?.Trim().ToLower() != "admin"))
+                            @foreach (var item in Model.Where(x => x.TenVaiTro?.Trim().ToLower() == "nhân viên"))
                             {
                                     <tr>
                                                <td>@item.MaNguoiDung</td>
-                                        <td>@item.HoTen</td>
+                                            <td>@item.TaiKhoan</td>
+                                                <td>@item.MatKhau</td>
                                         <td>@item.Email</td>
+                                            <td>@item.SoDienThoai</td>
                                         <td>@item.TenVaiTro</td>
                                         <td>
                                                 
@@ -102,6 +106,10 @@
                         <option value="Hoạt động">Hoạt động</option>
                         <option value="Tạm khóa">Tạm khóa</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_password">Mật khẩu mới</label>
+                    <input type="text" class="form-control" id="edit_password" name="MatKhau" placeholder="Để trống nếu không đổi mật khẩu">
                 </div>
             </div>
             <div class="modal-footer">
