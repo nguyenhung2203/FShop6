@@ -357,9 +357,11 @@ function updateProductDetails(element) {
     var maBienThe = element.getAttribute("data-id");
     var giaBan = element.getAttribute("data-giaban");
     var soLuong = element.getAttribute("data-soluong");
+    var maSku = element.getAttribute("data-sku");
 
     // Cập nhật thông tin sản phẩm vào các thẻ li tương ứng
-    document.getElementById('product-sku').textContent = maBienThe; // Hiển thị mã SKU
+    document.getElementById('nhap-so-luong').max = soLuong;
+    document.getElementById('product-sku').textContent = maSku; // Hiển thị mã SKU
     document.getElementById('product-status').textContent = 'Còn ' + soLuong + ' sản phẩm'; // Hiển thị số lượng
     document.getElementById('product-price').textContent = giaBan; // Cập nhật giá bán nếu có
 

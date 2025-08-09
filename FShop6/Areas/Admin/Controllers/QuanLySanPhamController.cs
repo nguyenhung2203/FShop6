@@ -41,21 +41,27 @@ namespace FShop6.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> ThemSanPham(IFormCollection form, IFormFile AnhDaiDien)
         {
-            await _quanLySanPhamServices.ThemSanPhamAsync(form, AnhDaiDien);
+            var ketQua = await _quanLySanPhamServices.ThemSanPhamAsync(form, AnhDaiDien);
+            TempData["ThongBao"] = ketQua.ThongBao;
+            TempData["LoaiThongBao"] = ketQua.ThanhCong ? "success" : "warning";
             return RedirectToAction("QuanLySanPham");
         }
 
         [HttpPost]
         public async Task<IActionResult> SuaSanPham(IFormCollection form, IFormFile AnhDaiDien)
         {
-            await _quanLySanPhamServices.SuaSanPhamAsync(form, AnhDaiDien);
+            var ketQuan = await _quanLySanPhamServices.SuaSanPhamAsync(form, AnhDaiDien);
+            TempData["ThongBao"] = ketQuan.ThongBao;
+            TempData["LoaiThongBao"] = ketQuan.ThanhCong ? "success" : "warning";
             return RedirectToAction("QuanLySanPham");
         }
 
         [HttpPost]
         public async Task<IActionResult> XoaSanPham(int MaSanPham)
         {
-            await _quanLySanPhamServices.XoaSanPhamAsync(MaSanPham);
+            var ketQua = await _quanLySanPhamServices.XoaSanPhamAsync(MaSanPham);
+            TempData["ThongBao"] = ketQua.ThongBao;
+            TempData["LoaiThongBao"] = ketQua.ThanhCong ? "success" : "warning";
             return RedirectToAction("QuanLySanPham");
         }
 
@@ -71,21 +77,27 @@ namespace FShop6.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> ThemBienThe(IFormCollection form, IFormFile AnhBienThe)
         {
-            await _quanLySanPhamServices.ThemBienTheAsync(form, AnhBienThe);
+            var ketQua = await _quanLySanPhamServices.ThemBienTheAsync(form, AnhBienThe);
+            TempData["ThongBao"] = ketQua.ThongBao;
+            TempData["LoaiThongBao"] = ketQua.ThanhCong ? "success" : "warning";
             return RedirectToAction("QuanLySanPham");
         }
 
         [HttpPost]
         public async Task<IActionResult> SuaBienThe(IFormCollection form, IFormFile AnhBienThe)
         {
-            await _quanLySanPhamServices.SuaBienTheAsync(form, AnhBienThe);
+            var ketQua = await _quanLySanPhamServices.SuaBienTheAsync(form, AnhBienThe);
+            TempData["ThongBao"] = ketQua.ThongBao;
+            TempData["LoaiThongBao"] = ketQua.ThanhCong ? "success" : "warning";
             return RedirectToAction("QuanLySanPham");
         }
 
         [HttpPost]
         public async Task<IActionResult> XoaBienThe(int MaBienThe)
         {
-            await _quanLySanPhamServices.XoaBienTheAsync(MaBienThe);
+            var ketQua = await _quanLySanPhamServices.XoaBienTheAsync(MaBienThe);
+            TempData["ThongBao"] = ketQua.ThongBao;
+            TempData["LoaiThongBao"] = ketQua.ThanhCong ? "success" : "warning";
             return RedirectToAction("QuanLySanPham");
         }
     }
