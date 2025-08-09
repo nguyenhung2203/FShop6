@@ -255,7 +255,7 @@ namespace FShop6.Areas.KhachHang.Controllers
                 HttpContext.Session.SetString("OTP", otp);
                 HttpContext.Session.SetString("OTP_Email", email);
 
-                EmailHelper.GuiMaOTP(email, otp);
+                //EmailHelper.GuiMaOTP(email, otp);
 
                 return Json(new { success = true, message = "Mã OTP đã được gửi đến email của bạn." });
             }
