@@ -1,42 +1,103 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-    var viewModel = document.getElementById('viewProductDetails');
-    viewModel.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget; // Nút đã click
-        var productId = button.getAttribute('data-maSanPham');
+﻿// Truyền mã sản phẩm từ nút xem chi tiết tới modal xem chi tiết
+window.showProductVariants = function (button) {
+    const maSanPham = button.dataset.masanpham;
 
-        var tatCaRows = viewModel.querySelectorAll('#dsSanPhamBienThe tr');
-        tatCaRows.forEach(row => {
-            var rowMaSP = row.getAttribute('data-masanpham');
-            row.style.display = (rowMaSP === productId) ? '' : 'none';
-        });
+    // Gán mã sản phẩm vào input hidden nếu cần dùng tiếp
+    document.getElementById('view_bien_the_sp').value = maSanPham;
+
+    // Hiện/ẩn các dòng biến thể
+    const rows = document.querySelectorAll('#dsSanPhamBienThe tr');
+    rows.forEach(row => {
+        const rowMaSP = row.dataset.masanpham;
+        row.style.display = (rowMaSP === maSanPham) ? '' : 'none';
     });
-});
 
-document.getElementById('editProductModal').addEventListener('show.bs.modal', function (event) {
-    const button = event.relatedTarget;
-    const id = button.getAttribute('data-maSanPham');
-    const ten = button.getAttribute('data-tenSanPham');
-    const mota = button.getAttribute('data-moTa');
-    const danhmuc = button.getAttribute('data-danhMuc');
-    const anh = button.getAttribute('data-anhDaiDien');
+    // Mở modal bằng JS nếu không dùng data-bs-toggle
+    const modal = new bootstrap.Modal(document.getElementById('viewProductDetails'));
+    modal.show();
+}
 
-    this.querySelector('#product_id_edit').value = id;
-    this.querySelector('#product_name_edit').value = ten;
-    this.querySelector('#product_desc_edit').value = mota;
-    this.querySelector('#category_select_edit').value = danhmuc;
+window.passProductIdToAddVariant = function (button) {
+    const maSanPham = document.getElementById('view_bien_the_sp').value;
 
-    this.querySelector('#current_image_preview').src = '/KhachHang/images/' + anh;
-});
+    if (!maSanPham) {
+        alert("Không tìm thấy mã sản phẩm. Vui lòng thử lại.");
+        return;
+    }
 
-document.getElementById('deleteProductModal').addEventListener('show.bs.modal', function (event) {
-    const button = event.relatedTarget;
-    const id = button.getAttribute('data-maSanPham');
+    // Gán vào thuộc tính data cho nút nếu cần
+    button.dataset.masanpham = maSanPham;
 
-    this.querySelector('#product_id_delete').value = id;
-});
+    // Gán vào form thêm biến thể (modal khác)
+    const input = document.getElementById('maSanPham_add_variant');
+    if (input) {
+        input.value = maSanPham;
+    }
+};
 
-document.getElementById('addProductDetails').addEventListener('show.bs.modal', function (event) {
-    const button = event.relatedTarget;
-    const id = button.getAttribute('data-maSanPham');
-    this.querySelector('#productDetail_id_delete').value = id; // Clear the hidden product ID field
-});
+
+window.openEditModal = function (button) {
+    const maSanPham = button.dataset.masanpham;
+    const tenSanPham = button.dataset.tensanpham;
+    const moTa = button.dataset.mota;
+    const danhMucId = button.dataset.danhmucid;
+    const hinhAnh = button.dataset.anhdaidien;
+    const noibat = button.dataset.noibat;
+    const trangthai = button.dataset.trangthai;
+
+    document.getElementById('product_name_edit').value = tenSanPham;
+    document.getElementById('product_desc_edit').value = moTa;
+    document.getElementById('category_select_edit').value = danhMucId;
+    document.getElementById('ma_san_pham_hidden').value = maSanPham;
+    document.getElementById('featured_select_edit').value = noibat ? 'true' : 'false';
+    document.getElementById('status_select_edit').value = trangthai ? 'true' : 'false';
+    const imgPreview = document.getElementById('old_image_preview');
+    if (imgPreview && hinhAnh) {
+        imgPreview.src = '/KhachHang/images/' + hinhAnh;
+    } else {
+        imgPreview.src = '';
+    }
+}
+
+//const modal = document.getElementById('editProductModal');
+//modal.addEventListener('hidden.bs.modal', function () {
+//    location.reload();
+//});
+
+window.openDeleteModal = function (button) {
+    const maSanPham = button.dataset.masanpham;
+    document.getElementById('product_id_delete').value = maSanPham;
+}
+
+window.openEditDetailsModal = function (button) {
+    const maBienThe = button.dataset.mabienthe;
+    const maSku = button.dataset.masku;
+    const loaiSanPham = button.dataset.loaibienthe;
+    const giaNhap = button.dataset.gianhap;
+    const giaBan = button.dataset.giaban;
+    const soLuong = button.dataset.soluongconlai;
+    const tinhTrang = button.dataset.tinhtrang;
+    const maAnhBTCu = button.dataset.maanhbtcu;
+    const urlAnhBTCu = button.dataset.urlanhbtcu;
+    document.getElementById('ma_bien_the_sp_edit').value = maBienThe;
+    document.getElementById('sku_edit_detail').value = maSku;
+    document.getElementById('type_edit_detail').value = loaiSanPham;
+    document.getElementById('price_sell_edit_detail').value = giaBan;
+    document.getElementById('price_import_edit_detail').value = giaNhap;
+    document.getElementById('quantity_edit_detail').value = soLuong;
+    document.getElementById('status_input_edit').value = tinhTrang;
+    document.getElementById('ma_anh_bien_the_cu').value = maAnhBTCu;
+    const imgPreview = document.getElementById('anhBTCu');
+    if (imgPreview && urlAnhBTCu) {
+        imgPreview.src = '/KhachHang/images/' + urlAnhBTCu;
+    } else {
+        imgPreview.src = '';
+    }
+}
+
+window.openDeleteDetailsModal = function (button) {
+    const maBienThe = button.dataset.mabienthe;
+
+    document.getElementById('ma_bien_the_sp_delete').value = maBienThe;
+}
+

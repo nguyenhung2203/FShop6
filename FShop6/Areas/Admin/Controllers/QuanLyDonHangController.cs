@@ -17,5 +17,19 @@ namespace FShop6.Areas.Admin.Controllers
             var dsDonHang = await _quanLyDonHangServices.LayTatCaDonHangAsync();
             return View(dsDonHang);
         }
-    }
+
+        [HttpPost]
+        public async Task<IActionResult> DuyetDonHang(int id)
+        {
+            await _quanLyDonHangServices.DuyetDonHang(id);
+            return RedirectToAction("QuanLyDonHang");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SuaDonHang(IFormCollection form)
+        {
+            await _quanLyDonHangServices.SuaDonHang(form);
+            return RedirectToAction("QuanLyDonHang");
+        }
+    } 
 }

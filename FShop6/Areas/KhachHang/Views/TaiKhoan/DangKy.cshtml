@@ -13,19 +13,15 @@
     <link rel="stylesheet" href="~/KhachHang/css/styles.css" />
 </head>
 <body>
-    <!-- Header Rút Gọn -->
-    <header class="header-minimal">
-        <div class="container">
-            <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
-                <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
-            </a>
-        </div>
-    </header>
-
     <main class="main">
         <section class="login-register section--lg">
             <div class="login-register__container container">
-                <div class="register">
+                <div class="register header-minimal">
+                    <div class="container">
+                        <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
+                            <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
+                        </a>
+                    </div>
                     <h3 class="section__title">Tạo Tài Khoản Mới</h3>
 
                     @if (ViewBag.ThongBao != null)
@@ -37,11 +33,9 @@
                         @Html.AntiForgeryToken()
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-                        <input name="HoTen" class="form__input" placeholder="Tên của bạn" />
-                        <span class="text-danger" asp-validation-for="HoTen"></span>
+                        <input name="TaiKhoan" class="form__input" placeholder="Tài khoản" />
+                        <span class="text-danger" asp-validation-for="TaiKhoan"></span>
 
-                        <input name="Email" class="form__input" placeholder="Email" />
-                        <span class="text-danger" asp-validation-for="Email"></span>
 
                         <input name="MatKhau" type="password" class="form__input" placeholder="Mật khẩu" />
                         <span class="text-danger" asp-validation-for="MatKhau"></span>

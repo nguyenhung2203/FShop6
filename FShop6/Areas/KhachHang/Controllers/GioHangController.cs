@@ -104,6 +104,12 @@ namespace FShop6.Areas.KhachHang.Controllers
         public ActionResult ThemGioHang(int maBienThe, int soLuong, int maSanPham)
         {
             int id = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            if (id == null || id <= 0)
+            {
+                TempData["ThongBao"] = "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.";
+                TempData["LoaiThongBao"] = "warning";
+                return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
+            }
             try
             {
                 bool ketQua = _gioHangServices.ThemVaoGioHang(id, maBienThe, soLuong);

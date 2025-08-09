@@ -902,8 +902,8 @@ main {
     }
 .shop-product__item .product__price .new__price {
     font-size: var(--large-font-size);
-    margin-left: -2rem;
     padding-right: 1.25rem;
+    margin-left: 20px
 }
 
 .cart__btn {
@@ -5777,6 +5777,7 @@ input[type="range"] {
 
 /* Mỗi item trong dropdown */
 .suggestion__item {
+    z-index: 9999;
     display: flex;
     align-items: center;
     padding: 10px;
@@ -6184,4 +6185,123 @@ input[type="range"] {
         transform: scale(1);
         opacity: 1;
     }
+}
+
+.new__container .swiper-slide {
+    height: 479px;
+}
+.shop-card {
+    height: 475px;
+}
+
+.shop .old__price {
+    margin-left: 7rem;
+}
+/* Nền mờ với blur */
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeInBg 0.35s ease forwards;
+}
+
+/* Hộp modal */
+.confirm-box {
+    background: #fff;
+    padding: 28px 32px;
+    border-radius: 14px;
+    max-width: 380px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    animation: slideZoom 0.35s ease forwards;
+    transform-origin: top center;
+}
+
+/* Icon cảnh báo */
+.confirm-icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+    background: linear-gradient(45deg, #f39c12, #e67e22);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    animation: iconPop 0.4s ease forwards;
+}
+
+.confirm-box h3 {
+    margin-bottom: 8px;
+    font-size: 20px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.confirm-box p {
+    margin-bottom: 22px;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Nút */
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.confirm-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+}
+
+    .confirm-btn.confirm {
+        background: linear-gradient(135deg, #ff4e50, #f0392c);
+        margin-bottom: 0.25rem;
+        color: white;
+    }
+
+.confirm-btn.cancel {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+}
+
+.confirm-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Hiệu ứng nền */
+@keyframes fadeInBg {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Hiệu ứng modal */
+@keyframes slideZoom {
+    0% { transform: translateY(-15px) scale(0.9); opacity: 0; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Icon nhảy nhẹ */
+@keyframes iconPop {
+    0% { transform: scale(0.8) rotate(-10deg); opacity: 0; }
+    50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); }
+}
+
+.main .login-register__container {
+    max-width: 600px;
+    height: 600px;
 }
