@@ -11,19 +11,16 @@
     <link rel="stylesheet" href="~/KhachHang/css/styles.css" />
 </head>
 <body>
-    <header class="header-minimal">
-        <div class="container">
-            <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
-                <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
-            </a>
-        </div>
-    </header>
-
     <main class="main">
         <section class="login-register section--lg">
             <div class="login-register__container container">
-                <div class="login">
+                <div class="login header-minimal">
                     <div id="step-get-otp">
+                        <div class="container">
+                            <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
+                                <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
+                            </a>
+                        </div>
                         <h3 class="section__title">Đặt Lại Mật Khẩu</h3>
                         <form id="form-otp" class="form grid">
                             <input type="email" id="email-input" name="Email" placeholder="Nhập email của bạn" class="form__input" required />

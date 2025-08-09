@@ -12,37 +12,32 @@
     <link rel="stylesheet" href="~/KhachHang/css/styles.css" />
 </head>
 <body>
-    <!-- Header Rút Gọn -->
-    <header class="header-minimal">
-        <div class="container">
-            <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
-                <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
-            </a>
-        </div>
-    </header>
-
     <main class="main">
         <section class="login-register section--lg">
             <div class="login-register__container container">
-                <div class="login">
+                <div class="login header-minimal">
+                    <div class="container">
+                        <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
+                            <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
+                        </a>
+                    </div>
                     <h3 class="section__title">Chào mừng trở lại!</h3>
 
                     @* Form dùng model binding *@
                     <form asp-action="DangNhap" method="post" class="form grid">
-                        <input name="ThongTinDangNhap" placeholder="Email / Số điện thoại / Tài khoản" class="form__input" />
-<span asp-validation-for="ThongTinDangNhap" class="text-danger"></span>
+                        <input name="ThongTinDangNhap" placeholder="Email / Số điện thoại / Tài khoản" class="form__input_log form__input" />
+                        <span asp-validation-for="ThongTinDangNhap" class="text-danger"></span>
 
                         <div class="form__input-group" style="position: relative;">
-    <input name="MatKhau" id="passwordInput" placeholder="Mật khẩu" class="form__input" type="password" />
-    <span asp-validation-for="MatKhau" class="text-danger"></span>
-
-    <button type="button"
-            onclick="togglePassword()"
-            title="Hiện/Ẩn mật khẩu"
-            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
-        👁
-    </button>
-</div>
+                            <input name="MatKhau" id="passwordInput" placeholder="Mật khẩu" class="form__input_log form__input" type="password" />
+                            <span asp-validation-for="MatKhau" class="text-danger"></span>
+                            <button type="button"
+                                    onclick="togglePassword()"
+                                    title="Hiện/Ẩn mật khẩu"
+                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+                                👁
+                            </button>
+                        </div>
 
                         <a href="@Url.Action("QuenMatKhau", "TaiKhoan", new { area = "KhachHang" })" class="form__forgot">Quên mật khẩu?</a>
 

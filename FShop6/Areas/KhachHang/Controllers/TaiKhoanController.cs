@@ -97,9 +97,14 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
             }
-            maNguoiDung = nguoiDung.MaNguoiDung;
         }
 
+        [HttpGet]
+        public IActionResult DangXuat()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
+        }
 
         public async Task<IActionResult> HoSo()
         {
@@ -257,54 +262,7 @@ namespace FShop6.Areas.KhachHang.Controllers
 
         // GET: Quên mật khẩu
         [HttpGet]
-        public IActionResult QuenMatKhau() => View();
-
-        // POST: Gửi mã OTP
-        [HttpPost]
-        public IActionResult GuiMaOTP(string email)
-        {
-            try
-            {
-                var user = _context.NguoiDung.FirstOrDefault(u => u.Email == email);
-                if (user == null)
-                {
-                    return Json(new { success = false, message = "Email không tồn tại trong hệ thống." });
-                }
-
-                var otp = new Random().Next(100000, 999999).ToString();
-                HttpContext.Session.SetString("OTP", otp);
-                HttpContext.Session.SetString("OTP_Email", email);
-
-                EmailHelper.GuiMaOTP(email, otp);
-
-                return Json(new { success = true, message = "Mã OTP đã được gửi đến email của bạn." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Lỗi gửi OTP");
-                return Json(new { success = false, message = "Đã xảy ra lỗi khi gửi OTP." });
-            }
-        }
-
-        // POST: Xác nhận OTP
-        [HttpPost]
-        public IActionResult XacNhanOTP(string email, string otp)
-        {
-            var sessionOtp = HttpContext.Session.GetString("OTP");
-            var sessionEmail = HttpContext.Session.GetString("OTP_Email");
-
-            if (sessionOtp == null || sessionEmail == null)
-            {
-                return Json(new { success = false, message = "Phiên làm việc đã hết hạn, vui lòng thử lại." });
-            }
-
-            if (sessionEmail != email || sessionOtp != otp)
-            {
-                return Json(new { success = false, message = "Mã OTP không đúng." });
-            }
-
-            return Json(new { success = true });
-        }
+        public IActionResult QuenMatKhau() => View();      
         public IActionResult SanPhamYeuThich()
         {
             if (maNguoiDung <= 0)
@@ -312,14 +270,6 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             return View(); 
         }
-
-        // GET: Đăng xuất
-        public IActionResult DangXuat()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("DangNhap");
-        }
-
 
         [HttpPost]
         public ActionResult ThemYeuThich(int maSanPham, string giaoDien)
@@ -347,20 +297,23 @@ namespace FShop6.Areas.KhachHang.Controllers
                 {
                     TempData["ThongBao"] = "Sản phẩm đã tồn tại trong danh sách yêu thích.";
                     TempData["LoaiThongBao"] = "warning";
-                }
+                }               
             }
             catch (Exception ex)
             {
                 TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
                 TempData["LoaiThongBao"] = "error";
             }
-
-            if (!string.IsNullOrEmpty(giaoDien))
+            if (giaoDien == "sanpham")
+            {
+                return RedirectToAction("SanPham", "CuaHang", new { area = "KhachHang" });
+            }
+            else if (giaoDien == "chitiet")
             {
                 return RedirectToAction("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = maSanPham });
             }
-
             return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
+
         }
         [HttpPost]
         public async Task<IActionResult> GuiMaOTP(string email)
@@ -406,6 +359,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             }
         }
         [HttpPost]
+        [HttpPost]
         public IActionResult XacNhanOTP(XacNhanOTPViewModel model)
         {
             if (!ModelState.IsValid)
@@ -416,7 +370,6 @@ namespace FShop6.Areas.KhachHang.Controllers
             var otpSession = HttpContext.Session.GetString("OTP");
             var emailSession = HttpContext.Session.GetString("OTP_Email");
             var hetHan = HttpContext.Session.GetString("OTP_HetHan");
-
             if (otpSession == null || emailSession == null || hetHan == null)
             {
                 return Json(new { success = false, message = "OTP không hợp lệ hoặc đã hết hạn." });
