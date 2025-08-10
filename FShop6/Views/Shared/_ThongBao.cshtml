@@ -1,0 +1,130 @@
+﻿<style>
+    /* Định dạng cho toàn bộ trang */
+    .body-success {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: var(--body-color); /* Sử dụng màu nền chung */
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .success-container {
+        max-width: 600px;
+    }
+
+    .success-icon svg {
+        stroke: #28a745; /* Màu xanh lá cho sự thành công */
+        margin-bottom: 1rem;
+    }
+
+    .success-title {
+        font-size: var(--h1-font-size);
+        color: var(--title-color);
+        margin-bottom: 1rem;
+    }
+
+    .success-message {
+        font-size: var(--large-font-size);
+        color: var(--text-color);
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+    }
+
+    .success-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .success-link {
+        color: var(--first-color); /* Màu cam FPT */
+        font-weight: var(--weight-600);
+        text-decoration: none;
+        font-size: var(--small-font-size);
+    }
+
+        .success-link:hover {
+            text-decoration: underline;
+        }
+
+    .toast-notification {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        z-index: 9999;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: white;
+        font-weight: 500;
+        font-size: var(--normal-font-size);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        /* Hiệu ứng trượt vào từ bên phải */
+        transform: translateX(120%);
+        transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+
+        .toast-notification.show {
+            transform: translateX(0);
+        }
+
+        .toast-notification i {
+            font-size: 1.5rem;
+        }
+
+        /* Màu sắc cho từng loại thông báo */
+        .toast-notification.success {
+            background-color: #28a745; /* Xanh lá */
+        }
+
+        .toast-notification.error {
+            background-color: #dc3545; /* Đỏ */
+        }
+
+        .toast-notification.warning {
+            background-color: #ffc107; /* Vàng */
+            color: #333; /* Chữ đen cho dễ đọc trên nền vàng */
+        }
+
+        .toast-notification.info {
+            background-color: #17a2b8; /* Xanh dương */
+        }
+</style>
+@if (TempData["ThongBao"] != null)
+{
+    var loaiThongBao = TempData["LoaiThongBao"]?.ToString() ?? "info";
+    var thongBao = TempData["ThongBao"].ToString();
+    var iconClass = "fi fi-rs-info"; // Icon mặc định
+
+    // Chọn icon phù hợp với loại thông báo
+    if (loaiThongBao == "success") { iconClass = "fi fi-rs-check-circle"; }
+    else if (loaiThongBao == "error") { iconClass = "fi fi-rs-cross-circle"; }
+    else if (loaiThongBao == "warning") { iconClass = "fi fi-rs-exclamation"; }
+
+    <div id="toast-notification" class="toast-notification @loaiThongBao">
+        <i class="@iconClass"></i>
+        <span>@thongBao</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toast = document.getElementById('toast-notification');
+            if (toast) {
+                // Hiện thông báo sau một khoảng trễ ngắn để hiệu ứng mượt hơn
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 100);
+
+                // Tự động ẩn thông báo sau 5 giây
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 5000);
+            }
+        });
+    </script>
+}

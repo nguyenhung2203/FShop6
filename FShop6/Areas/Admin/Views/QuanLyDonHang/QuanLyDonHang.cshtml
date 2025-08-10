@@ -3,6 +3,7 @@
 	ViewData["Title"] = "Quản lý đơn hàng";
 }
 @model FShop6.Areas.Admin.Models.QuanLyDonHangViewModel
+
 <div class="container-fluid">
     <!-- Breadcrumbs -->
     <ol class="breadcrumb">
@@ -415,7 +416,7 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Ghi chú</label>
-                            <textarea class="form-control" name="GhiChu" id="editGhiChu" rows="2"></textarea>
+                            <textarea class="form-control" name="GhiChu" id="editGhiChu" rows="2" required></textarea>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Trạng thái</label>

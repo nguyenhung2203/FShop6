@@ -22,7 +22,7 @@
 				 alt="Ảnh sản phẩm"
 				 class="details__img" />
 			<div class="details__small-images grid">
-				@foreach (var image in Model.BienThe.SelectMany(bt => bt.DanhSachAnh))
+				@foreach (var image in Model.BienThe.Where(bt => bt.SoLuongTon > 0).SelectMany(bt => bt.DanhSachAnh))
 				{
 					<img src="~/KhachHang/images/@image" alt="Ảnh sản phẩm nhỏ" class="details__small-img" />
 				}
@@ -39,10 +39,7 @@
 			</p>
 			<ul class="products__list">
 				<li class="list__item flex">
-					<i class="fi-rs-crown"></i> Bảo hành thương hiệu Al Jazeera 1 nămy
-				</li>
-				<li class="list__item flex">
-					<i class="fi-rs-refresh"></i> Chính sách đổi trả trong 30 ngày
+					<i class="fi-rs-crown"></i> Nhận hàng nhanh chóng
 				</li>
 				<li class="list__item flex">
 					<i class="fi-rs-credit-card"></i> Thanh toán khi nhận hàng
@@ -50,14 +47,15 @@
 			</ul>
 			<div class="details__size flex">
 				<span class="details__size-title">Loại</span>
-				<ul class="size__list">
-					@foreach (var bienThe in Model.BienThe)
+				<ul class="size__list" style="display: flex; flex-wrap: wrap;">
+					@foreach (var bienThe in Model.BienThe.Where(bt => bt.SoLuongTon > 0))
 					{
-						<li>
+						<li style="margin: 10px;">
 							<a href="#" class="size__link"
 							   data-id="@bienThe.MaBienThe"
 							   data-giaban="@bienThe.GiaBan"
 							   data-soluong="@bienThe.SoLuongTon"
+							   data-sku="@bienThe.SKU"
 							   onclick="updateProductDetails(this)">
 								@bienThe.LoaiBienThe
 							</a>
@@ -65,28 +63,27 @@
 					}
 				</ul>
 			</div>
-			@using (Html.BeginForm("ThemGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang" }))
-			{
-				@Html.Hidden("maSanPham", Model.MaSanPham, new { id = "hiddenMaSanPham" })
-				@Html.Hidden("maBienThe", "", new { id = "hiddenMaBienThe" })
-				<input type="number" name="soLuong" class="quantity" value="1" min="1" />
-				<button type="submit" class="btn btn--sm">Thêm vào giỏ hàng</button>
-			}
-
-			<form id="yeuthich" action="@Url.Action("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" })" method="post">
-				<input type="hidden" name="giaoDien" value="chitiet" />
-				<input type="hidden" name="maSanPham" value="@Model.MaSanPham" />
-				<button type="submit" class="btn-heart">
-					<i class="fi fi-rs-heart table__trash"></i>
-				</button>
-			</form>
+			<div class="details__action" style="align-items: center;">
+				@using (Html.BeginForm("ThemGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang" }))
+				{
+					@Html.Hidden("maSanPham", Model.MaSanPham, new { id = "hiddenMaSanPham" })
+					@Html.Hidden("maBienThe", "", new { id = "hiddenMaBienThe" })
+					<input id="nhap-so-luong" type="number" name="soLuong" class="quantity" value="1" min="1" max=""/>
+					<button type="submit" class="btn btn--sm">Thêm vào giỏ hàng</button>
+				}
+				
+				<form id="yeuthich" action="@Url.Action("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" })" method="post" style="margin-left: 20px;">
+					<input type="hidden" name="giaoDien" value="ok" />
+					<input type="hidden" name="maSanPham" value="@Model.MaSanPham" />
+					<button type="submit" class="btn-heart">
+						<i class="fi fi-rs-heart table__trash"></i>
+					</button>
+				</form>
+			</div>
 
 			<ul class="details__meta">
 				<li class="meta__list flex">
 					<span>SKU:</span> <span id="product-sku"></span>
-				</li>
-				<li class="meta__list flex">
-					<span>Thẻ:</span> <span id="product-tags">Quần áo, Nữ, Đầm</span>
 				</li>
 				<li class="meta__list flex">
 					<span>Tình trạng:</span> <span id="product-status"></span>
@@ -97,107 +94,22 @@
 	</div>
 	</section>
 	<br />
-	<!--=============== DETAILS TAB ===============-->
-	<section class="details__tab container">
-		<div class="detail__tabs">
-			<span class="detail__tab active-tab" data-target="#info">
-				Mô tả sản phẩm
-			</span>
-			<span class="detail__tab" data-target="#reviews">Đánh giá(3)</span>
-		</div>
-		<div class="details__tabs-content">
-			<div class="details__tab-content active-tab" content id="info">
-				<img src="/assets/img/avatar-1.jpg" alt="">
-			</div>
-			<div class="details__tab-content" content id="reviews">
-				<div class="reviews__container grid">
-					<div class="review__single">
-						<div>
-							<img src="./assets/img/avatar-1.jpg"
-								 alt=""
-								 class="review__img" />
-							<h4 class="review__title">Jacky Chan</h4>
-						</div>
-						<div class="review__data">
-							<div class="review__rating">
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-							</div>
-							<p class="review__description">
-								Thank you, very fast shipping from Poland only 3days.
-							</p>
-							<span class="review__date">December 4, 2022 at 3:12 pm</span>
-						</div>
-					</div>
-					<div class="review__single">
-						<div>
-							<img src="./assets/img/avatar-2.jpg"
-								 alt=""
-								 class="review__img" />
-							<h4 class="review__title">Meriem Js</h4>
-						</div>
-						<div class="review__data">
-							<div class="review__rating">
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-							</div>
-							<p class="review__description">
-								Great low price and works well
-							</p>
-							<span class="review__date">August 23, 2022 at 19:45 pm</span>
-						</div>
-					</div>
-					<div class="review__single">
-						<div>
-							<img src="./assets/img/avatar-3.jpg"
-								 alt=""
-								 class="review__img" />
-							<h4 class="review__title">Moh Benz</h4>
-						</div>
-						<div class="review__data">
-							<div class="review__rating">
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-								<i class="fi fi-rs-star"></i>
-							</div>
-							<p class="review__description">
-								Authentic and beautiful, Love these ways more than ever
-								expected, They are great earphones.
-							</p>
-							<span class="review__date">March 2, 2021 at 10:01 am</span>
-						</div>
-					</div>
-				</div>
-				<div class="review__form">
-					<h4 class="review__form-title">Add a review</h4>
-					<div class="rate__product">
-						<i class="fi fi-rs-star"></i>
-						<i class="fi fi-rs-star"></i>
-						<i class="fi fi-rs-star"></i>
-						<i class="fi fi-rs-star"></i>
-						<i class="fi fi-rs-star"></i>
-					</div>
-					<form action="" class="form grid">
-						<textarea class="form__input textarea"
-								  placeholder="Write Comment"></textarea>
-						<div class="form__group grid">
-							<input type="text" placeholder="Name" class="form__input">
-							<input type="email" placeholder="Email" class="form__input">
-						</div>
-						<div class="form__btn">
-							<button class="btn">Submit Review</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</section>
 </main>
+
+<script>
+	document.querySelectorAll('.quantity-wrapper').forEach(wrapper => {
+	  const input = wrapper.querySelector('.quantity');
+	  const btnPlus = wrapper.querySelector('.plus');
+	  const btnMinus = wrapper.querySelector('.minus');
+
+	  btnPlus.addEventListener('click', () => {
+		input.value = parseInt(input.value) + 1;
+	  });
+
+	  btnMinus.addEventListener('click', () => {
+		if (parseInt(input.value) > parseInt(input.min)) {
+		  input.value = parseInt(input.value) - 1;
+		}
+	  });
+	});
+</script>
