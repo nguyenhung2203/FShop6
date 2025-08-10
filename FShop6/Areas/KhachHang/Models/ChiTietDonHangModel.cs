@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FShop6.Areas.KhachHang.Models
 {
+    [Table("ChiTietDonHang")]
     public class ChiTietDonHangModel
     {
         [Key]
@@ -14,15 +15,14 @@ namespace FShop6.Areas.KhachHang.Models
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal DonGia { get; set; }
-
-        // Khóa ngoại đến DonHang
-        public int? DonHang_ID { get; set; }
-        public DonHangModel DonHang { get; set; }
-
+        [Column("DonHang_ID")]
+        public int? IDDonHang { get; set; }
+        [ForeignKey("IDDonHang")]
+        public virtual DonHangModel DonHang { get; set; }
         // Khóa ngoại đến BienThe
         public int? MaBienThe { get; set; }
 
         [ForeignKey("MaBienThe")]
-        public BienTheModels BienThe { get; set; }
+        public virtual BienTheModels BienThe { get; set; }
     }
 }

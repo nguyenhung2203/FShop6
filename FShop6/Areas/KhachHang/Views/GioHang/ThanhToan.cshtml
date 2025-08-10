@@ -2,55 +2,381 @@
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Thanh toán";
 }
+@model FShop6.Areas.KhachHang.Models.GioHangViewModel
 <main class="main">
-    <section class="checkout section--lg">
-        <div class="checkout__container container grid">
-            <div class="checkout__group">
-                <h3 class="section__title">Thông Tin Thanh Toán</h3>
-                <form id="checkout-form" class="form grid">
-                    <input type="text" placeholder="Họ và tên" class="form__input" required />
-                    <input type="tel" placeholder="Số điện thoại" class="form__input" required />
-                    <input type="text" placeholder="Địa chỉ nhận hàng" class="form__input" required />
-                </form>
-            </div>
+    <div class="container">
+        @using (Html.BeginForm("SanPhamThanhToan", "GioHang", FormMethod.Post, new { area = "KhachHang" }))
+        {
+            var TongTien = Model.GioHang.Sum(sp => sp.SoLuong * sp.GiaBan);
+            @Html.AntiForgeryToken()
 
-            <div class="checkout__group">
-                <h3 class="section__title">Đơn Hàng Của Bạn</h3>
-                <table class="order__table" id="order-summary-table"></table>
+            @Html.HiddenFor(m => m.MaNguoiDung)
+            @Html.HiddenFor(m => m.DiaChiMacDinh)
 
-                <div class="payment__methods">
-                    <h3 class="checkout__title payment__title">Phương Thức Thanh Toán</h3>
-                    <div class="payment__option flex">
-                        <input type="radio" name="payment" value="cod" id="cod" checked class="payment__input" />
-                        <label for="cod" class="payment__label">Thanh toán khi nhận hàng (COD)</label>
+            @for (int i = 0; i < Model.GioHang.Count; i++)
+            {
+                @Html.HiddenFor(m => m.GioHang[i].MaBienThe)
+                @Html.HiddenFor(m => m.GioHang[i].GiaBan)
+                @Html.HiddenFor(m => m.GioHang[i].SoLuong)
+                @Html.HiddenFor(m => m.GioHang[i].TenSanPham)
+                @Html.HiddenFor(m => m.GioHang[i].HinhAnhDaiDien)
+                @Html.HiddenFor(m => m.GioHang[i].LoaiBienThe)
+                @Html.HiddenFor(m => m.GioHang[i].DuocChon)
+            }
+
+            <div class="checkout-wrapper">
+                <!-- Left Column: Shipping & Payment -->
+                <div class="left-column">
+                    <!-- Shipping Information Section -->
+                    <div class="shipping-container">
+                        <div class="shipping-header">
+                            <h3 class="section-title">Thông Tin Vận Chuyển</h3>
+                        </div>
+                        <div class="shipping-form">
+                            <div class="form-group">
+                                <input type="text"
+                                       id="fullName"
+                                       value="@Model.TenNguoiNhan"
+                                       placeholder="Họ và tên *" class="form-input" required />
+                                <span class="form-error" id="fullName-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="tel"
+                                       id="phoneNumber"
+                                       value="@Model.SoDienThoai"
+                                       placeholder="Số điện thoại *" class="form-input" required />
+                                <span class="form-error" id="phoneNumber-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="DiaChi.CuThe"
+                                       value="@(Model.DiaChi != null && !string.IsNullOrEmpty(Model.DiaChi.CuThe)
+                                           ? $"{Model.DiaChi.CuThe}, {Model.DiaChi.Xa}, {Model.DiaChi.Huyen}, {Model.DiaChi.Tinh}"
+                                           : (Model.DiaChiMacDinh ?? "Lỗi"))"
+                                       placeholder="Địa chỉ nhận hàng *" class="form-input" required />
+                                <span class="form-error" id="address-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <textarea name="GhiChu" placeholder="Ghi chú đơn hàng (tùy chọn)" class="form-textarea" rows="3"></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="payment__option flex">
-                        <input type="radio" name="payment" value="bank" id="bank" class="payment__input" />
-                        <label for="bank" class="payment__label">Chuyển khoản ngân hàng</label>
+
+                    <!-- Payment Methods Section -->
+                    <div class="payment-container">
+                        <div class="payment-header">
+                            <h3 class="section-title">Chọn Phương Thức Thanh Toán</h3>
+                        </div>
+                        <div class="payment-content">
+                            <div class="payment-methods">
+                                <label class="payment-method" for="cod">
+                                    <input type="radio" id="cod" name="PhuongThucThanhToan" value="false" checked>
+                                    <span class="payment-icon">🚚</span>
+                                    <div class="payment-details">
+                                        <div class="payment-name">Thanh toán khi nhận hàng</div>
+                                        <div class="payment-desc">Thanh toán bằng tiền mặt khi nhận hàng</div>
+                                    </div>
+                                </label>
+
+                                <label class="payment-method" for="bank">
+                                    <input type="radio" id="bank" name="PhuongThucThanhToan" value="true">
+                                    <span class="payment-icon">🏦</span>
+                                    <div class="payment-details">
+                                        <div class="payment-name">Chuyển khoản ngân hàng</div>
+                                        <div class="payment-desc">Chuyển khoản qua tài khoản ngân hàng</div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="confirm-btn" id="confirmOrderBtn">
+                                Xác Nhận Đặt Hàng
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" form="checkout-form" class="btn btn--md"
-                        data-success-url="@Url.Action("DatHangThanhCong", "CuaHang", new { area = "KhachHang" })">
-                        Đặt Hàng</button>
-            </div>
-        </div>
-    </section>
+                <!-- Right Column: Order Summary -->
+                <div class="right-column">
+                    <div class="order-container">
+                        <div class="order-header">
+                            <h2>Đơn Hàng Của Bạn</h2>
+                            <div class="order-divider"></div>
+                        </div>
 
-    <div id="bank-info-modal" class="modal-bank-info hidden">
-        <div class="modal-bank-info__overlay"></div>
-        <div class="modal-bank-info__content">
-            <h4>Thông tin chuyển khoản</h4>
-            <div class="modal-bank-info__details">
-                <img src="assets/img/qrcode.jpeg" alt="QR chuyển khoản" class="modal-bank-info__qr">
-                <div>
-                    <p><strong>Ngân hàng:</strong> <span>TPBank</span></p>
-                    <p><strong>Số tài khoản:</strong> <span>123456789</span></p>
-                    <p><strong>Chủ tài khoản:</strong> Nguyễn Văn A</p>
-                    <p><strong>Nội dung:</strong> <span>SDT_Hoten</span></p>
+                        <table class="order__table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">Ảnh</th>
+                                    <th style="width: 140px;">Tên sản phẩm</th>
+                                    <th style="width: 60px;">SL</th>
+                                    <th style="width: 80px;">Giá</th>
+                                </tr>
+                            </thead>
+                        </table>
+
+                        <div class="scroll-indicator" id="scrollIndicator">
+                            ↓ Cuộn xuống để xem thêm sản phẩm ↓
+                        </div>
+
+                        <div class="products-container" id="productsContainer">
+                            <table class="order__table">
+                                <tbody>
+                                    @foreach (var sanPham in Model.GioHang.Where(x => x.DuocChon))
+                                    {
+                                        <tr class="product-row">
+                                            <td>
+                                                <img src="@sanPham.HinhAnhDaiDien" alt="@sanPham.TenSanPham" class="order__img" />
+                                            </td>
+                                            <td>
+                                                <h3 class="product-name">@sanPham.TenSanPham</h3>
+                                                <span class="product-category">@sanPham.LoaiBienThe</span>
+                                            </td>
+                                            <td>@sanPham.SoLuong</td>
+                                            <td>@sanPham.GiaBan.ToString("N0")đ</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <table class="order__table order-summary">
+                            <tbody>
+                                <tr class="summary-row">
+                                    <td colspan="3" style="text-align: right; padding-right: 15px;"><span class="order__subtitle">Tạm tính</span></td>
+                                    <td style="width: 80px; text-align: right;"><span class="table__price">@TongTien.ToString("N0")đ</span></td>
+                                </tr>
+                                <tr class="summary-row">
+                                    <td colspan="3" style="text-align: right; padding-right: 15px;"><span class="order__subtitle">Phí vận chuyển</span></td>
+                                    <td style="width: 80px; text-align: right;"><span>Miễn phí</span></td>
+                                </tr>
+                                <tr class="summary-row">
+                                    <td colspan="3" style="text-align: right; padding-right: 15px;"><span class="order__subtitle">Tổng cộng</span></td>
+                                    <td style="width: 80px; text-align: right;"><span class="order__grand-total">@TongTien.ToString("N0")đ</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <button id="confirm-transfer-btn" class="btn">Tôi đã chuyển khoản</button>
-        </div>
+
+            <!-- Bank Transfer Modal -->
+            <div id="bank-info-modal" class="modal-bank-info hidden">
+                <div class="modal-bank-info__overlay"></div>
+                <div class="modal-bank-info__content">
+                    <h4>Thông tin chuyển khoản</h4>
+                    <div class="modal-bank-info__details">
+                        <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=180&h=180&fit=crop"
+                             alt="QR chuyển khoản" class="modal-bank-info__qr">
+                        <div class="bank-info-text">
+                            <p>
+                                <strong>Ngân hàng:</strong>
+                                <span>TPBank</span>
+                            </p>
+                            <p>
+                                <strong>Số tài khoản:</strong>
+                                <span>123456789</span>
+                            </p>
+                            <p>
+                                <strong>Chủ tài khoản:</strong>
+                                <span>Nguyễn Văn A</span>
+                            </p>
+                            <p>
+                                <strong>Nội dung:</strong>
+                                <span>SDT_Hoten</span>
+                            </p>
+                            <p class="bank-amount">
+                                <strong>Số tiền:</strong>
+                                <span>@TongTien.ToString("N0")đ</span>
+                            </p>
+                        </div>
+                    </div>
+                    <button id="confirm-transfer-btn" class="btn">
+                        Tôi đã chuyển khoản
+                    </button>
+                </div>
+            </div>
+        }
     </div>
 </main>
+
+<script>
+        // JavaScript để xử lý modal chuyển khoản
+    document.addEventListener('DOMContentLoaded', function() {
+        const bankRadio = document.getElementById('bank');
+        const codRadio = document.getElementById('cod');
+        const bankModal = document.getElementById('bank-info-modal');
+        const modalOverlay = document.querySelector('.modal-bank-info__overlay');
+        const confirmTransferBtn = document.getElementById('confirm-transfer-btn');
+        const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+
+        // Hiển thị modal khi chọn chuyển khoản
+        bankRadio.addEventListener('change', function() {
+            if (this.checked) {
+                bankModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Ngăn scroll body
+            }
+        });
+
+        // Ẩn modal khi chọn COD
+        codRadio.addEventListener('change', function() {
+            if (this.checked) {
+                bankModal.classList.add('hidden');
+                document.body.style.overflow = 'auto'; // Cho phép scroll lại
+            }
+        });
+
+        // Đóng modal khi click overlay
+        modalOverlay.addEventListener('click', function() {
+            bankModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            // Chuyển về COD khi đóng modal
+            codRadio.checked = true;
+        });
+
+        // Xử lý khi xác nhận đã chuyển khoản
+        confirmTransferBtn.addEventListener('click', function() {
+            // Có thể thêm logic xác nhận ở đây
+            bankModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+
+            // Có thể submit form hoặc thực hiện các hành động khác
+            // confirmOrderBtn.click(); // Uncomment nếu muốn tự động submit
+        });
+
+        // Ngăn submit form khi chưa xác nhận chuyển khoản (nếu cần)
+        confirmOrderBtn.addEventListener('click', function(e) {
+            if (bankRadio.checked) {
+                // Có thể thêm logic kiểm tra xác nhận chuyển khoản ở đây
+                // e.preventDefault();
+                // alert('Vui lòng xác nhận đã chuyển khoản trước khi đặt hàng');
+            }
+        });
+    });
+
+    // CSS để đảm bảo modal hoạt động đúng cách
+    const style = document.createElement('style');
+    style.textContent = `
+        .modal-bank-info {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-bank-info.hidden {
+            display: none;
+        }
+
+        .modal-bank-info__overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+
+        .modal-bank-info__content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 550px;
+            width: 90%;
+            position: relative;
+            z-index: 1001;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .modal-bank-info__content h4 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .modal-bank-info__details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .modal-bank-info__qr {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid #f0f0f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .bank-info-text {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .modal-bank-info__details p {
+            margin: 0;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+        }
+
+        .modal-bank-info__details strong {
+            color: #555;
+            font-weight: 600;
+            min-width: 130px;
+            text-align: left;
+        }
+
+        .modal-bank-info__details span {
+            color: #333;
+            font-weight: 500;
+            text-align: right;
+            flex: 1;
+        }
+
+        .bank-amount {
+            background: #e3f2fd !important;
+            border: 2px solid #2196f3;
+        }
+
+        .bank-amount span {
+            color: #1976d2 !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+        }
+
+        #confirm-transfer-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        #confirm-transfer-btn:hover {
+            background-color: #0056b3;
+        }
+    `;
+    document.head.appendChild(style);
+</script>

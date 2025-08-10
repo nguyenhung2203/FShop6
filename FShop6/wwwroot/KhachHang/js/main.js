@@ -139,93 +139,83 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-/*=============== LOGIC HEADER TOP LOGIN/LOGOUT ===============*/
-const URL_HO_SO = "/KhachHang/TaiKhoan/HoSo";
-const URL_DANG_NHAP = "/KhachHang/TaiKhoan/DangNhap";
-const URL_DANG_KY = "/KhachHang/TaiKhoan/DangKy";
+///*=============== LOGIC HEADER TOP LOGIN/LOGOUT ===============*/
+//const URL_HO_SO = "/KhachHang/TaiKhoan/HoSo";
+//const URL_DANG_NHAP = "/KhachHang/TaiKhoan/DangNhap";
+//const URL_DANG_KY = "/KhachHang/TaiKhoan/DangKy";
 
-document.addEventListener('DOMContentLoaded', () => {
-    const accountText = document.getElementById('account-text');
-    const dropdownContent = document.getElementById('account-dropdown-content');
+//document.addEventListener('DOMContentLoaded', () => {
+//    const accountText = document.getElementById('account-text');
+//    const dropdownContent = document.getElementById('account-dropdown-content');
 
-    if (!accountText || !dropdownContent) return;
+//    if (!accountText || !dropdownContent) return;
 
-    // Fake user nếu chưa có
-    if (!localStorage.getItem('currentUser')) {
-        const fakeUser = {
-            name: "Ngọc",
-            email: "hung@example.com",
-            role: "user"
-        };
-        localStorage.setItem('currentUser', JSON.stringify(fakeUser));
-    }
+//    const currentUserId = @HttpContext.Session.GetInt32("MaNguoiDung") ?? 0;
 
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+//    if (currentUser > 0) {
+//        // Đã đăng nhập
+//        accountText.textContent = `Xin chào, ${currentUser.name}`;
+//        dropdownContent.innerHTML = `
+//            <a href="${URL_HO_SO}">Tài khoản của tôi</a>
+//            <a href="#" id="show-logout-modal" class="dropdown-link logout">Đăng xuất</a>
+//        `;
 
-    if (!currentUser) {
-        // Đã đăng nhập
-        accountText.textContent = `Xin chào, ${currentUser.name}`;
-        dropdownContent.innerHTML = `
-            <a href="${URL_HO_SO}">Tài khoản của tôi</a>
-            <a href="#" id="show-logout-modal" class="dropdown-link logout">Đăng xuất</a>
-        `;
+//        const logoutBtn = document.getElementById('show-logout-modal');
+//        if (logoutBtn) {
+//            logoutBtn.addEventListener('click', (e) => {
+//                e.preventDefault();
+//                const modalOverlay = document.getElementById('logout-confirm-modal');
+//                if (modalOverlay) {
+//                    modalOverlay.classList.remove('hidden');
+//                }
+//            });
+//        }
 
-        const logoutBtn = document.getElementById('show-logout-modal');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const modalOverlay = document.getElementById('logout-confirm-modal');
-                if (modalOverlay) {
-                    modalOverlay.classList.remove('hidden');
-                }
-            });
-        }
-
-    } else {
-        // Chưa đăng nhập
-        accountText.textContent = 'Tài khoản';
-        dropdownContent.innerHTML = `
-            <a href="${URL_DANG_NHAP}" class="dropdown-link">Đăng nhập</a>
-            <a href="${URL_DANG_KY}" class="dropdown-link">Đăng ký</a>
-        `;
-    }
-});
+//    } else {
+//        // Chưa đăng nhập
+//        accountText.textContent = 'Tài khoản';
+//        dropdownContent.innerHTML = `
+//            <a href="${URL_DANG_NHAP}" class="dropdown-link">Đăng nhập</a>
+//            <a href="${URL_DANG_KY}" class="dropdown-link">Đăng ký</a>
+//        `;
+//    }
+//});
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    const modalOverlay = document.getElementById('logout-confirm-modal');
-    const confirmBtn = document.getElementById('logout-confirm-btn');
-    const cancelBtn = document.getElementById('logout-cancel-btn');
-    const openModalBtn = document.getElementById('show-logout-modal'); // Nút mở modal
-    console.log({ modalOverlay, confirmBtn, cancelBtn, openModalBtn });
-    if (modalOverlay && confirmBtn && cancelBtn && openModalBtn) {
-        // 👉 MỞ modal khi nhấn nút "Đăng xuất"
-        openModalBtn.addEventListener('click', () => {
-            modalOverlay.classList.remove('hidden');
-        });
+//document.addEventListener('DOMContentLoaded', function () {
+//    const modalOverlay = document.getElementById('logout-confirm-modal');
+//    const confirmBtn = document.getElementById('logout-confirm-btn');
+//    const cancelBtn = document.getElementById('logout-cancel-btn');
+//    const openModalBtn = document.getElementById('show-logout-modal'); // Nút mở modal
+//    console.log({ modalOverlay, confirmBtn, cancelBtn, openModalBtn });
+//    if (modalOverlay && confirmBtn && cancelBtn && openModalBtn) {
+//        // 👉 MỞ modal khi nhấn nút "Đăng xuất"
+//        openModalBtn.addEventListener('click', () => {
+//            modalOverlay.classList.remove('hidden');
+//        });
 
-        // 👉 Đăng xuất
-        confirmBtn.addEventListener('click', () => {
-            localStorage.removeItem('currentUser');
-            modalOverlay.classList.add('hidden');
-            window.location.reload();
-        });
+//        // 👉 Đăng xuất
+//        confirmBtn.addEventListener('click', () => {
+//            localStorage.removeItem('currentUser');
+//            modalOverlay.classList.add('hidden');
+//            window.location.reload();
+//        });
 
-        // 👉 Hủy modal
-        cancelBtn.addEventListener('click', () => {
-            modalOverlay.classList.add('hidden');
-        });
+//        // 👉 Hủy modal
+//        cancelBtn.addEventListener('click', () => {
+//            modalOverlay.classList.add('hidden');
+//        });
 
-        // 👉 Đóng khi nhấn ra ngoài vùng modal
-        modalOverlay.addEventListener('click', (event) => {
-            if (event.target === modalOverlay) {
-                modalOverlay.classList.add('hidden');
-            }
-        });
-    } else {
-        console.warn("⚠️ Một trong các phần tử không tồn tại!");
-    }
-});
+//        // 👉 Đóng khi nhấn ra ngoài vùng modal
+//        modalOverlay.addEventListener('click', (event) => {
+//            if (event.target === modalOverlay) {
+//                modalOverlay.classList.add('hidden');
+//            }
+//        });
+//    } else {
+//        console.warn("⚠️ Một trong các phần tử không tồn tại!");
+//    }
+//});
 
 /*=============== IMAGE GALLERY ===============*/
 function imgGallery() {
@@ -360,3 +350,28 @@ document.addEventListener("DOMContentLoaded", function () {
     setupActiveClassToggle(".color__link", "color-active");
 });
 
+
+
+function updateProductDetails(element) {
+    // Lấy các giá trị từ thuộc tính data của thẻ <a> được click
+    var maBienThe = element.getAttribute("data-id");
+    var giaBan = element.getAttribute("data-giaban");
+    var soLuong = element.getAttribute("data-soluong");
+    var maSku = element.getAttribute("data-sku");
+
+    // Cập nhật thông tin sản phẩm vào các thẻ li tương ứng
+    document.getElementById('nhap-so-luong').max = soLuong;
+    document.getElementById('product-sku').textContent = maSku; // Hiển thị mã SKU
+    document.getElementById('product-status').textContent = 'Còn ' + soLuong + ' sản phẩm'; // Hiển thị số lượng
+    document.getElementById('product-price').textContent = giaBan; // Cập nhật giá bán nếu có
+
+    // Nếu có thay đổi về số lượng, cập nhật thêm số lượng vào input
+    document.getElementById('hiddenMaBienThe').value = maBienThe;
+}
+window.onload = function () {
+    // Chọn thẻ <a> đầu tiên
+    var firstLink = document.querySelector('.size__list a');
+    if (firstLink) {
+        firstLink.click(); // Mô phỏng việc click vào thẻ <a> đầu tiên
+    }
+}

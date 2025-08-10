@@ -1,4 +1,11 @@
-﻿<header class="header">
+﻿@{
+    var ID = ViewBag.MaNguoiDung ?? 0;
+    var HoTen = ViewBag.TenNguoiDung ?? "Khách hàng";
+    const string URL_HO_SO = "/KhachHang/TaiKhoan/HoSo";
+    const string URL_DANG_NHAP = "/KhachHang/TaiKhoan/DangNhap";
+    const string URL_DANG_KY = "/KhachHang/TaiKhoan/DangKy";
+}
+<header class="header">
     <div class="header__top">
         <div class="header__container container">
             <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="nav__logo">
@@ -19,12 +26,28 @@
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                <span id="account-text">Tài khoản</span>
-                <div class="account-dropdown" id="account-dropdown-content"></div>
+                @if (ID > 0)
+                {
+                    <!-- Trường hợp đã đăng nhập -->
+                    <span id="account-text">Xin chào, @HoTen</span>
+                    <div class="account-dropdown" id="account-dropdown-content">
+                        <a href="@URL_HO_SO">Tài khoản của tôi</a>
+                        <a href="#" id="show-logout-modal" class="dropdown-link logout">Đăng xuất</a>
+                    </div>
+                }
+                else
+                {
+                    <!-- Trường hợp chưa đăng nhập -->
+                    <span id="account-text">Tài khoản</span>
+                    <div class="account-dropdown" id="account-dropdown-content">
+                        <a href="@URL_DANG_NHAP" class="dropdown-link">Đăng nhập</a>
+                        <a href="@URL_DANG_KY" class="dropdown-link">Đăng ký</a>
+                    </div>
+                }
+
             </div>
         </div>
     </div>
-
     <nav class="nav container" id="nav-container">
         <div class="nav__menu" id="nav-menu">
             <div class="nav__menu-top">
@@ -70,20 +93,24 @@
                         Giới thiệu</a>
                 </li>
             </ul>
-            <div class="header__search">
-                <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form__input" />
+            <div class="header__search" id="search-box">
+                <input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm..." class="form__input" autocomplete="off" />
                 <button class="search__btn">
                     <img src="~/KhachHang/images/search.png" alt="icon tìm kiếm" />
                 </button>
+
+                <!-- Gợi ý sản phẩm -->
+                <div class="search__suggestions" id="search-suggestions"></div>
             </div>
+
         </div>
 
         <div class="header__user-actions">
             <a href="@Url.Action("SanPhamYeuThich", "TaiKhoan", new { area = "KhachHang" })" class="header__action-btn" title="Yêu thích">
-                <i class="fi fi-rs-heart"></i><span class="count">0</span>
+                <i class="fi fi-rs-heart"></i><span class="count">@ViewBag.TongSoSanPhamYeuThich</span>
             </a>
             <a href="@Url.Action("GioHang", "GioHang", new { area = "KhachHang" })" class="header__action-btn" title="Giỏ hàng">
-                <i class="fi fi-rs-shopping-bag-add"></i><span class="count">0</span>
+                <i class="fi fi-rs-shopping-bag-add"></i><span class="count">@ViewBag.TongSoSanPhamGioHang</span>
             </a>
             <div class="header__action-btn nav__toggle" id="nav-toggle">
                 <img src="~/assets/img/menu-burger.svg" alt="">
@@ -91,3 +118,84 @@
         </div>
     </nav>
 </header>
+<!-- Modal xác nhận đăng xuất -->
+<div class="confirm-overlay" id="logoutConfirm">
+    <div class="confirm-box">
+        <h3>Xác nhận đăng xuất</h3>
+        <p>Bạn có chắc chắn muốn đăng xuất?</p>
+        <button class="confirm-btn confirm" id="btnLogoutYes">Đồng ý</button>
+        <button class="confirm-btn cancel" id="btnLogoutNo">Hủy</button>
+    </div>
+</div>
+<script>
+      function dangXuat() {
+        window.location.href = '/KhachHang/TaiKhoan/DangXuat';
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("logoutConfirm");
+        const btnShow = document.getElementById("show-logout-modal");
+        const btnNo = document.getElementById("btnLogoutNo");
+        const btnYes = document.getElementById("btnLogoutYes");
+
+        if (btnShow) {
+            btnShow.addEventListener("click", function (e) {
+                e.preventDefault();
+                modal.style.display = "flex";
+            });
+        }
+        btnNo.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+        btnYes.addEventListener("click", function () {
+            dangXuat();
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("search-input");
+        const suggestions = document.getElementById("search-suggestions");
+
+        if (!input || !suggestions) {
+            console.warn("Không tìm thấy input hoặc suggestions");
+            return;
+        }
+
+        input.addEventListener("input", async () => {
+            const keyword = input.value.trim();
+            if (keyword.length < 2) {
+                suggestions.style.display = "none";
+                return;
+            }
+
+            const res = await fetch(`/KhachHang/CuaHang/TimKiem?tuKhoa=${encodeURIComponent(keyword)}`);
+            const data = await res.json();
+
+            suggestions.innerHTML = "";
+            if (data.length > 0) {
+                data.forEach(p => {
+                    const div = document.createElement("div");
+                    div.className = "suggestion__item";
+                    div.innerHTML = `
+                        <img src="${p.anh}" width="40" />
+                        <div>
+                            <strong>${p.ten}</strong><br/>
+                            <span>${p.gia}</span>
+                        </div>
+                    `;
+                    div.onclick = () => location.href = `/KhachHang/CuaHang/ChiTietSanPham?maSanPham=${p.id}`;
+                    suggestions.appendChild(div);
+                });
+                suggestions.style.display = "block";
+            } else {
+                suggestions.style.display = "none";
+            }
+        });
+
+        document.addEventListener("click", e => {
+            if (!e.target.closest("#search-box")) {
+                suggestions.style.display = "none";
+            }
+        });
+    });
+</script>

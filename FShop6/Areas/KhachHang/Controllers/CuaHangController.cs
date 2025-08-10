@@ -1,46 +1,42 @@
 ﻿using FShop6.Areas.KhachHang.Models;
 using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
+using System.Threading.Tasks;
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
-    public class CuaHangController : Controller
+    public class CuaHangController : BaseController
     {
-        private readonly ICuaHangServices _cuaHangService;
-
-        public CuaHangController(ICuaHangServices cuaHangService)
+        private readonly IShopService _shopService;
+        public CuaHangController(IHeaderServices headerServices, IShopService shopService)
+            : base(headerServices)
         {
-            _cuaHangService = cuaHangService;
+            _shopService = shopService;
         }
 
         public async Task<IActionResult> SanPham(int? maDanhMuc, int? loai, int? loaiXapXep, decimal? khoangGia, int trang = 1)
         {
-            if (trang < 1) trang = 1;
+            var viewModel = await _shopService.LaySanPhamDaLoc(maDanhMuc, khoangGia, loaiXapXep, trang);
 
-            PhanTrangSanPhamViewModel model;
-
-            if (loai == 1 && maDanhMuc.HasValue && maDanhMuc.Value > 0)
-            {
-                model = await _cuaHangService.LaySanPhamDanhMuc(maDanhMuc.Value, trang);
-            }
-            else if (loai == 2)
-            {
-                model = await _cuaHangService.LaySanPhamXapXep(loaiXapXep.Value, trang);
-            }
-            else if (loai == 3)
-            {
-                model = await _cuaHangService.LaySanPhamTheoGia(khoangGia.Value, trang);
-            }    
-            else
-            {
-                model = await _cuaHangService.LaySanPhamTatCa(trang);
-            }
-
+            // Truyền tất cả tham số vào ViewBag để view có thể sử dụng
             ViewBag.MaDanhMuc = maDanhMuc;
             ViewBag.Loai = loai;
+            ViewBag.LoaiXapXep = loaiXapXep;
             ViewBag.KhoangGia = khoangGia;
 
+            return View(viewModel);
+        }
+
+
+        public async Task<IActionResult> ChiTietSanPham(int maSanPham)
+        {
+            var model = await _shopService.LayChiTietSanPhamAsync(maSanPham);
+            if (model == null)
+            {
+                return NotFound();
+            }
             return View(model);
         }
 
@@ -48,5 +44,13 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> TimKiem(string tuKhoa)
+        {
+            var ketQua = await _shopService.TimKiem(tuKhoa);
+            return Json(ketQua);
+        }
+
     }
 }

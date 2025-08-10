@@ -25,6 +25,9 @@ namespace FShop6.Areas.KhachHang.Models
         [Display(Name = "Ngày tạo")]
         [Column("ThoiGianTao")]
         public DateTime NgayTao { get; set; } = DateTime.Now;
+        public bool NoiBat { get; set; }
+        public bool TrangThai { get; set; }
+
 
         // Liên kết đến bảng DanhMuc (1 sản phẩm thuộc 1 danh mục)
         [ForeignKey("MaDanhMucSP")]

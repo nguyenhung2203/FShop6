@@ -1,9 +1,8 @@
 ﻿@{
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Tài khoản";
-    string tab = Context.Request.Query["tab"];
-    tab = string.IsNullOrEmpty(tab) ? "dashboard" : tab;
 }
+@model FShop6.Areas.KhachHang.Models.HoSoViewModel
 <main class="main">
     <!--=============== BREADCRUMB ===============-->
     <section class="breadcrumb">
@@ -27,23 +26,20 @@
                 <p class="account__tab" data-target="#update-profile">
                     <i class="fi fi-rs-user"></i> Cập nhật hồ sơ
                 </p>
-                <p class="account__tab" data-target="#address">
-                    <i class="fi fi-rs-marker"></i> Địa chỉ của tôi
-                </p>
                 <p class="account__tab" data-target="#change-password">
                     <i class="fi fi-rs-settings-sliders"></i> Đổi mật khẩu
                 </p>
             </div>
             <div class="tabs__content">
-                <div class="tab__content active-tab" content id="dashboard">
-                    <h3 class="tab__header">Xin chào Rosie</h3>
+                <div class="tab__content active-tab" id="dashboard">
+                    <h3 class="tab__header">Xin chào: @Model.nguoiDungModels.HoTen</h3>
                     <div class="tab__body">
                         <p class="tab__description">
                             Từ bảng điều khiển tài khoản, bạn có thể dễ dàng kiểm tra & xem đơn hàng gần đây, quản lý địa chỉ giao hàng và thanh toán, chỉnh sửa mật khẩu và thông tin tài khoản.
                         </p>
                     </div>
                 </div>
-                <div class="tab__content" content id="orders">
+                <div class="tab__content" id="orders">
                     <h3 class="tab__header">Đơn hàng của bạn</h3>
                     <div class="tab__body">
                         <table class="placed__order-table">
@@ -57,120 +53,138 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>#1357</td>
-                                    <td>19/03/2022</td>
-                                    <td>Đang xử lý</td>
-                                    <td>125.000đ</td>
-                                    <td>
-                                        <button class="btn-cancel-order" data-order="#1357">Hủy</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#2468</td>
-                                    <td>29/06/2022</td>
-                                    <td>Hoàn thành</td>
-                                    <td>364.000đ</td>
-                                    <td>
-                                        <a href="#" class="view__order">Xem</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#2366</td>
-                                    <td>02/08/2022</td>
-                                    <td>Hoàn thành</td>
-                                    <td>280.000đ</td>
-                                    <td>
-                                        <a href="#" class="view__order">Xem</a>
-                                    </td>
-                                </tr>
+                                @foreach (var donHang in Model.donHangModels)
+                                {
+                                    <tr>
+                                        <td>@donHang.MaDonHang</td>
+                                        <td>@donHang.ThoiGianDatHang</td>
+                                        <td>@donHang.TrangThai</td>
+                                        <td>@string.Format("{0:N0}₫", donHang.TongTien)</td>
+                                        <td>
+                                            @using (Html.BeginForm("HuyDon", "TaiKhoan", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
+                                            {
+                                                @Html.Hidden("maDonHang", donHang.MaDonHang)
+                                                <button type="submit" class="action__btn" data-confirm="Bạn có chắc chắn muốn hủy đơn hàng này?">
+                                                    Hủy
+                                                </button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="tab__content" content id="update-profile">
+                <div class="tab__content" id="update-profile">
                     <h3 class="tab__header">Cập nhật hồ sơ</h3>
                     <div class="tab__body">
-                        <form class="form grid" id="profile-form">
-                            <input type="text"
-                                   placeholder="Tên đăng nhập"
-                                   class="form__input"
-                                   name="username" />
+                        <form action="@Url.Action("CapNhatHoSo", "TaiKhoan", new { area = "KhachHang" })"
+                              method="post" class="form grid" id="profile-form">
+
+                            <!-- Gửi MaNguoiDung về server để EF biết bản ghi nào cần update -->
+                            <input type="hidden"
+                                   name="nguoiDungModels.MaNguoiDung"
+                                   value="@Model.nguoiDungModels.MaNguoiDung" />
+
                             <input type="text"
                                    placeholder="Họ và tên"
                                    class="form__input"
-                                   name="fullname" />
+                                   name="nguoiDungModels.HoTen"
+                                   value="@Model.nguoiDungModels.HoTen" />
+
                             <input type="email"
                                    placeholder="Email"
                                    class="form__input"
-                                   name="email" />
+                                   name="nguoiDungModels.Email"
+                                   value="@Model.nguoiDungModels.Email" />
+
                             <input type="text"
                                    placeholder="Số điện thoại"
                                    class="form__input"
-                                   name="phone" />
-                            <div class="form__btn">
-                                <button class="btn btn--md" type="submit">Lưu</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="tab__content" content id="address">
-                    <h3 class="tab__header">Địa chỉ giao hàng</h3>
-                    <div class="tab__body">
-                        <div id="address-view">
-                            <address class="address">
-                                3522 Interstate <br />
-                                75 Business Spur, <br />
-                                Sault Ste. <br />
-                                Marie, Mi 49783
-                            </address>
-                            <p class="city">New York</p>
-                            <a href="#" class="edit" id="edit-address-btn">Chỉnh sửa</a>
-                        </div>
-                        <form class="form grid" id="address-form" style="display:none;">
+                                   name="nguoiDungModels.SoDienThoai"
+                                   value="@Model.nguoiDungModels.SoDienThoai" />
+
                             <input type="text"
                                    placeholder="Địa chỉ"
                                    class="form__input"
-                                   name="address" />
-                            <input type="text"
-                                   placeholder="Thành phố"
-                                   class="form__input"
-                                   name="city" />
-                            <input type="text"
-                                   placeholder="Tỉnh/Quận"
-                                   class="form__input"
-                                   name="state" />
-                            <input type="text"
-                                   placeholder="Mã bưu điện"
-                                   class="form__input"
-                                   name="zipcode" />
+                                   name="nguoiDungModels.DiaChi"
+                                   value="@Model.nguoiDungModels.DiaChi" />
                             <div class="form__btn">
-                                <button class="btn btn--md" type="submit">Lưu</button>
-                                <button class="btn btn--md" type="button" id="cancel-edit-address">Hủy</button>
+                                <button type="submit" class="btn btn--md">Lưu</button>
                             </div>
                         </form>
                     </div>
                 </div>
-                <div class="tab__content" content id="change-password">
+                <div class="tab__content" id="change-password">
                     <h3 class="tab__header">Đổi mật khẩu</h3>
                     <div class="tab__body">
-                        <form class="form grid">
+                        <form action="@Url.Action("DoiMatKhau", "TaiKhoan", new { area = "KhachHang" })" method="post" class="form grid">
                             <input type="password"
                                    placeholder="Mật khẩu hiện tại"
-                                   class="form__input" />
+                                   class="form__input"
+                                   name="matKhauCu"/>
+
                             <input type="password"
                                    placeholder="Mật khẩu mới"
-                                   class="form__input" />
+                                   class="form__input"
+                                   name="matKhauMoi" />
+
                             <input type="password"
                                    placeholder="Xác nhận mật khẩu"
-                                   class="form__input" />
+                                   class="form__input"
+                                   name="matKhauNhapLai" />
+
                             <div class="form__btn">
-                                <button class="btn btn--md">Lưu</button>
+                                <button type="submit" class="btn btn--md">Lưu</button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lấy tất cả các tab buttons và tab contents
+        const tabButtons = document.querySelectorAll('.account__tab');
+        const tabContents = document.querySelectorAll('.tab__content');
+
+        // Xử lý khi click vào tab
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Lấy target từ data-target attribute
+                const targetId = this.getAttribute('data-target');
+
+                // Xóa class active-tab khỏi tất cả tab buttons
+                tabButtons.forEach(btn => btn.classList.remove('active-tab'));
+
+                // Xóa class active-tab khỏi tất cả tab contents
+                tabContents.forEach(content => content.classList.remove('active-tab'));
+
+                // Thêm class active-tab vào tab button được click
+                this.classList.add('active-tab');
+
+                // Thêm class active-tab vào tab content tương ứng
+                const targetContent = document.querySelector(targetId);
+                if (targetContent) {
+                    targetContent.classList.add('active-tab');
+                }
+            });
+        });
+
+        // Xử lý tab từ URL parameter nếu có
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabParam = urlParams.get('tab');
+
+        if (tabParam) {
+            // Tìm tab button tương ứng với parameter
+            const targetButton = document.querySelector(`[data-target="#${tabParam}"]`);
+            if (targetButton) {
+                targetButton.click();
+            }
+        }
+    });
+</script>

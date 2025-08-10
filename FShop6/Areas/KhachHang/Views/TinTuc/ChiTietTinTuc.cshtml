@@ -2,6 +2,10 @@
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Tin tức";
 }
+@model FShop6.Areas.KhachHang.Models.TinTucModel
+
+
+
 <main class="main">
     <section class="breadcrumb">
         <ul class="breadcrumb__list flex container">
@@ -17,27 +21,19 @@
         <div class="news-page__container grid">
             <div class="news-page__main">
                 <article class="post-content">
-                    <h1 class="post-content__title">FPT Polytechnic Tây Nguyên: Lễ Tôn Vinh “Ong Vàng” Học Kỳ Spring 2025</h1>
+                    <h1 class="post-content__title">@Model.TieuDe</h1>
                     <div class="author-info" style="margin-bottom: 1.5rem;">
-                        <span>Đăng bởi <strong>Phòng CTSV</strong></span> |
-                        <span>15/07/2025</span> |
+                        <span>Đăng bởi <strong>Admin</strong></span> |
+                        <span>@Model.ThoiGianTao</span> |
                     </div>
-                    <img src="https://scontent.fdad3-6.fna.fbcdn.net/v/t39.30808-6/513641492_737299905506734_1563430124922618263_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeEiCPD6FQ6-Ao5VtG5GI7Ez-vnU9pCqklf6-dT2kKqSV24Io2JeU_TCLvY0ymYZ39LM4swOaY7LuCarcI4AdUN9&_nc_ohc=1Ky8pzlxPwEQ7kNvwFRuK_D&_nc_oc=AdmXJgH5_ewhOrZF2y8e3R9KBMJL2qTZcsZ3q-9B_hLF3Qsp9TqgeFPEDP5JSnVFkgBish6LS0kOL0J6bEAU-vFg&_nc_zt=23&_nc_ht=scontent.fdad3-6.fna&_nc_gid=N2zhdBnoYbPIUgXYquI5qQ&oh=00_AfR2SRigzlrQw46NZxlf5QuTkxlvkdiWnFX9el-7vPAV-A&oe=687DAF06" alt="Tiêu đề bài viết" class="post-content__image">
+                    <img src=" @("/KhachHang/images/" + Model.HinhAnhDaiDien)" alt="Tiêu đề bài viết" class="post-content__image">
 
-                    <p>Sáng ngày 15/07, FPT Polytechnic Tây Nguyên đã long trọng tổ chức Lễ tôn vinh "Ong vàng" nhằm vinh danh những cá nhân và tập thể có thành tích học tập và hoạt động phong trào xuất sắc trong học kỳ Spring 2025 vừa qua. Buổi lễ là dịp để nhìn lại những nỗ lực không ngừng nghỉ và lan tỏa tinh thần học tập hăng say trong cộng đồng sinh viên.</p>
+                    <p>@Model.NoiDung</p>
 
-                    <p>Sự kiện có sự tham dự của Ban Giám đốc, các trưởng bộ môn cùng đông đảo giảng viên và sinh viên. Phát biểu tại buổi lễ, thầy [Tên Giám đốc] đã gửi lời chúc mừng và động viên các bạn sinh viên, nhấn mạnh rằng tri thức và kỹ năng chính là hành trang quan trọng nhất mà nhà trường mong muốn trang bị cho các bạn trên con đường sự nghiệp sau này.</p>
-
-                    <h3>Những gương mặt vàng được vinh danh</h3>
-                    <p>Danh hiệu "Ong vàng" cao quý nhất đã thuộc về sinh viên [Tên Ong Vàng], một gương mặt không còn xa lạ với những thành tích ấn tượng trong cả học tập và các cuộc thi chuyên môn. Bên cạnh đó, hàng chục sinh viên khác cũng được vinh danh ở các hạng mục "Sinh viên xuất sắc" và "Sinh viên giỏi".</p>
-
-                    <blockquote>
-                        "Em rất tự hào khi nhận được danh hiệu này. Đây là động lực lớn để em tiếp tục cố gắng hơn nữa trong các học kỳ tới." - [Tên Ong Vàng] chia sẻ.
-                    </blockquote>
-
-                    <p>Buổi lễ đã khép lại trong không khí hân hoan và tự hào, thắp lên ngọn lửa đam mê và tinh thần "học hết mình, chơi tới bến" của sinh viên FPT Polytechnic Tây Nguyên.</p>
+                   
                 </article>
             </div>
+
 
             <aside class="news-page__sidebar">
                 <div class="sidebar__widget">
@@ -48,4 +44,4 @@
             </aside>
         </div>
     </section>
-</main>
+</main> 

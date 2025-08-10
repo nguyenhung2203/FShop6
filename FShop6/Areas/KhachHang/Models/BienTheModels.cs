@@ -27,6 +27,8 @@ namespace FShop6.Areas.KhachHang.Models
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal GiaBan { get; set; }
+       
+        public int GiamGia { get; set; } = 0;
 
         [Range(0, int.MaxValue)]
         public int SoLuongConLai { get; set; }
@@ -34,11 +36,11 @@ namespace FShop6.Areas.KhachHang.Models
         [StringLength(100)]
         public string TinhTrang { get; set; }
 
-        public bool NoiBat { get; set; }
-
         // Navigation property
         [ForeignKey("MaSanPham")]
         public SanPhamModel SanPham { get; set; }
+        // Liên kết với AnhBienThe
+        public ICollection<AnhBienTheModel> AnhBienThe { get; set; } // Mối quan hệ 1-n
     }
 
 }

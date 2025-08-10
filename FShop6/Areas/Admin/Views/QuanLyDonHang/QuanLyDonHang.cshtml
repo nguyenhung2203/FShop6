@@ -1,252 +1,499 @@
 ﻿@{
-	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/CustomerLayout.cshtml";
 	ViewData["Title"] = "Quản lý đơn hàng";
 }
-<div id="content-wrapper">
-    <div class="container-fluid">
-        <!-- Breadcrumbs-->
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="index.html">Trang chủ</a>
-            </li>
-            <li class="breadcrumb-item active">Quản lý đơn hàng</li>
-        </ol>
-        <!-- Quản lý đơn hàng -->
-        <div class="card mb-3">
-            <div class="card-header bg-primary text-white">
-                <i class="fa fa-shopping-cart"></i>
-                Quản lý đơn hàng
-                <a href="#" class="text-white" data-toggle="modal" data-target="#addOrderModal">
-                    <span class="float-right">
-                        <i class="fa fa-plus"></i>
-                        Thêm đơn hàng mới
-                    </span>
-                </a>
+@model FShop6.Areas.Admin.Models.QuanLyDonHangViewModel
+
+<div class="container-fluid">
+    <!-- Breadcrumbs -->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#" class="text-decoration-none">Trang chủ</a>
+        </li>
+        <li class="breadcrumb-item active">Quản lý đơn hàng</li>
+    </ol>
+
+    <!-- Main Card -->
+    <div class="card">
+        <div class="card-header text-white">
+            <i class="fas fa-shopping-cart me-2"></i>
+            Quản lý đơn hàng
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control">
+                        <option value="">Tất cả phương thức thanh toán</option>
+                        <option value="cod">COD</option>
+                        <option value="bank">Chuyển khoản</option>
+                        <option value="momo">MoMo</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control">
+                </div>
             </div>
-            <div class="card-body">
+        </div>
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs" id="orderTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pending-tab" data-toggle="tab" data-target="#pending" type="button"
+                        role="tab">
+                    <i class="fas fa-clock"></i>
+                    Chờ xác nhận
+                    <span class="tab-counter">@Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Chờ xác nhận").Count()</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="shipping-tab" data-toggle="tab" data-target="#shipping" type="button"
+                        role="tab">
+                    <i class="fas fa-truck"></i>
+                    Đang vận chuyển
+                    <span class="tab-counter">@Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đang vận chuyển").Count()</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="delivered-tab" data-toggle="tab" data-target="#delivered" type="button"
+                        role="tab">
+                    <i class="fas fa-check-circle"></i>
+                    Đã giao hàng
+                    <span class="tab-counter">@Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đã giao").Count()</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="cancelled-tab" data-toggle="tab" data-target="#cancelled" type="button"
+                        role="tab">
+                    <i class="fas fa-times-circle"></i>
+                    Đã hủy
+                    <span class="tab-counter">@Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đã huỷ").Count()</span>
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="orderTabContent">
+            <!-- Chờ xác nhận -->
+            <div class="tab-pane fade show active" id="pending" role="tabpanel">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="orderTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
+                    <table class="table table-datatables table-bordered" id="pendingOrdersTable">
+                        <thead style="font-size: 16px;">
+                            <tr style="text-align: center;">
                                 <th>Mã đơn hàng</th>
-                                <th>Địa chỉ giao hàng</th>
-                                <th>Tổng tiền</th>
-                                <th>Trạng thái</th>
-                                <th>Phương thức thanh toán</th>
-                                <th>Thời gian đặt hàng</th>
+                                <th>Khách hàng</th>
+                                <th>Phương thức TT</th>
+                                <th>Thời gian đặt</th>
                                 <th>Ngày cập nhật</th>
-                                <th>Ghi chú</th>
-                                <th>Thao tác</th>
+                                <th class="no-sort">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Ví dụ dữ liệu đơn hàng -->
-                            <tr>
-                                <td>DH001</td>
-                                <td>123 Đường A, Quận B</td>
-                                <td>4,200,000</td>
-                                <td><span class="badge badge-warning">Chờ xử lý</span></td>
-                                <td>Chuyển khoản</td>
-                                <td>01/01/2023 09:00</td>
-                                <td>02/01/2023</td>
-                                <td>Giao buổi sáng</td>
-                                <td>
-                                    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#approveOrderModal"><i class="fa fa-check"></i> Duyệt</button>
-                                    <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editOrderModal"><i class="fa fa-pencil"></i> Sửa</button>
-                                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteOrderModal"><i class="fa fa-trash"></i> Xóa</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>DH002</td>
-                                <td>456 Đường X, Quận Y</td>
-                                <td>200,000</td>
-                                <td><span class="badge badge-success">Hoàn thành</span></td>
-                                <td>Tiền mặt</td>
-                                <td>15/02/2023 14:30</td>
-                                <td>16/02/2023</td>
-                                <td>Giao tận nơi</td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editOrderModal"><i class="fa fa-pencil"></i> Sửa</button>
-                                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteOrderModal"><i class="fa fa-trash"></i> Xóa</button>
-                                </td>
-                            </tr>
-                            <!-- ...thêm dữ liệu khác... -->
+                        <tbody style="font-size: 16px;">
+                            @foreach (var item in Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Chờ xác nhận"))
+                            {
+                                <tr style="text-align: center;">
+                                    <td><strong>#@item.DonHang.MaDonHang</strong></td>
+                                    <td>
+                                        <div>
+                                            <strong>@item.HoTen</strong><br>
+                                            <small class="text-muted">@item.SoDienThoai</small>
+                                        </div>
+                                    </td>
+                                    <td style="color: white;"><span class="badge bg-info">@item.DonHang.PhuongThucThanhToan</span></td>
+                                    <td>@item.DonHang.ThoiGianDatHang.ToString("dd/MM/yyyy")<br><small class="text-muted">@item.DonHang.ThoiGianDatHang.ToString("HH:mm")</small></td>
+                                    <td>@item.DonHang.NgayCapNhat.ToString("dd/MM/yyyy")<br><small class="text-muted">@item.DonHang.NgayCapNhat.ToString("HH:mm")</small></td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#viewOrderModal"
+                                        data-id="@item.DonHang.ID"
+                                        data-madonhang = "@item.DonHang.MaDonHang"
+                                        data-ngaydat = "@item.DonHang.ThoiGianDatHang"
+                                        data-trangthai = "@item.DonHang.TrangThai"
+                                        data-tenkhachhang = "@item.HoTen"
+                                        data-sodienthoai ="@item.SoDienThoai"
+                                        data-diachi ="@item.DonHang.DiaChiGiaoHang"
+                                        data-tongtien ="@item.DonHang.TongTien"
+                                        data-ghichu ="@item.DonHang.GhiChu"
+                                        onclick="modalXemChiTietDH(this)">
+                                            <i class="fas fa-eye"></i> Chi tiết
+                                        </button>
+                                        @using (Html.BeginForm("DuyetDonHang", "QuanLyDonHang", new { id = item.DonHang.ID }, FormMethod.Post,null, new { @class = "btn btn-primary btn-sm", @style="padding: 0;" }))
+										{
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-check"></i> Duyệt
+                                            </button>
+										}
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="card-footer small text-muted"></div>
-        </div>
 
-        <!-- Modal Thêm đơn hàng -->
-        <div class="modal fade" id="addOrderModal" tabindex="-1" role="dialog" aria-labelledby="addOrderLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <form class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="addOrderLabel">Thêm đơn hàng mới</h5>
-                        <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="order_code">Mã đơn hàng</label>
-                                    <input type="text" class="form-control" id="order_code" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_address">Địa chỉ giao hàng</label>
-                                    <input type="text" class="form-control" id="order_address" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_total">Tổng tiền</label>
-                                    <input type="number" class="form-control" id="order_total" min="0" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_status">Trạng thái</label>
-                                    <select class="form-control" id="order_status">
-                                        <option value="pending">Chờ xử lý</option>
-                                        <option value="completed">Hoàn thành</option>
-                                        <option value="cancelled">Đã hủy</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="order_payment">Phương thức thanh toán</label>
-                                    <select class="form-control" id="order_payment">
-                                        <option value="cash">Tiền mặt</option>
-                                        <option value="bank">Chuyển khoản</option>
-                                        <option value="cod">COD</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_time">Thời gian đặt hàng</label>
-                                    <input type="datetime-local" class="form-control" id="order_time" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_update">Ngày cập nhật</label>
-                                    <input type="date" class="form-control" id="order_update" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="order_note">Ghi chú</label>
-                                    <textarea class="form-control" id="order_note" rows="2" placeholder="Ghi chú thêm nếu có"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-primary" type="submit">Thêm mới</button>
-                    </div>
-                </form>
+            <!-- Đang vận chuyển -->
+            <div class="tab-pane fade" id="shipping" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-datatables table-bordered" id="shippingOrdersTable">
+                        <thead style="font-size: 16px;">
+                            <tr style="text-align: center;">
+                                <th>Mã đơn hàng</th>
+                                <th>Khách hàng</th>
+                                <th>Phương thức TT</th>
+                                <th>Thời gian đặt</th>
+                                <th>Ngày cập nhật</th>
+                                <th class="no-sort">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size: 16px;">
+                            @foreach (var item in Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đang vận chuyển"))
+                            {
+                                <tr style="text-align: center;">
+                                    <td><strong>#@item.DonHang.MaDonHang</strong></td>
+                                    <td>
+                                        <div>
+                                            <strong>@item.HoTen</strong><br>
+                                            <small class="text-muted">@item.SoDienThoai</small>
+                                        </div>
+                                    </td>
+                                    <td style="color: white;"><span class="badge bg-info">@item.DonHang.PhuongThucThanhToan</span></td>
+                                    <td>@item.DonHang.ThoiGianDatHang.ToString("dd/MM/yyyy")<br><small class="text-muted">@item.DonHang.ThoiGianDatHang.ToString("HH:mm")</small></td>
+                                    <td>@item.DonHang.NgayCapNhat.ToString("dd/MM/yyyy")<br><small class="text-muted">@item.DonHang.NgayCapNhat.ToString("HH:mm")</small></td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#viewOrderModal"
+                                        data-id="@item.DonHang.ID"
+                                        data-madonhang = "@item.DonHang.MaDonHang"
+                                        data-ngaydat = "@item.DonHang.ThoiGianDatHang"
+                                        data-trangthai = "@item.DonHang.TrangThai"
+                                        data-tenkhachhang = "@item.HoTen"
+                                        data-sodienthoai ="@item.SoDienThoai"
+                                        data-diachi ="@item.DonHang.DiaChiGiaoHang"
+                                        data-tongtien ="@item.DonHang.TongTien"
+                                        data-ghichu ="@item.DonHang.GhiChu"
+                                        onclick="modalXemChiTietDH(this)">
+                                            <i class="fas fa-eye"></i> Chi tiết
+                                        </button>
+                                        <button class="btn btn-warning btn-sm"
+                                                data-toggle="modal"
+                                                data-target="#editOrderModal"
+                                                data-id="@item.DonHang.ID"
+                                                data-madonhang="@item.DonHang.MaDonHang"
+                                                data-ghichu="@item.DonHang.GhiChu"
+                                                data-trangthai="@item.DonHang.TrangThai"
+                                                data-tenkhachhang="@item.HoTen"
+                                                data-sodienthoai="@item.SoDienThoai"
+                                                data-diachi="@item.DonHang.DiaChiGiaoHang"
+												data-tongtien="@item.DonHang.TongTien"
+                                                onclick="modalSuaDonHang(this)">
+                                            <i class="fas fa-edit"></i> Sửa
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        <!-- Modal Sửa đơn hàng -->
-        <div class="modal fade" id="editOrderModal" tabindex="-1" role="dialog" aria-labelledby="editOrderLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <form class="modal-content">
-                    <div class="modal-header bg-info text-white">
-                        <h5 class="modal-title" id="editOrderLabel">Sửa thông tin đơn hàng</h5>
-                        <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="edit_order_code">Mã đơn hàng</label>
-                                    <input type="text" class="form-control" id="edit_order_code" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_address">Địa chỉ giao hàng</label>
-                                    <input type="text" class="form-control" id="edit_order_address" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_total">Tổng tiền</label>
-                                    <input type="number" class="form-control" id="edit_order_total" min="0" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_status">Trạng thái</label>
-                                    <select class="form-control" id="edit_order_status">
-                                        <option value="pending">Chờ xử lý</option>
-                                        <option value="completed">Hoàn thành</option>
-                                        <option value="cancelled">Đã hủy</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="edit_order_payment">Phương thức thanh toán</label>
-                                    <select class="form-control" id="edit_order_payment">
-                                        <option value="cash">Tiền mặt</option>
-                                        <option value="bank">Chuyển khoản</option>
-                                        <option value="cod">COD</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_time">Thời gian đặt hàng</label>
-                                    <input type="datetime-local" class="form-control" id="edit_order_time" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_update">Ngày cập nhật</label>
-                                    <input type="date" class="form-control" id="edit_order_update" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_order_note">Ghi chú</label>
-                                    <textarea class="form-control" id="edit_order_note" rows="2" placeholder="Ghi chú thêm nếu có"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-info" type="submit">Lưu thay đổi</button>
-                    </div>
-                </form>
+
+            <!-- Đã giao hàng -->
+            <div class="tab-pane fade" id="delivered" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-datatables table-bordered" id="deliveredOrdersTable">
+                        <thead style="font-size: 16px;">
+                            <tr style="text-align: center;">
+                                <th>Mã đơn hàng</th>
+                                <th>Khách hàng</th>
+                                <th>Phương thức TT</th>
+                                <th>Thời gian đặt</th>
+                                <th>Ngày cập nhật</th>
+                                <th class="no-sort">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size: 16px;">
+                            @foreach (var item in Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đã giao"))
+                            {
+                                <tr style="text-align: center;">
+                                    <td><strong>#@item.DonHang.MaDonHang</strong></td>
+                                    <td>
+                                        <div>
+                                            <strong>@item.HoTen</strong><br>
+                                            <small class="text-muted">@item.SoDienThoai</small>
+                                        </div>
+                                    </td>
+                                    <td style="color: white;"><span class="badge bg-info">@item.DonHang.PhuongThucThanhToan</span></td>
+                                    <td>@item.DonHang.ThoiGianDatHang.ToString("dd/MM/yyyy")<br><small class="text-muted">@item.DonHang.ThoiGianDatHang.ToString("HH:mm")</small></td>
+                                    <td>@item.DonHang.NgayCapNhat.ToString("dd/MM/yyyy")<br><small class="text-muted">@item.DonHang.NgayCapNhat.ToString("HH:mm")</small></td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#viewOrderModal"
+                                        data-id="@item.DonHang.ID"
+                                        data-madonhang = "@item.DonHang.MaDonHang"
+                                        data-ngaydat = "@item.DonHang.ThoiGianDatHang"
+                                        data-trangthai = "@item.DonHang.TrangThai"
+                                        data-tenkhachhang = "@item.HoTen"
+                                        data-sodienthoai ="@item.SoDienThoai"
+                                        data-diachi ="@item.DonHang.DiaChiGiaoHang"
+                                        data-tongtien ="@item.DonHang.TongTien"
+                                        data-ghichu ="@item.DonHang.GhiChu"
+                                        onclick="modalXemChiTietDH(this)">
+                                            <i class="fas fa-eye"></i> Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        <!-- Modal Duyệt đơn hàng -->
-        <div class="modal fade" id="approveOrderModal" tabindex="-1" role="dialog" aria-labelledby="approveOrderLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <form class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title" id="approveOrderLabel">Duyệt đơn hàng</h5>
-                        <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Bạn có chắc chắn muốn duyệt đơn hàng này không?
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-success" type="submit">Duyệt</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="modal fade" id="deleteOrderModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrderLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <form class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="deleteOrderLabel">Xóa đơn hàng</h5>
-                        <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Bạn có chắc chắn muốn xóa đơn hàng này không?
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-danger" type="submit">Xóa</button>
-                    </div>
-                </form>
+
+            <!-- Đã hủy -->
+            <div class="tab-pane fade" id="cancelled" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-datatables table-bordered">
+                        <thead style="font-size: 16px;">
+                            <tr style="text-align: center;">
+                                <th>Mã đơn hàng</th>
+                                <th>Khách hàng</th>
+                                <th>Tổng tiền</th>
+                                <th>Lý do hủy</th>
+                                <th>Ngày hủy</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size: 16px;">
+                            @foreach (var item in Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đã huỷ"))
+                            {
+                                <tr style="text-align: center;">
+                                    <td><strong>#@item.DonHang.MaDonHang</strong></td>
+                                    <td>
+                                        <div>
+                                            <strong>@item.HoTen</strong><br>
+                                            <small class="text-muted">@item.SoDienThoai</small>
+                                        </div>
+                                    </td>
+                                    <td><strong class="text-muted">@item.DonHang.TongTien.ToString("N0") đ</strong></td>
+                                    <td>
+                                        <small class="text-danger">@item.DonHang.GhiChu</small>
+                                    </td>
+                                    <td>12/01/2024<br><small class="text-muted">09:15</small></td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#viewOrderModal"
+                                        data-id="@item.DonHang.ID"
+                                        data-madonhang = "@item.DonHang.MaDonHang"
+                                        data-ngaydat = "@item.DonHang.ThoiGianDatHang"
+                                        data-trangthai = "@item.DonHang.TrangThai"
+                                        data-tenkhachhang = "@item.HoTen"
+                                        data-sodienthoai ="@item.SoDienThoai"
+                                        data-diachi ="@item.DonHang.DiaChiGiaoHang"
+                                        data-tongtien ="@item.DonHang.TongTien"
+                                        data-ghichu ="@item.DonHang.GhiChu"
+                                        onclick="modalXemChiTietDH(this)">
+                                            <i class="fas fa-eye"></i> Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-    <!-- ...existing code for footer, scripts, etc... -->
 </div>
+
+<!-- Modal Xem chi tiết đơn hàng -->
+<div class="modal fade" id="viewOrderModal" tabindex="-1" aria-labelledby="viewOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="viewOrderModalLabel">Chi tiết đơn hàng #<span id="maDonHang1"></span></h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6>Thông tin khách hàng</h6>
+                        <p><strong>Tên:</strong> <span id="tenKhachHang"></span></p>
+                        <p><strong>SĐT:</strong> <span id="soDienThoai"></span></p>
+                        <p><strong>Địa chỉ:</strong> <span id="diaChiGiaoHang"></span></p>
+                        <p><strong>Ghi chú:</strong> <span id="ghiChu"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="hidden" id="ID" name="name" value="" />
+                        <h6>Thông tin đơn hàng</h6>
+                        <p><strong>Mã đơn:</strong> <span id="maDonHang2"></span></p>
+                        <p><strong>Ngày đặt:</strong> <span id="thoiGianDatHang"></span></p>
+                        <p><strong>Trạng thái:</strong> <span id="trangThai" class="badge bg-warning"></span></p>
+                    </div>
+                </div>
+
+                <h6>Sản phẩm đã đặt</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>SKU</th>
+                                <th>Biến thể</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+							@foreach (var item in Model.DSDonHang)
+							{
+								foreach (var sanPham in item.ChiTietDonHangs)
+								{
+                                    <tr class="chitiet-donhang" data-donhangid="@item.DonHang.ID" style="display: none;">
+                                        <td>@sanPham.TenSanPham</td>
+                                        <td>@sanPham.MaSku</td>
+                                        <td>@sanPham.LoaiBienThe</td>
+                                        <td>@sanPham.ChiTietDonHang.SoLuong</td>
+                                        <td>@sanPham.ChiTietDonHang.DonGia.ToString("N0") ₫</td>
+                                        <td>@(((decimal)(sanPham.ChiTietDonHang.SoLuong * sanPham.ChiTietDonHang.DonGia)).ToString("N0")) ₫</td>
+                                    </tr>
+                                }
+							}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="5" class="text-end">Tổng tiền:</th>
+                                <th id="tongTien"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal sửa chi tiết đơn hàng -->
+<div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form class="modal-content" asp-action="CapNhatDonHang" asp-controller="QuanLyDonHang" method="post">
+            
+        </form>
+
+        @using (Html.BeginForm("SuaDonHang", "QuanLyDonHang", FormMethod.Post, new { @class = "modal-content" }))
+        {
+            <input type="hidden" name="ID" id="editID" />
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Sửa chi tiết đơn hàng #<span id="editMaDonHang"></span></h5>
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6>Thông tin khách hàng</h6>
+                        <div class="mb-2">
+                            <label class="form-label">Tên khách hàng</label>
+                            <input type="text" class="form-control" name="HoTen" id="editTenKhachHang" readonly>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" name="SoDienThoai" id="editSoDienThoai" readonly>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Địa chỉ</label>
+                            <textarea class="form-control" name="DiaChiGiaoHang" id="editDiaChi" rows="2" readonly></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Thông tin đơn hàng</h6>
+                        <div class="mb-2">
+                            <label class="form-label">Mã đơn</label>
+                            <input type="text" class="form-control" id="editMaDonHangText" readonly>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" name="GhiChu" id="editGhiChu" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Trạng thái</label>
+                            <select class="form-control" name="TrangThai" id="editTrangThai">
+                                <option value="Chờ xác nhận">Chờ xác nhận</option>
+                                <option value="Đang vận chuyển">Đang vận chuyển</option>
+                                <option value="Đã giao">Đã giao</option>
+                                <option value="Đã huỷ">Đã huỷ</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                <button class="btn btn-warning text-white" type="submit">Lưu thay đổi</button>
+            </div>
+        }
+
+    </div>
+</div>
+
+<script>
+	function modalXemChiTietDH(button) {
+		// Lấy dữ liệu từ button và cập nhật vào modal
+		const ID = button.dataset.id;
+		const tenKhachHang = button.dataset.tenkhachhang;
+		const soDienThoai = button.dataset.sodienthoai;
+		const diaChi = button.dataset.diachi;
+		const trangThai = button.dataset.trangthai;
+		const maDonHang = button.dataset.madonhang;
+		const thoiGianDatHang = button.dataset.ngaydat;
+		const tongTien = button.dataset.tongtien;
+		const ghiChu = button.dataset.ghichu;
+		document.getElementById('ID').value = ID;
+		document.getElementById('tenKhachHang').textContent = tenKhachHang;
+		document.getElementById('soDienThoai').textContent = soDienThoai;
+		document.getElementById('diaChiGiaoHang').textContent = diaChi;
+		document.getElementById('trangThai').textContent = trangThai;
+		document.getElementById('maDonHang1').textContent = maDonHang;
+		document.getElementById('maDonHang2').textContent = maDonHang;
+        const date = new Date(thoiGianDatHang);
+        const ngayThangNam = date.toLocaleDateString('vi-VN');
+        document.getElementById('thoiGianDatHang').textContent = ngayThangNam;
+        const tongtien = parseFloat(tongTien).toLocaleString('vi-VN');
+        document.getElementById('tongTien').textContent = tongtien + " đ";
+		document.getElementById('ghiChu').textContent = ghiChu;
+
+        // Hiển thị các sản phẩm trong modal
+		const chitietDonhangRows = document.querySelectorAll('.chitiet-donhang');
+		chitietDonhangRows.forEach(row => {
+			if (row.dataset.donhangid === ID) {
+				row.style.display = 'table-row'; // Hiển thị dòng sản phẩm
+			} else {
+				row.style.display = 'none'; // Ẩn các dòng không liên quan
+			}
+		});
+	}
+    function modalSuaDonHang(button) {
+        const id = button.dataset.id;
+        const tenKhach = button.dataset.tenkhachhang;
+        const sdt = button.dataset.sodienthoai;
+        const diaChi = button.dataset.diachi;
+        const maDon = button.dataset.madonhang;
+		const ghiChu = button.dataset.ghichu;
+        const trangThai = button.dataset.trangthai;
+
+        // Gán giá trị vào input
+        document.getElementById('editID').value = id;
+        document.getElementById('editTenKhachHang').value = tenKhach;
+        document.getElementById('editSoDienThoai').value = sdt;
+        document.getElementById('editDiaChi').value = diaChi;
+        document.getElementById('editMaDonHang').textContent = maDon;
+        document.getElementById('editMaDonHangText').value = "#" + maDon;
+
+		document.getElementById('editGhiChu').value = ghiChu;
+
+        document.getElementById('editTrangThai').value = trangThai;
+    }
+</script>

@@ -9,33 +9,105 @@ namespace FShop6.Areas.KhachHang.Services
 {
     public interface ICuaHangServices
     {
-        Task<PhanTrangSanPhamViewModel> LaySanPhamDanhMuc(int maDanhMuc, int trang = 1, int kichThuocTrang = 8);
-        Task<PhanTrangSanPhamViewModel> LaySanPhamTatCa(int trang = 1, int kichThuocTrang = 8);
-        Task<PhanTrangSanPhamViewModel> LaySanPhamXapXep(int loai, int trang = 1, int kichThuocTrang = 8);
-        Task<PhanTrangSanPhamViewModel> LaySanPhamTheoGia(decimal khoangGia, int trang = 1, int kichThuocTrang = 8);
+        Task<PhanTrangSanPhamViewModel> LaySanPhamDaLoc(int? maDanhMuc, decimal? giaToiDa, int? loaiXapXep, int trang = 1, int kichThuocTrang = 8);
     }
 
-    public class CuaHangServices : ICuaHangServices
+    public interface IChiTietSanPhamService
     {
-        private readonly AppDbContext _context;
+        Task<BienTheChiTietModel> LayChiTietSanPhamAsync(int maSanPham);
+    }
 
-        public CuaHangServices(AppDbContext context)
+    public interface IShopService : ICuaHangServices, IChiTietSanPhamService
+    {
+        Task<List<object>> TimKiem(string tuKhoa);
+    }
+
+
+    public class ShopService : IShopService
+    {
+        public readonly AppDbContext _context;
+
+        public ShopService(AppDbContext context)
         {
             _context = context;
         }
 
-        private (int tongSoTrang, int trang) PhanTrang(Expression<Func<BienTheModels, bool>> dieuKien, int kichThuocTrang, int trang = 1)
+        public async Task<PhanTrangSanPhamViewModel> LaySanPhamDaLoc(int? maDanhMuc, decimal? giaToiDa, int? loaiXapXep, int trang = 1, int kichThuocTrang = 8)
         {
+            // 1. Bắt đầu với một câu truy vấn gốc, chưa thực thi
+            IQueryable<SanPhamModel> query = _context.SanPham
+                                                .Include(sp => sp.DanhMuc)
+                                                .Include(sp => sp.BienThes);
 
-            var tongSoSanPham = _context.BienThe
-                .Include(bt => bt.SanPham)
-                .Where(dieuKien)
-                .Count();
+            // 2. Áp dụng bộ lọc DANH MỤC nếu có
+            if (maDanhMuc.HasValue && maDanhMuc.Value > 0)
+            {
+                query = query.Where(sp => sp.DanhMuc.Id == maDanhMuc.Value);
+            }
 
-            int tongSoTrang = (int)Math.Ceiling((double)tongSoSanPham / kichThuocTrang);
-            if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
-            if (trang < 1) trang = 1;
-            return (tongSoTrang, trang);
+            // 3. Áp dụng bộ lọc GIÁ nếu có
+            if (giaToiDa.HasValue)
+            {
+                query = query.Where(sp => sp.BienThes.Any(bt => bt.GiaBan <= giaToiDa.Value));
+            }
+
+            // 4. Áp dụng SẮP XẾP nếu có
+            if (loaiXapXep.HasValue)
+            {
+                switch (loaiXapXep.Value)
+                {
+                    case 1: // Mặc định - không sắp xếp thêm
+                        // Giữ nguyên thứ tự mặc định
+                        break;
+                    case 2: // Giá tăng dần
+                        query = query.OrderBy(sp => sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan);
+                        break;
+                    case 3: // Giá giảm dần
+                        query = query.OrderByDescending(sp => sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan);
+                        break;
+                    case 4: // Tên A-Z
+                        query = query.OrderBy(sp => sp.TenSanPham);
+                        break;
+                    case 5: // Tên Z-A
+                        query = query.OrderByDescending(sp => sp.TenSanPham);
+                        break;
+                    case 6: // Mới nhất
+                        query = query.OrderByDescending(sp => sp.NgayTao);
+                        break;
+                    case 7: // Cũ nhất
+                        query = query.OrderBy(sp => sp.NgayTao);
+                        break;
+                }
+            }
+
+            // 5. Bây giờ mới PHÂN TRANG dựa trên câu truy vấn đã hoàn chỉnh
+            var tongSoSanPham = await query.CountAsync();
+            var tongSoTrang = (int)Math.Ceiling(tongSoSanPham / (double)kichThuocTrang);
+
+            var danhSachSanPham = await query
+                .Skip((trang - 1) * kichThuocTrang)
+                .Take(kichThuocTrang)
+                .Select(sp => new SanPhamTrangChuViewModel
+                {
+                    MaSanPham = sp.MaSanPham,
+                    TenSanPham = sp.TenSanPham,
+                    HinhAnhDaiDien = sp.HinhAnhDaiDien,
+                    GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
+                    MoTaNgan = sp.MoTa,
+                    TenDanhMuc = sp.DanhMuc.TenDanhMuc
+                })
+                .ToListAsync();
+
+            var danhSachDanhMuc = await LayDanhMuc();
+
+            // 6. Trả về kết quả cuối cùng
+            return new PhanTrangSanPhamViewModel
+            {
+                DanhSachSanPham = danhSachSanPham,
+                DanhSachDanhMuc = danhSachDanhMuc,
+                TrangHienTai = trang,
+                TongSoTrang = tongSoTrang,
+            };
         }
 
         public async Task<List<DanhMucModel>> LayDanhMuc()
@@ -50,175 +122,57 @@ namespace FShop6.Areas.KhachHang.Services
                 .ToListAsync();
         }
 
-
-        public async Task<PhanTrangSanPhamViewModel> LaySanPhamDanhMuc(int maDanhMuc, int trang = 1, int kichThuocTrang = 8)
+        public async Task<BienTheChiTietModel> LayChiTietSanPhamAsync(int maSanPham)
         {
-            var (tongSoTrang, trangHienTai) = PhanTrang(
-                bt => bt.SanPham.DanhMuc.Id == maDanhMuc,
-                kichThuocTrang,
-                trang);
+            var sanPham = await _context.SanPham
+                    .Include(sp => sp.DanhMuc)
+                    .Include(sp => sp.BienThes)
+                        .ThenInclude(b => b.AnhBienThe)
+                    .FirstOrDefaultAsync(sp => sp.MaSanPham == maSanPham);
+                    
 
-
-            var danhSachSanPhamLocDanhMuc = await _context.BienThe
-                .Include(bt => bt.SanPham)
-                .ThenInclude(sp => sp.DanhMuc)
-                .Where(bt => bt.SanPham.DanhMuc.Id == maDanhMuc)
-                .OrderBy(bt => bt.SanPham.TenSanPham)
-                .Skip((trangHienTai - 1) * kichThuocTrang)
-                .Take(kichThuocTrang)
-                .Select(bt => new BienTheTrangChuViewModel
-                {
-                    MaBienThe = bt.MaBienThe,
-                    TenSanPham = bt.SanPham.TenSanPham,
-                    HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                    GiaBan = bt.GiaBan,
-                    MoTaNgan = bt.SanPham.MoTa,
-                    TenDanhMuc = bt.SanPham.DanhMuc.TenDanhMuc
-                })
-                .ToListAsync();
-
-            var danhSachDanhMuc = await LayDanhMuc();
-
-            return new PhanTrangSanPhamViewModel
+            if (sanPham == null)
             {
-                DanhSachSanPham = danhSachSanPhamLocDanhMuc,
-                DanhSachDanhMuc = danhSachDanhMuc,
-                TrangHienTai = trangHienTai,
-                TongSoTrang = tongSoTrang,
+                return null;
+            }
+
+            var bienTheList = sanPham.BienThes.Select(bienthe => new BienTheChiTietModel.BienTheModel
+            {
+                MaBienThe = bienthe.MaBienThe,
+                LoaiBienThe = bienthe.LoaiBienThe,
+                GiaBan = bienthe.GiaBan.ToString("N0"),
+                SKU = bienthe.MaSKU,
+                SoLuongTon = bienthe.SoLuongConLai, // Thêm số lượng tồn kho
+                DanhSachAnh = bienthe.AnhBienThe.Select(a => a.URL).ToList()
+            }).ToList();
+
+            return new BienTheChiTietModel
+            {
+                MaSanPham = sanPham.MaSanPham,
+                TenSanPham = sanPham.TenSanPham,
+                MoTa = sanPham.MoTa,
+                HinhAnhDaiDien = sanPham.HinhAnhDaiDien,
+                DanhMuc = sanPham.DanhMuc?.TenDanhMuc ?? "Không có danh mục",
+                BienThe = bienTheList // Trả về danh sách các biến thể
             };
         }
 
-        public async Task<PhanTrangSanPhamViewModel> LaySanPhamTatCa(int trang = 1, int kichThuocTrang = 8)
+        public async Task<List<object>> TimKiem(string tuKhoa)
         {
-            var (tongSoTrang, trangHienTai) = PhanTrang(
-                bt => true,
-               kichThuocTrang,
-               trang);
-
-            if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
-            if (trang < 1) trang = 1;
-
-            var tongSanPham = await _context.BienThe
-                .Include(bt => bt.SanPham)
-                .ThenInclude(sp => sp.DanhMuc)
-                .OrderBy(bt => bt.SanPham.TenSanPham)
-                .Skip((trangHienTai - 1) * kichThuocTrang)
-                .Take(kichThuocTrang)
-                .Select(bt => new BienTheTrangChuViewModel
+            if (string.IsNullOrWhiteSpace(tuKhoa))
+                return new List<object>();
+            var ketQua = await _context.SanPham
+                .Where(sp => sp.TenSanPham.Contains(tuKhoa))
+                .Select(sp => new
                 {
-                    MaBienThe = bt.MaBienThe,
-                    TenSanPham = bt.SanPham.TenSanPham,
-                    HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                    GiaBan = bt.GiaBan,
-                    MoTaNgan = bt.SanPham.MoTa,
-                    TenDanhMuc = bt.SanPham.DanhMuc.TenDanhMuc
+                    id = sp.MaSanPham,
+                    ten = sp.TenSanPham,
+                    gia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan.ToString("N0") + "₫" ,
+                    anh = sp.HinhAnhDaiDien
                 })
+                .Take(5)
                 .ToListAsync();
-
-            var danhSachDanhMuc = await LayDanhMuc();
-
-            return new PhanTrangSanPhamViewModel
-            {
-                DanhSachSanPham = tongSanPham,
-                DanhSachDanhMuc = danhSachDanhMuc,
-                TrangHienTai = trangHienTai,
-                TongSoTrang = tongSoTrang,
-            };
-        }
-        public async Task<PhanTrangSanPhamViewModel> LaySanPhamXapXep(int loai, int trang = 1, int kichThuocTrang = 8)
-        {
-            var (tongSoTrang, trangHienTai) = PhanTrang(
-                bt => true,
-                kichThuocTrang,
-                trang);
-            List<BienTheTrangChuViewModel> tongSanPham = new List<BienTheTrangChuViewModel>();
-
-            IQueryable<BienTheModels> query = _context.BienThe
-            .Include(bt => bt.SanPham)
-            .ThenInclude(sp => sp.DanhMuc);
-
-            if (loai == 2)
-            {
-                query = query.OrderBy(bt => bt.GiaBan);
-            }
-            else if (loai == 3)
-            {
-                query = query.OrderByDescending(bt => bt.GiaBan);
-            }
-            else if (loai == 4)
-            {
-                query = query.OrderBy(bt => bt.SanPham.TenSanPham);
-            }
-            else if (loai == 5)
-            {
-                query = query.OrderByDescending(bt => bt.SanPham.TenSanPham);
-            }
-            else if (loai == 6)
-            {
-                query = query.OrderBy(bt => bt.SanPham.NgayTao);
-            }
-            else if (loai == 7)
-            {
-                query = query.OrderByDescending(bt => bt.SanPham.NgayTao);
-            }
-
-            tongSanPham = await query
-            .Skip((trangHienTai - 1) * kichThuocTrang)
-            .Take(kichThuocTrang)
-            .Select(bt => new BienTheTrangChuViewModel
-            {
-                MaBienThe = bt.MaBienThe,
-                TenSanPham = bt.SanPham.TenSanPham,
-                HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                GiaBan = bt.GiaBan,
-                MoTaNgan = bt.SanPham.MoTa,
-                TenDanhMuc = bt.SanPham.DanhMuc.TenDanhMuc
-            })
-            .ToListAsync();
-
-
-            var danhSachDanhMuc = await LayDanhMuc();
-
-            return new PhanTrangSanPhamViewModel
-            {
-                DanhSachSanPham = tongSanPham,
-                DanhSachDanhMuc = danhSachDanhMuc,
-                TrangHienTai = trangHienTai,
-                TongSoTrang = tongSoTrang,
-            };
-        }
-
-        public async Task<PhanTrangSanPhamViewModel> LaySanPhamTheoGia(decimal khoangGia, int trang = 1, int kichThuocTrang = 8)
-        {
-            var (tongSoTrang, trangHienTai) = PhanTrang(
-                bt => bt.GiaBan < khoangGia,
-                kichThuocTrang,
-                trang);
-            var tongSanPham = await _context.BienThe
-                .Include(bt => bt.SanPham)
-                .ThenInclude(sp => sp.DanhMuc)
-                .Where(bt => bt.GiaBan < khoangGia)
-                .OrderBy(bt => bt.SanPham.TenSanPham)
-                .Skip((trangHienTai - 1) * kichThuocTrang)
-                .Take(kichThuocTrang)
-                .Select(bt => new BienTheTrangChuViewModel
-                {
-                    MaBienThe = bt.MaBienThe,
-                    TenSanPham = bt.SanPham.TenSanPham,
-                    HinhAnhDaiDien = bt.SanPham.HinhAnhDaiDien,
-                    GiaBan = bt.GiaBan,
-                    MoTaNgan = bt.SanPham.MoTa,
-                    TenDanhMuc = bt.SanPham.DanhMuc.TenDanhMuc
-                })
-                .ToListAsync();
-            var danhSachDanhMuc = await LayDanhMuc();
-            return new PhanTrangSanPhamViewModel
-            {
-                DanhSachSanPham = tongSanPham,
-                DanhSachDanhMuc = danhSachDanhMuc,
-                TrangHienTai = trangHienTai,
-                TongSoTrang = tongSoTrang,
-            };
+            return ketQua.Cast<object>().ToList();
         }
     }
 }

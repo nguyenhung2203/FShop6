@@ -1,4 +1,6 @@
-﻿@{
+﻿@model FShop6.Areas.KhachHang.Models.DangKyViewModel
+
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -11,33 +13,60 @@
     <link rel="stylesheet" href="~/KhachHang/css/styles.css" />
 </head>
 <body>
-    <!-- Header Rút Gọn -->
-    <header class="header-minimal">
-        <div class="container">
-            <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
-                <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
-            </a>
-        </div>
-    </header>
     <main class="main">
         <section class="login-register section--lg">
             <div class="login-register__container container">
-                <div class="register">
-                    </a>
+                <div class="register header-minimal">
+                    <div class="container">
+                        <a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="logo">
+                            <img src="~/KhachHang/images/logo.png" alt="FShop Logo" />
+                        </a>
+                    </div>
                     <h3 class="section__title">Tạo Tài Khoản Mới</h3>
-                    <form action="" class="form grid">
-                        <input type="text" placeholder="Tên của bạn" class="form__input" required />
-                        <input type="email" placeholder="Email" class="form__input" required />
-                        <input type="password" placeholder="Mật khẩu" class="form__input" required />
-                        <input type="password" placeholder="Nhập lại mật khẩu" class="form__input" required />
+
+                    @if (ViewBag.ThongBao != null)
+                    {
+                            <div class="alert alert-warning">@ViewBag.ThongBao</div>
+                    }
+
+                    <form action="@Url.Action("DangKy", "TaiKhoan", new { area = "KhachHang" })" method="post" class="form grid">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                        <input name="TaiKhoan" class="form__input" placeholder="Tài khoản" />
+                        <span class="text-danger" asp-validation-for="TaiKhoan"></span>
+
+
+                        <input name="MatKhau" type="password" class="form__input" placeholder="Mật khẩu" />
+                        <span class="text-danger" asp-validation-for="MatKhau"></span>
+
+                        <input name="XacNhanMatKhau" type="password" class="form__input" placeholder="Nhập lại mật khẩu" />
+                        <span class="text-danger" asp-validation-for="XacNhanMatKhau"></span>
+
                         <div class="form__btn">
-                            <button class="btn">Đăng Ký</button>
+                            <button type="submit" class="btn">Đăng Ký</button>
                         </div>
                     </form>
-                    <p class="form__switch">Đã có tài khoản? <a href="@Url.Action("DangNhap", "TaiKhoan", new { area = "KhachHang" })">Đăng nhập ngay</a></p>
+
+                    <p class="form__switch">Đã có tài khoản? 
+                        <a href="@Url.Action("DangNhap", "TaiKhoan", new { area = "KhachHang" })">Đăng nhập ngay</a>
+                    </p>
                 </div>
             </div>
         </section>
     </main>
+    <script>
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+    $(function () {
+        console.log("✅ jQuery đã hoạt động!");
+    });
+</script>
+
 </body>
 </html>
