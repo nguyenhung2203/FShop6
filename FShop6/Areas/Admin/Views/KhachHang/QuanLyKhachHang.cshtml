@@ -7,9 +7,7 @@
 <div id="content-wrapper">
     <div class="container-fluid">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="/Admin/TrangChu">Trang chủ</a>
-            </li>
+            <li class="breadcrumb-item"><a href="/Admin/TrangChu">Trang chủ</a></li>
             <li class="breadcrumb-item active">Quản lý khách hàng</li>
         </ol>
 
@@ -18,15 +16,24 @@
                 <i class="fa fa-users"></i> Quản lý khách hàng
             </div>
             <div class="card-body">
+                @if (TempData["ThongBao"] != null)
+                {
+                    <div class="alert alert-success">@TempData["ThongBao"]</div>
+                }
+                @if (TempData["Loi"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["Loi"]</div>
+                }
+
                 <div class="table-responsive">
                     <table class="table table-bordered" id="customerTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>Mã người dùng</th>
                                 <th>Họ tên</th>
                                 <th>Email</th>
                                 <th>Số điện thoại</th>
                                 <th>Địa chỉ</th>
+                                <th>Mật khẩu</th>
                                 <th>Số tiền đã đặt</th>
                                 <th>Số đơn đã đặt</th>
                                 <th>Trạng thái</th>
@@ -37,11 +44,11 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.MaNguoiDung</td>
                                     <td>@item.HoTen</td>
                                     <td>@item.Email</td>
                                     <td>@item.SDT</td>
                                     <td>@item.DiaChi</td>
+                                    <td>@item.MatKhau</td>
                                     <td>@String.Format("{0:N0}", item.TongTienDaDat)</td>
                                     <td>@item.SoLuongDonDat</td>
                                     <td>
@@ -64,7 +71,8 @@
                                     <td>
                                         <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editCustomerModal"
                                                 data-id="@item.MaNguoiDung"
-                                                data-status="@item.TTHoatDong">
+                                                data-status="@item.TTHoatDong"
+                                                data-password="@item.MatKhau">
                                             <i class="fa fa-pencil"></i> Sửa
                                         </button>
                                         <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCustomerModal"
@@ -84,13 +92,17 @@
         <!-- Modal sửa -->
         <div class="modal fade" id="editCustomerModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
-                <form action="@Url.Action("CapNhatTrangThai", "KhachHang", new { area = "Admin" })" method="post" class="modal-content">
+                <form action="@Url.Action("ChinhSua", "KhachHang", new { area = "Admin" })" method="post" class="modal-content">
                     <div class="modal-header bg-info text-white">
                         <h5 class="modal-title">Sửa thông tin khách hàng</h5>
                         <button class="close text-white" type="button" data-dismiss="modal"><span>×</span></button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" id="edit_customer_id" name="id" />
+                        <input type="hidden" id="edit_customer_id" name="MaNguoiDung" />
+                        <div class="form-group">
+                            <label for="edit_customer_password">Mật khẩu</label>
+                            <input type="text" class="form-control" id="edit_customer_password" name="MatKhau" required />
+                        </div>
                         <div class="form-group">
                             <label for="edit_customer_status">Trạng thái</label>
                             <select class="form-control" id="edit_customer_status" name="TTHoatDong">
@@ -108,7 +120,6 @@
         </div>
 
         <!-- Modal xóa -->
-        <!-- Modal xóa -->
         <div class="modal fade" id="deleteCustomerModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <form action="@Url.Action("XoaNguoiDung", "KhachHang", new { area = "Admin" })"
@@ -119,7 +130,6 @@
                     </div>
                     <div class="modal-body">
                         Bạn có chắc chắn muốn xóa khách hàng này?
-                        <!-- tên hidden phải đúng với tên tham số trong action -->
                         <input type="hidden" id="customerIdToDelete" name="maNguoiDung" />
                     </div>
                     <div class="modal-footer">
@@ -129,7 +139,6 @@
                 </form>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -139,14 +148,17 @@
             var button = $(event.relatedTarget);
             var id = button.data('id');
             var status = button.data('status');
-            $(this).find('#edit_customer_id').val(id);
-            $(this).find('#edit_customer_status').val(status);
+            var password = button.data('password');
+
+            $('#edit_customer_id').val(id);
+            $('#edit_customer_status').val(status);
+            $('#edit_customer_password').val(password);
         });
 
         $('#deleteCustomerModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var id = button.data('id');
-            $(this).find('#customerIdToDelete').val(id);
+            $('#customerIdToDelete').val(id);
         });
     </script>
 }

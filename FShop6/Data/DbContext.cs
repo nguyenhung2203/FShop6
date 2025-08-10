@@ -11,7 +11,6 @@ namespace FShop6.Data
         {
 
         }
-     
         public DbSet<DanhMucModel> DanhMucSP { get; set; }
         public DbSet<SanPhamModel> SanPham { get; set; }
         public DbSet<TinTucModel> TinTuc { get; set; }

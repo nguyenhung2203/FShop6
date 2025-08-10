@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FShop6.Areas.Admin.Services;
-using FShop6.Areas.Admin.Models; // ViewModel nếu có
-using FShop6.Areas.KhachHang.Models;
+using FShop6.Areas.Admin.Models;
 
 namespace FShop6.Areas.Admin.Controllers
 {
@@ -15,56 +14,51 @@ namespace FShop6.Areas.Admin.Controllers
             _khachHangService = khachHangService;
         }
 
-        // ✅ 1. Hiển thị danh sách khách hàng
+        // 👉 Hiển thị danh sách khách hàng
         public IActionResult QuanLyKhachHang()
         {
-            var danhSach = _khachHangService.LayDanhSach();
+            var danhSach = _khachHangService.LayDanhSachViewModel(); // Trả về List<NguoiDungViewModel>
             return View(danhSach);
         }
 
-        // ✅ 2. Hiển thị form sửa trạng thái
-        [HttpGet]
-        public IActionResult ChinhSua(int id)
-        {
-            var khachHang = _khachHangService.TimTheoId(id);
-            if (khachHang == null)
-                return NotFound();
-
-            return View(khachHang);
-        }
-
-        // ✅ 3. Xử lý cập nhật trạng thái
+        // 👉 Xử lý cập nhật mật khẩu và trạng thái
         [HttpPost]
-        public IActionResult CapNhatTrangThai(int id, string TTHoatDong)
+        public IActionResult ChinhSua(int MaNguoiDung, string MatKhau, string TTHoatDong)
         {
-            if (_khachHangService.ChinhSua(id, TTHoatDong))
+            if (string.IsNullOrWhiteSpace(MatKhau) || string.IsNullOrWhiteSpace(TTHoatDong))
             {
-                TempData["ThongBao"] = "Cập nhật trạng thái thành công!";
+                TempData["Loi"] = "Vui lòng nhập đầy đủ mật khẩu và trạng thái.";
+                return RedirectToAction("QuanLyKhachHang");
+            }
+
+            var thanhCong = _khachHangService.ChinhSua(MaNguoiDung, TTHoatDong, MatKhau);
+            if (thanhCong)
+            {
+                TempData["ThongBao"] = "✅ Cập nhật khách hàng thành công!";
             }
             else
             {
-                TempData["Loi"] = "Không thể cập nhật trạng thái!";
+                TempData["Loi"] = "❌ Không thể cập nhật khách hàng.";
             }
 
             return RedirectToAction("QuanLyKhachHang");
         }
 
-        // ✅ 4. Xóa khách hàng theo Email
+        // 👉 Xóa khách hàng
         [HttpPost]
         public IActionResult XoaNguoiDung(int maNguoiDung)
         {
-            if (_khachHangService.XoaNguoiDung(maNguoiDung))
+            var daXoa = _khachHangService.XoaNguoiDung(maNguoiDung);
+            if (daXoa)
             {
-                TempData["ThongBao"] = "Đã xóa khách hàng.";
+                TempData["ThongBao"] = "🗑️ Đã xóa khách hàng thành công.";
             }
             else
             {
-                TempData["Loi"] = "Không thể xóa khách hàng.";
+                TempData["Loi"] = "❌ Không thể xóa khách hàng.";
             }
 
             return RedirectToAction("QuanLyKhachHang");
         }
-
-
     }
 }

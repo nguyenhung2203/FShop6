@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using FShop6.Areas.KhachHang.Models;
+﻿using FShop6.Areas.KhachHang.Models;
+using System.Collections.Generic;
 
 namespace FShop6.Areas.Admin.Models
 {
@@ -9,7 +9,7 @@ namespace FShop6.Areas.Admin.Models
         public string HoTen { get; set; }
         public string Email { get; set; }
         public string SDT { get; set; }
-
+        public string MatKhau { get; set; }       // ✅ Thêm mật khẩu
         public string TTHoatDong { get; set; }
         public string DiaChi { get; set; }
 

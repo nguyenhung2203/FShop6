@@ -1,0 +1,70 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/CustomerLayout.cshtml";
+    ViewData["Title"] = "Thêm Tin Tức";
+}
+@model List<FShop6.Areas.Admin.Models.TinTucViewModel>
+<main>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <!-- Breadcrumb -->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item active">Tin Tức</li>
+            </ol>
+
+            <!-- Card -->
+            <div class="card mb-3 shadow">
+                <div class="card-header bg-primary text-white">
+                    <i class="fa fa-newspaper-o"></i> Thêm tin tức mới
+                </div>
+
+                <div class="card-body">
+                    @using (Html.BeginForm("ThemTinTuc", "QuanLyTinTuc", FormMethod.Post, new { enctype = "multipart/form-data"}))
+                    {
+                        <div class="form-group">
+                            <label asp-for="TieuDe">Tiêu đề</label>
+                            <input name="TieuDe" class="form-control" placeholder="Nhập tiêu đề" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="MoTaNgan">Mô tả ngắn</label>
+                            <textarea name="MoTaNgan" class="form-control" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="NoiDung">Nội dung</label>
+                            <textarea name="NoiDung" class="form-control" rows="6" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="AnhDaiDien">Hình ảnh đại diện</label>
+                            <input name="AnhDaiDien" type="file" class="form-control-file" />
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="TrangThai">Trạng thái</label>
+                            <select name="TrangThai" class="form-control">
+                                <option value="Hiển thị">Hiển thị</option>
+                                <option value="Ẩn">Ẩn</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group text-right">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-plus"></i> Thêm
+                            </button>
+                           
+                        </div>
+                     }
+                </div>
+
+                <div class="card-footer small text-muted">
+                    Quản lý tin tức cho website bán hàng
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
