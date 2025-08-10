@@ -1,4 +1,4 @@
-﻿using FShop6.Areas.KhachHang.Models;
+using FShop6.Areas.KhachHang.Models;
 using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
 using FShop6.CauHinh;
@@ -12,11 +12,12 @@ namespace FShop6.Areas.KhachHang.Controllers
     [Area("KhachHang")]
     public class TaiKhoanController : BaseController
     {
+        private readonly ISanPhamYeuThichServices _yeuThichService; 
         private readonly AppDbContext _context;
         private readonly IKhachHangService _khachHangService;
         private readonly ILogger<TaiKhoanController> _logger;
         private readonly ITaiKhoanServices _taiKhoanServices;
-        public TaiKhoanController(IHeaderServices headerServices, AppDbContext context, IKhachHangService khachHangService, ILogger<TaiKhoanController> logger, ITaiKhoanServices taiKhoanServices)
+        public TaiKhoanController(IHeaderServices headerServices, AppDbContext context, IKhachHangService khachHangService, ILogger<TaiKhoanController> logger, ITaiKhoanServices taiKhoanServices, ISanPhamYeuThichServices yeuThichService)
              : base(headerServices)
         {
             _taiKhoanServices = taiKhoanServices;
@@ -24,8 +25,15 @@ namespace FShop6.Areas.KhachHang.Controllers
             _khachHangService = khachHangService;
             _logger = logger;
             _taiKhoanServices = taiKhoanServices;
+             _yeuThichService = yeuThichService;
         }
-        int maNguoiDung = 0;
+        
+        public async Task<IActionResult> SanPhamYeuThich()
+        {
+            int maNguoiDung = 5; // test cứng
+            var model = await _yeuThichService.LayDanhSach(maNguoiDung);
+            return View(model);
+        }
 
         // Đổi mật khẩu (từ OTP)
         [HttpPost]
@@ -251,7 +259,6 @@ namespace FShop6.Areas.KhachHang.Controllers
                 ThoiGianTao = DateTime.Now,
                 NgayCapNhat = DateTime.Now
             };
-
             _context.NguoiDung.Add(nguoiDungMoi);
             _context.SaveChanges();
 

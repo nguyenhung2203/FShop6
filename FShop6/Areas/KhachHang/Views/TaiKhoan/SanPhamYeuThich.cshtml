@@ -1,15 +1,17 @@
-﻿@{
+﻿@model List<FShop6.Areas.KhachHang.Models.SanPhamYeuThichViewModel>
+@{
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Sản phẩm yêu thích";
 }
+
 <main class="main">
     <!--=============== BREADCRUMB ===============-->
     <section class="breadcrumb">
         <ul class="breadcrumb__list flex container">
-            <li><a href="index.html" class="breadcrumb__link">Trang chủ</a></li>
-            <li><span class="breadcrumb__link"></span>></li>
+            <li><a asp-area="KhachHang" asp-controller="TrangChu" asp-action="Index" class="breadcrumb__link">Trang chủ</a></li>
+            <li><span class="breadcrumb__link">></span></li>
             <li><span class="breadcrumb__link">Sản phẩm</span></li>
-            <li><span class="breadcrumb__link"></span>></li>
+            <li><span class="breadcrumb__link">></span></li>
             <li><span class="breadcrumb__link">Danh sách yêu thích</span></li>
         </ul>
     </section>
@@ -29,27 +31,51 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <img src="./assets//img/product-1-2.jpg"
-                                 alt=""
-                                 class="table__img" />
-                        </td>
-                        <td>
-                            <h3 class="table__title">
-                                J.Crew Mercantile Women's Short-Sleeve
-                            </h3>
-                            <p class="table__description">
-                                Lorem ipsum dolor sit amet consectetur.
-                            </p>
-                        </td>
-                        <td>
-                            <span class="table__price">$110</span>
-                        </td>
-                        <td><span class="table__stock">Còn hàng</span></td>
-                        <td><a href="#" class="btn btn--sm">Thêm vào giỏ hàng</a></td>
-                        <td><i class="fi fi-rs-trash table__trash"></i></td>
-                    </tr>                 
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var sp in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="~/images/@sp.HinhAnh"
+                                         alt="@sp.TenSanPham"
+                                         class="table__img" />
+                                </td>
+                                <td>
+                                    <h3 class="table__title">@sp.TenSanPham</h3>
+                                    <p class="table__description">@sp.MoTaNgan</p>
+                                </td>
+                                <td>
+                                    <span class="table__price">@sp.GiaBan.ToString("C")</span>
+                                </td>
+                                <td>
+                                    <span class="table__stock">
+                                        @(sp.ConHang ? "Còn hàng" : "Hết hàng")
+                                    </span>
+                                </td>
+                                <td>
+                                    <form asp-action="Them" method="post">
+                                        <input type="hidden" name="maSanPham" value="@sp.MaSanPham" />
+                                        <button type="submit" class="btn btn--sm">Thêm vào giỏ hàng</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form asp-area="KhachHang" asp-controller="TaiKhoan" asp-action="Xoa" method="post">
+                                        <input type="hidden" name="maSanPham" value="@sp.MaSanPham" />
+                                        <button type="submit" class="table__trash">
+                                            <i class="fi fi-rs-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">Chưa có sản phẩm yêu thích nào</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
