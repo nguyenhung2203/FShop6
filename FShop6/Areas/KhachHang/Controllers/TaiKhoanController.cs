@@ -1,4 +1,4 @@
-﻿using FShop6.Areas.KhachHang.Models;
+using FShop6.Areas.KhachHang.Models;
 using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
 using FShop6.CauHinh;
@@ -117,6 +117,7 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             try
             {
+                maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
                 bool ketQua = _taiKhoanServices.HuyDonHang(maDonHang, maNguoiDung, noiDungHuy);
                 if (ketQua)
                 {
@@ -202,11 +203,6 @@ namespace FShop6.Areas.KhachHang.Controllers
                     TempData["LoaiThongBao"] = "warning";
                 }
             }
-            catch (SqlException ex)
-            {
-                TempData["ThongBao"] = "Có lỗi xảy ra Database: " + ex.Message;
-                TempData["LoaiThongBao"] = "error";
-            }
             catch (Exception ex)
             {
                 TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
@@ -242,33 +238,62 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 TaiKhoan = model.TaiKhoan.Trim(),
                 MatKhau = model.MatKhau.Trim(),
-                HoTen = "Khách " + model.TaiKhoan,            // Tên tạm
-                Email = model.TaiKhoan + "@gmail.com",         // Email tạm dựa trên tài khoản
-                SoDienThoai = "0000000000",                   // Số điện thoại tạm
-                DiaChi = "Chưa cập nhật",                     // Địa chỉ tạm
+                HoTen = "",            // Tên tạm
+                Email = "",         // Email tạm dựa trên tài khoản
+                SoDienThoai = "",                   // Số điện thoại tạm
+                DiaChi = "",                     // Địa chỉ tạm
                 TTHoatDong = "Hoạt động",
                 TenVaiTro = "Khách hàng",
                 ThoiGianTao = DateTime.Now,
                 NgayCapNhat = DateTime.Now
             };
-
             _context.NguoiDung.Add(nguoiDungMoi);
             _context.SaveChanges();
-
-            TempData["ThongBao"] = "Đăng ký thành công! Vui lòng đăng nhập.";
-            TempData["LoaiThongBao"] = "success";
             return RedirectToAction("DangNhap");
         }
 
         // GET: Quên mật khẩu
         [HttpGet]
         public IActionResult QuenMatKhau() => View();      
-        public IActionResult SanPhamYeuThich()
+        public async Task<IActionResult> SanPhamYeuThich()
         {
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
             if (maNguoiDung <= 0)
                 return RedirectToAction("DangNhap");
 
-            return View(); 
+            var model = await _taiKhoanServices.LayDanhSach(maNguoiDung);
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult XoaYeuThich(int maSanPham)
+        {
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            if (maNguoiDung <= 0)
+            {
+                TempData["ThongBao"] = "Vui lòng đăng nhập để xóa sản phẩm yêu thích.";
+                TempData["LoaiThongBao"] = "warning";
+                return RedirectToAction("DangNhap");
+            }
+            try
+            {
+                bool ketQua = _taiKhoanServices.XoaSanPham(maNguoiDung, maSanPham);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Xóa sản phẩm yêu thích thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Không tìm thấy sản phẩm trong danh sách yêu thích.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            return RedirectToAction("SanPhamYeuThich", "TaiKhoan");
         }
 
         [HttpPost]

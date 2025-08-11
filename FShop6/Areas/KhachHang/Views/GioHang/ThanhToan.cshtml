@@ -105,9 +105,9 @@
                         <table class="order__table">
                             <thead>
                                 <tr>
-                                    <th style="width: 60px;">Ảnh</th>
-                                    <th style="width: 140px;">Tên sản phẩm</th>
-                                    <th style="width: 60px;">SL</th>
+                                    <th style="width: 88px;">Ảnh</th>
+                                    <th style="width: 148px;">Tên sản phẩm</th>
+                                    <th style="width: 55px;">SL</th>
                                     <th style="width: 80px;">Giá</th>
                                 </tr>
                             </thead>
@@ -124,7 +124,7 @@
                                     {
                                         <tr class="product-row">
                                             <td>
-                                                <img src="@sanPham.HinhAnhDaiDien" alt="@sanPham.TenSanPham" class="order__img" />
+                                                <img src="@("/KhachHang/images/" + @sanPham.HinhAnhDaiDien)" alt="@sanPham.TenSanPham" class="order__img" />
                                             </td>
                                             <td>
                                                 <h3 class="product-name">@sanPham.TenSanPham</h3>

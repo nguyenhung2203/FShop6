@@ -51,7 +51,7 @@
                                         @Html.HiddenFor(m => m.GioHang[i].MaBienThe)
                                     </td>
                                     <td>
-                                        <img src="@item.HinhAnhDaiDien" alt="@item.TenSanPham" class="table__img" />
+                                        <img src="@("/KhachHang/images/" + @item.HinhAnhDaiDien)" alt="@item.TenSanPham" class="table__img" />
                                         @Html.HiddenFor(m => m.GioHang[i].HinhAnhDaiDien)
                                     </td>
                                     <td>

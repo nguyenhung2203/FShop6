@@ -1,15 +1,17 @@
-﻿@{
+﻿@model List<FShop6.Areas.KhachHang.Models.SPYeuThichModel>
+@{
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Sản phẩm yêu thích";
 }
+
 <main class="main">
     <!--=============== BREADCRUMB ===============-->
     <section class="breadcrumb">
         <ul class="breadcrumb__list flex container">
-            <li><a href="index.html" class="breadcrumb__link">Trang chủ</a></li>
-            <li><span class="breadcrumb__link"></span>></li>
+            <li><a asp-area="KhachHang" asp-controller="TrangChu" asp-action="Index" class="breadcrumb__link">Trang chủ</a></li>
+            <li><span class="breadcrumb__link">></span></li>
             <li><span class="breadcrumb__link">Sản phẩm</span></li>
-            <li><span class="breadcrumb__link"></span>></li>
+            <li><span class="breadcrumb__link">></span></li>
             <li><span class="breadcrumb__link">Danh sách yêu thích</span></li>
         </ul>
     </section>
@@ -29,27 +31,55 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <img src="./assets//img/product-1-2.jpg"
-                                 alt=""
-                                 class="table__img" />
-                        </td>
-                        <td>
-                            <h3 class="table__title">
-                                J.Crew Mercantile Women's Short-Sleeve
-                            </h3>
-                            <p class="table__description">
-                                Lorem ipsum dolor sit amet consectetur.
-                            </p>
-                        </td>
-                        <td>
-                            <span class="table__price">$110</span>
-                        </td>
-                        <td><span class="table__stock">Còn hàng</span></td>
-                        <td><a href="#" class="btn btn--sm">Thêm vào giỏ hàng</a></td>
-                        <td><i class="fi fi-rs-trash table__trash"></i></td>
-                    </tr>                 
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var sp in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@("/KhachHang/images/" + @sp.SanPham.HinhAnhDaiDien)"
+                                         alt="@sp.SanPham.TenSanPham"
+                                         class="table__img" />
+                                </td>
+                                <td>
+                                    <h3 class="table__title">@sp.SanPham.TenSanPham</h3>
+                                    @* <p class="table__description">@sp.SanPham.MoTaNgan</p> *@
+                                </td>
+                                <td>
+                                    <span class="table__price">@string.Format("{0:N0}₫", sp.SanPham.BienThes.First().GiaBan)</span>
+                                </td>
+                                <td>
+                                    <span class="table__stock">
+                                       @if (sp.SanPham.BienThes.Any(bt => bt.SoLuongConLai > 0))
+                                       {
+                                           <span class="in-stock">Còn hàng</span>
+                                       }
+                                       else
+                                        {
+                                           <span class="out-of-stock">Hết hàng</span>
+										}
+                                    </span>
+                                </td>
+                                <td>          
+                                    <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sp.SanPham.MaSanPham })" class="btn btn--sm">Mua ngay</a>
+                                </td>
+                                <td>
+                                    <form method="post" action="@Url.Action("XoaYeuThich", "TaiKhoan", new { area = "KhachHang" })">
+                                        <input type="hidden" name="maSanPham" value="@sp.MaSanPham" />
+                                        <button type="submit" class="table__trash">
+                                            <i class="fi fi-rs-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">Chưa có sản phẩm yêu thích nào</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

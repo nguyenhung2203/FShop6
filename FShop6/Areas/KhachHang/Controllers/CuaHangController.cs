@@ -20,7 +20,6 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             var viewModel = await _shopService.LaySanPhamDaLoc(maDanhMuc, khoangGia, loaiXapXep, trang);
 
-            // Truyền tất cả tham số vào ViewBag để view có thể sử dụng
             ViewBag.MaDanhMuc = maDanhMuc;
             ViewBag.Loai = loai;
             ViewBag.LoaiXapXep = loaiXapXep;
