@@ -12,9 +12,13 @@ namespace FShop6.Areas.Admin.Controllers
             _quanLyDonHangServices = quanLyDonHangServices;
         }
 
-        public async Task<IActionResult> QuanLyDonHang()
+        [HttpGet]
+        public async Task<IActionResult> QuanLyDonHang(string? tuKhoa, DateTime? tuNgay, DateTime? denNgay)
         {
-            var dsDonHang = await _quanLyDonHangServices.LayTatCaDonHangAsync();
+            var dsDonHang = await _quanLyDonHangServices.LayTatCaDonHangAsync(tuKhoa, tuNgay, denNgay);
+            ViewBag.TuKhoa = tuKhoa;
+            ViewBag.TuNgay = tuNgay?.ToString("yyyy-MM-dd");
+            ViewBag.DenNgay = denNgay?.ToString("yyyy-MM-dd");
             return View(dsDonHang);
         }
 

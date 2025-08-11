@@ -355,15 +355,26 @@ document.addEventListener("DOMContentLoaded", function () {
 function updateProductDetails(element) {
     // Lấy các giá trị từ thuộc tính data của thẻ <a> được click
     var maBienThe = element.getAttribute("data-id");
-    var giaBan = element.getAttribute("data-giaban");
+    var giaBan = parseInt(element.getAttribute("data-giaban"));
     var soLuong = element.getAttribute("data-soluong");
     var maSku = element.getAttribute("data-sku");
-
+    var giamGia = element.getAttribute("data-giamgia");
+    // Tính toán giảm giá
+    if (giamGia > 0) {
+        giaKhiGiam = (giaBan * (100-giamGia))/100;
+    }
     // Cập nhật thông tin sản phẩm vào các thẻ li tương ứng
     document.getElementById('nhap-so-luong').max = soLuong;
     document.getElementById('product-sku').textContent = maSku; // Hiển thị mã SKU
     document.getElementById('product-status').textContent = 'Còn ' + soLuong + ' sản phẩm'; // Hiển thị số lượng
-    document.getElementById('product-price').textContent = giaBan; // Cập nhật giá bán nếu có
+    if (giamGia > 0) {
+        document.getElementById('product-discount').textContent = giaBan.toLocaleString('vi-VN') + "đ";
+        document.getElementById('product-price').textContent = giaKhiGiam.toLocaleString('vi-VN') + "đ";
+    }
+    else {
+        document.getElementById('product-discount').textContent = '';
+        document.getElementById('product-price').textContent = giaBan.toLocaleString('vi-VN') + "đ";
+    }
 
     // Nếu có thay đổi về số lượng, cập nhật thêm số lượng vào input
     document.getElementById('hiddenMaBienThe').value = maBienThe;

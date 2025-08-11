@@ -140,9 +140,11 @@ namespace FShop6.Areas.KhachHang.Services
             {
                 MaBienThe = bienthe.MaBienThe,
                 LoaiBienThe = bienthe.LoaiBienThe,
-                GiaBan = bienthe.GiaBan.ToString("N0"),
+                GiaBan = bienthe.GiaBan.ToString(),
                 SKU = bienthe.MaSKU,
                 SoLuongTon = bienthe.SoLuongConLai, // Thêm số lượng tồn kho
+                TinhTrang = bienthe.TinhTrang,
+                GiamGia = bienthe.GiamGia, // Thêm thông tin giảm giá
                 DanhSachAnh = bienthe.AnhBienThe.Select(a => a.URL).ToList()
             }).ToList();
 

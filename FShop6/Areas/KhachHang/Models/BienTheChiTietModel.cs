@@ -20,7 +20,8 @@ namespace FShop6.Areas.KhachHang.Models
             public string GiaBan { get; set; }
             public string SKU { get; set; }
             public int SoLuongTon { get; set; } // Số lượng tồn kho của biến thể
-
+            public string TinhTrang { get; set; } // Tình trạng của biến thể (còn hàng, hết hàng, v.v.)
+            public byte GiamGia { get; set; } // Giảm giá của biến thể (nếu có)
             // Các ảnh liên quan đến biến thể
             public List<string> DanhSachAnh { get; set; } // Danh sách ảnh của biến thể
         }
