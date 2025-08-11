@@ -28,7 +28,7 @@ namespace FShop6.Areas.KhachHang.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal GiaBan { get; set; }
        
-        public int GiamGia { get; set; } = 0;
+        public byte GiamGia { get; set; } = 0;
 
         [Range(0, int.MaxValue)]
         public int SoLuongConLai { get; set; }

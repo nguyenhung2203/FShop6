@@ -230,9 +230,14 @@ namespace FShop6.Areas.Admin.Services
                     LoaiBienThe = form["LoaiBienThe"],
                     GiaBan = decimal.Parse(form["GiaBan"]),
                     GiaNhap = decimal.Parse(form["GiaNhap"]),
+                    GiamGia = byte.Parse(form["GiamGia"]),
                     TinhTrang = form["TinhTrang"],
                     SoLuongConLai = int.Parse(form["SoLuongConLai"])
                 };
+                if (bienThe.GiaBan < bienThe.GiaNhap)
+                {
+                    return KetQuaXuLy.Loi("Giá nhập không thể nhỏ hơn giá bán.");
+                }
                 _context.BienThe.Add(bienThe);
                 await _context.SaveChangesAsync();
                 Console.WriteLine(bienThe.MaBienThe);
@@ -276,6 +281,7 @@ namespace FShop6.Areas.Admin.Services
                 bienThe.LoaiBienThe = form["LoaiBienThe"];
                 bienThe.GiaBan = decimal.Parse(form["GiaBan"].ToString().Replace(",", "").Trim());
                 bienThe.GiaNhap = decimal.Parse(form["GiaNhap"].ToString().Replace(",", "").Trim());
+                bienThe.GiamGia = byte.Parse(form["GiamGia"]);
                 bienThe.TinhTrang = form["TinhTrang"];
                 bienThe.SoLuongConLai = int.Parse(form["SoLuongConLai"]);
 
