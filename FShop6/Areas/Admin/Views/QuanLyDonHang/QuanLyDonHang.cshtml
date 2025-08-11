@@ -26,19 +26,18 @@
                 <div class="col-md-6">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng...">
+                        <input id="filterSearch" type="text" class="form-control" placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng...">
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <select class="form-control">
+                    <select id="filterPayment" class="form-control">
                         <option value="">Tất cả phương thức thanh toán</option>
-                        <option value="cod">COD</option>
-                        <option value="bank">Chuyển khoản</option>
-                        <option value="momo">MoMo</option>
+                        <option value="COD">COD</option>
+                        <option value="Chuyển khoản">Chuyển khoản</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <input type="date" class="form-control">
+                    <input id="filterDate" type="date" class="form-control">
                 </div>
             </div>
         </div>
@@ -280,7 +279,7 @@
                                     <td>
                                         <small class="text-danger">@item.DonHang.GhiChu</small>
                                     </td>
-                                    <td>12/01/2024<br><small class="text-muted">09:15</small></td>
+                                    <td>@item.DonHang.NgayCapNhat.ToString("dd/MM/yyyy")<br><small class="text-muted">@item.DonHang.NgayCapNhat.ToString("HH:mm")</small></td>
                                     <td>
                                         <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#viewOrderModal"
                                         data-id="@item.DonHang.ID"
