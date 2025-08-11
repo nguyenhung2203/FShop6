@@ -50,7 +50,7 @@ app.MapControllerRoute(
 // 👉 6. Định tuyến mặc định cho ứng dụng
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=KhachHang}/{action=QuanLyKhachHang}/{id?}",
+    pattern: "{controller=QuanLyTinTuc}/{action=QuanLyTinTuc}/{id?}",
     defaults: new { area = "Admin" }
 );
 app.Run();
