@@ -19,6 +19,7 @@ namespace FShop6.Areas.Admin.Services
         public List<NguoiDungViewModel> LayDanhSachViewModel()
         {
             return _context.NguoiDung
+                   .Where(nd => nd.TenVaiTro == "Khách hàng") // 🟢 Lọc khách hàng
                 .Select(nd => new NguoiDungViewModel
                 {
                     MaNguoiDung = nd.MaNguoiDung,
@@ -63,10 +64,31 @@ namespace FShop6.Areas.Admin.Services
             var user = _context.NguoiDung.FirstOrDefault(x => x.MaNguoiDung == id);
             if (user == null) return false;
 
+            // Xóa dữ liệu trong GioHang liên quan
+            var gioHangs = _context.GioHang.Where(g => g.MaNguoiDung == id).ToList();
+            if (gioHangs.Any())
+            {
+                _context.GioHang.RemoveRange(gioHangs);
+            }
+
+            // Xóa dữ liệu trong SPYeuThich liên quan
+            var spYeuThichs = _context.SPYeuThich.Where(s => s.MaNguoiDung == id).ToList();
+            if (spYeuThichs.Any())
+            {
+                _context.SPYeuThich.RemoveRange(spYeuThichs);
+            }
+
+            // Nếu còn bảng nào khác FK tới NguoiDung thì cũng phải xóa tương tự
+
+            // Cuối cùng xóa người dùng
             _context.NguoiDung.Remove(user);
-            _context.SaveChanges(); 
+
+            _context.SaveChanges();
             return true;
         }
+
+
+
 
 
 
