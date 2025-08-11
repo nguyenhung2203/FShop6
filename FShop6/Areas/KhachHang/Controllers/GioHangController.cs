@@ -18,11 +18,8 @@ namespace FShop6.Areas.KhachHang.Controllers
         int maNguoiDung;
         public async Task<IActionResult> GioHang()
         {
-            if (maNguoiDung == 0)
-            {
-                maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
-            }
-            if (maNguoiDung < 0)
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            if (maNguoiDung <= 0)
                 return RedirectToAction("DangNhap", "TaiKhoan", new { area = "KhachHang"});
             var model = await _gioHangServices.LayGioHang(maNguoiDung);
             if (model == null)

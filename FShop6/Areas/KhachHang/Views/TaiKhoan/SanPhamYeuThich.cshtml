@@ -1,4 +1,4 @@
-﻿@model List<FShop6.Areas.KhachHang.Models.SanPhamYeuThichViewModel>
+﻿@model List<FShop6.Areas.KhachHang.Models.SPYeuThichModel>
 @{
     Layout = "~/Areas/KhachHang/Views/Shared/CustomerLayout.cshtml";
     ViewData["Title"] = "Sản phẩm yêu thích";
@@ -37,30 +37,34 @@
                         {
                             <tr>
                                 <td>
-                                    <img src="~/images/@sp.HinhAnh"
-                                         alt="@sp.TenSanPham"
+                                    <img src="@("/KhachHang/images/" + @sp.SanPham.HinhAnhDaiDien)"
+                                         alt="@sp.SanPham.TenSanPham"
                                          class="table__img" />
                                 </td>
                                 <td>
-                                    <h3 class="table__title">@sp.TenSanPham</h3>
-                                    <p class="table__description">@sp.MoTaNgan</p>
+                                    <h3 class="table__title">@sp.SanPham.TenSanPham</h3>
+                                    @* <p class="table__description">@sp.SanPham.MoTaNgan</p> *@
                                 </td>
                                 <td>
-                                    <span class="table__price">@sp.GiaBan.ToString("C")</span>
+                                    <span class="table__price">@string.Format("{0:N0}₫", sp.SanPham.BienThes.First().GiaBan)</span>
                                 </td>
                                 <td>
                                     <span class="table__stock">
-                                        @(sp.ConHang ? "Còn hàng" : "Hết hàng")
+                                       @if (sp.SanPham.BienThes.Any(bt => bt.SoLuongConLai > 0))
+                                       {
+                                           <span class="in-stock">Còn hàng</span>
+                                       }
+                                       else
+                                        {
+                                           <span class="out-of-stock">Hết hàng</span>
+										}
                                     </span>
                                 </td>
-                                <td>
-                                    <form asp-action="Them" method="post">
-                                        <input type="hidden" name="maSanPham" value="@sp.MaSanPham" />
-                                        <button type="submit" class="btn btn--sm">Thêm vào giỏ hàng</button>
-                                    </form>
+                                <td>          
+                                    <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sp.SanPham.MaSanPham })" class="btn btn--sm">Mua ngay</a>
                                 </td>
                                 <td>
-                                    <form asp-area="KhachHang" asp-controller="TaiKhoan" asp-action="Xoa" method="post">
+                                    <form method="post" action="@Url.Action("XoaYeuThich", "TaiKhoan", new { area = "KhachHang" })">
                                         <input type="hidden" name="maSanPham" value="@sp.MaSanPham" />
                                         <button type="submit" class="table__trash">
                                             <i class="fi fi-rs-trash"></i>

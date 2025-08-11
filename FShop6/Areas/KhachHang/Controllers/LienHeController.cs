@@ -23,30 +23,33 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             if (string.IsNullOrWhiteSpace(ten) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(noidung))
             {
-                ViewBag.ThongBao = "Vui lòng nhập đầy đủ thông tin.";
+                TempData["ThongBao"] = "Vui lòng nhập đầy đủ thông tin.";
+                TempData["LoaiThongBao"] = "warning";
                 return View();
             }
 
             try
             {
                 string noiDungMail = $@"
-                    <h3>Khách hàng liên hệ</h3>
-                    <p><b>Tên:</b> {ten}</p>
-                    <p><b>Email:</b> {email}</p>
-                    <p><b>Nội dung:</b><br/>{noidung}</p>
+                    Khách hàng liên hệ
+                    Tên: {ten}
+                    Email: {email}
+                    Nội dung: {noidung}
                 ";
 
                 await EmailHelper.SendEmailAsync(
-                    "taiptpk04158@gmail.com", // Gmail của bạn
+                    "hungnqpk04040@gmail.com", // Gmail của bạn
                     "Khách hàng liên hệ từ website",
                     noiDungMail
                 );
 
-                ViewBag.ThongBao = "Gửi thành công! Chúng tôi sẽ phản hồi sớm.";
+                TempData["ThongBao"] = "Gửi thành công! Chúng tôi sẽ phản hồi sớm.";
+                TempData["LoaiThongBao"] = "success";
             }
             catch (Exception ex)
             {
-                ViewBag.ThongBao = "Gửi email thất bại: " + ex.Message;
+                TempData["ThongBao"] = "Gửi email thất bại: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
             }
 
             return View();

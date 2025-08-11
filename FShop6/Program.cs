@@ -40,8 +40,7 @@ builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<ITrangChuService, TrangChuServices>();
 // 🟢 Đăng ký dịch vụ HeaderServices
 builder.Services.AddScoped<IHeaderServices, HeaderServices>();
-// 🟢 Đăng ký dịch vụ SanPhamYeuThichService
-builder.Services.AddScoped<ISanPhamYeuThichServices, SanPhamYeuThichServices>();
+// 🟢 Đăng ký dịch vụ FooterServices
 builder.Services.AddScoped<ICuaHangServices, ShopService>();
 // 🟢 Đăng ký dịch vụ TaiKhoanService
 builder.Services.AddScoped<ITaiKhoanServices, TaiKhoanServices>();

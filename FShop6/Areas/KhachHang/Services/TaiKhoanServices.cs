@@ -8,6 +8,8 @@ namespace FShop6.Areas.KhachHang.Services
     public interface ISanPhamYeuThichServices
     {
         bool ThemSanPham(int nguoiDungId, int sanPhamId);
+        Task<List<SPYeuThichModel>> LayDanhSach(int maNguoiDung);
+        bool XoaSanPham(int nguoiDungId, int sanPhamId);
     }
     public interface IHoSoServices
     {
@@ -27,9 +29,48 @@ namespace FShop6.Areas.KhachHang.Services
         {
             _context = context;
         }
+        public async Task<List<SPYeuThichModel>> LayDanhSach(int maNguoiDung)
+        {
+            return await _context.SPYeuThich
+                .Where(spyt => spyt.MaNguoiDung == maNguoiDung)
+                .Include(yt => yt.SanPham)
+                .ThenInclude(sp => sp.BienThes)
+                .Select(spyt => new SPYeuThichModel
+                {
+                    Id = spyt.Id,
+                    MaNguoiDung = spyt.MaNguoiDung,
+                    MaSanPham = spyt.MaSanPham,
+                    NgayThem = spyt.NgayThem,
+                    SanPham = new SanPhamModel
+                    {
+                        MaSanPham = spyt.SanPham.MaSanPham,
+                        TenSanPham = spyt.SanPham.TenSanPham,
+                        HinhAnhDaiDien = spyt.SanPham.HinhAnhDaiDien,
+                        BienThes = spyt.SanPham.BienThes
+                    }
+                }).ToListAsync();
+        }
+
+        public bool XoaSanPham(int nguoiDungId, int sanPhamId)
+        {
+            try
+            {
+                var yeuThich = _context.SPYeuThich.FirstOrDefault(sp => sp.MaNguoiDung == nguoiDungId && sp.MaSanPham == sanPhamId);
+                if (yeuThich != null)
+                {
+                    _context.SPYeuThich.Remove(yeuThich);
+                    _context.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch (SqlException ex)
+            {
+                return false;
+            }
+        }
         public bool ThemSanPham(int nguoiDungId, int sanPhamId)
         {
-            Console.WriteLine($"Thêm sản phẩm yêu thích: Người dùng {nguoiDungId}, Sản phẩm {sanPhamId}");
             try
             {
                 var daTonTai = KiemTraSanPhamYeuThich(nguoiDungId, sanPhamId);
@@ -122,6 +163,7 @@ namespace FShop6.Areas.KhachHang.Services
 
         public bool HuyDonHang(int donHangId, int maNguoiDung, string noiDungHuy)
         {
+            Console.WriteLine($"Hủy đơn hàng: ID {donHangId}, Người dùng {maNguoiDung}, Nội dung hủy: {noiDungHuy}");
             try
             {
                 var donHang = _context.DonHang.FirstOrDefault(dh => dh.ID == donHangId && dh.TrangThai == "Chờ xác nhận" && dh.MaNguoiDung == maNguoiDung);
@@ -153,6 +195,7 @@ namespace FShop6.Areas.KhachHang.Services
             }
             catch (SqlException ex)
             {
+                Console.WriteLine($"SQL Error: {ex.Message}");
                 return false;
             }
         }
