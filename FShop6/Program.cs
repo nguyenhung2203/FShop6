@@ -60,9 +60,13 @@ builder.Services.AddScoped<IQuanLySanPhamServices, QuanLySanPhamServices>();
 // 🟢 Đăng ký dịch vụ TinTucService
 builder.Services.AddScoped<ITinTucService, TinTucService>();
 
+// 🟢 Đăng ký dịch vụ AdminService
+builder.Services.AddScoped<IAdminService, AdminService>();
+
 // Đăng ký DichVuAIThongMinh như Scoped service
 builder.Services.AddScoped<DichVuAIThongMinh>();
 var app = builder.Build();
+
 
 if (!app.Environment.IsDevelopment())
 {

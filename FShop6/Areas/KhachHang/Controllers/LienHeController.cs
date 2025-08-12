@@ -1,16 +1,20 @@
 ﻿using FShop6.Areas.KhachHang.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace FShop6.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
     public class LienHeController : BaseController
     {
-        public LienHeController(IHeaderServices headerServices)
+        private readonly IAdminService _adminService;
+
+        // Cập nhật constructor để inject IAdminService
+        public LienHeController(IHeaderServices headerServices, IAdminService adminService)
             : base(headerServices)
         {
+            _adminService = adminService;
         }
 
         public IActionResult LienHe()
@@ -30,6 +34,9 @@ namespace FShop6.Areas.KhachHang.Controllers
 
             try
             {
+                // Lấy email admin từ database thay vì gán cứng
+                string adminEmail = await _adminService.GetAdminEmailAsync();
+
                 string noiDungMail = $@"
                     Khách hàng liên hệ
                     Tên: {ten}
@@ -38,7 +45,7 @@ namespace FShop6.Areas.KhachHang.Controllers
                 ";
 
                 await EmailHelper.SendEmailAsync(
-                    "hungnqpk04040@gmail.com", // Gmail của bạn
+                    adminEmail, // Sử dụng email từ database
                     "Khách hàng liên hệ từ website",
                     noiDungMail
                 );
