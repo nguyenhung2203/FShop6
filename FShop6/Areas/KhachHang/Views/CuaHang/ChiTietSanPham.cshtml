@@ -18,14 +18,13 @@
 	<!--=============== DETAILS ===============-->
 	<div class="details__container container grid">
 		<div class="details__group">
-			<img src="~/KhachHang/images/@Model.HinhAnhDaiDien"
-				 alt="Ảnh sản phẩm"
-				 class="details__img" />
-			<div class="details__small-images grid">
-				@foreach (var image in Model.BienThe.Where(bt => bt.SoLuongTon > 0).SelectMany(bt => bt.DanhSachAnh))
+			<div class="slider">
+				<button type="button" class="slide-btn prev" id="prev-btn">‹</button>
+				@foreach (var image in Model.BienThe.Where(bt => bt.TinhTrang != "Ngừng kinh doanh" && bt.TinhTrang != "Hết hàng" && bt.SoLuongTon > 0))
 				{
-					<img src="~/KhachHang/images/@image" alt="Ảnh sản phẩm nhỏ" class="details__small-img" />
+					<img src="~/KhachHang/images/@image.URL" alt="Ảnh sản phẩm lớn" class="details__big-img" />
 				}
+				<button type="button" class="slide-btn next" id="next-btn">›</button>
 			</div>
 		</div>
 		<div class="details__group">
@@ -58,10 +57,12 @@
 							   data-giamgia="@bienThe.GiamGia"
 							   data-soluong="@bienThe.SoLuongTon"
 							   data-sku="@bienThe.SKU"
+							   data-hinhanh="@bienThe.URL"
 							   onclick="updateProductDetails(this)">
 								@bienThe.LoaiBienThe
 							</a>
 						</li>
+						
 					}
 				</ul>
 			</div>
@@ -70,12 +71,12 @@
 				{
 					@Html.Hidden("maSanPham", Model.MaSanPham, new { id = "hiddenMaSanPham" })
 					@Html.Hidden("maBienThe", "", new { id = "hiddenMaBienThe" })
-					<input id="nhap-so-luong" type="number" name="soLuong" class="quantity" value="1" min="1" max=""/>
+					<input id="nhap-so-luong" type="number" name="soLuong" class="quantity" value="1" min="1" max="" />
 					<button type="submit" class="btn btn--sm">Thêm vào giỏ hàng</button>
 				}
-				
+
 				<form id="yeuthich" action="@Url.Action("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" })" method="post" style="margin-left: 20px;">
-					<input type="hidden" name="giaoDien" value="ok" />
+					<input type="hidden" name="giaoDien" value="chitiet" />
 					<input type="hidden" name="maSanPham" value="@Model.MaSanPham" />
 					<button type="submit" class="action__btn" aria-label="Thêm yêu thích">
 						<i class="fi fi-rs-heart"></i>
@@ -88,13 +89,12 @@
 					<span>SKU:</span> <span id="product-sku"></span>
 				</li>
 				<li class="meta__list flex">
-					<span>Tình trạng:</span> <span id="product-status"></span>
+					<span>Số lượng còn lại:</span> <span id="product-status"></span>
 				</li>
 			</ul>
 
 		</div>
 	</div>
-	</section>
 	<br />
 </main>
 
