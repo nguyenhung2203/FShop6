@@ -23,22 +23,24 @@
         <!-- Filter Section -->
         <div class="filter-section">
             <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input id="filterSearch" type="text" class="form-control" placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng...">
+                <form method="get" action="@Url.Action("QuanLyDonHang","QuanLyDonHang", new { area="Admin" })" class="row g-2 col-md-12">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input name="tuKhoa" class="form-control" placeholder="Mã đơn / Tên / SĐT" value="@ViewBag.TuKhoa" />
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <select id="filterPayment" class="form-control">
-                        <option value="">Tất cả phương thức thanh toán</option>
-                        <option value="COD">COD</option>
-                        <option value="Chuyển khoản">Chuyển khoản</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <input id="filterDate" type="date" class="form-control">
-                </div>
+                    <div class="col-md-3" style="display:flex;">
+                        <input type="date" name="tuNgay" class="form-control" value="@ViewBag.TuNgay" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" name="denNgay" class="form-control" value="@ViewBag.DenNgay" />
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100" style="margin: 0 10px;">Lọc</button>
+                        <a class="btn btn-secondary w-100" href="@Url.Action("QuanLyDonHang","QuanLyDonHang", new { area="Admin" })">Xóa</a>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -72,8 +74,8 @@
                 <button class="nav-link" id="cancelled-tab" data-toggle="tab" data-target="#cancelled" type="button"
                         role="tab">
                     <i class="fas fa-times-circle"></i>
-                    Đã hủy
-                    <span class="tab-counter">@Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đã hủy").Count()</span>
+                    Đã huỷ
+                    <span class="tab-counter">@Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đã huỷ").Count()</span>
                 </button>
             </li>
         </ul>
@@ -250,7 +252,7 @@
                 </div>
             </div>
 
-            <!-- Đã hủy -->
+            <!-- Đã huỷ -->
             <div class="tab-pane fade" id="cancelled" role="tabpanel">
                 <div class="table-responsive">
                     <table class="table table-datatables table-bordered">
@@ -265,7 +267,7 @@
                             </tr>
                         </thead>
                         <tbody style="font-size: 16px;">
-                            @foreach (var item in Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đã hủy"))
+                            @foreach (var item in Model.DSDonHang.Where(dh => dh.DonHang.TrangThai == "Đã huỷ"))
                             {
                                 <tr style="text-align: center;">
                                     <td><strong>#@item.DonHang.MaDonHang</strong></td>

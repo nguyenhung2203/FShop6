@@ -17,8 +17,7 @@ namespace FShop6.Areas.Admin.Services
     }
     public interface IQuanLySanPhamServices
     {
-        Task<QuanLySanPhamViewModel> LayDanhMuc();
-        Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync();
+        Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync(string? tuKhoa, string? trangThai);
         bool ThemDanhMuc(string TenDanhMuc);
         bool SuaDanhMucAsync(int MaDanhMuc, string TenDanhMuc);
         Task<bool> XoaDanhMucAsync(int MaDanhMuc);
@@ -41,14 +40,34 @@ namespace FShop6.Areas.Admin.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync()
+        public async Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync(string? tuKhoa, string? trangThai)
         {
-            var dsSanPham = await _context.SanPham
+            var query = _context.SanPham
                 .Include(sp => sp.DanhMuc)
                 .Include(sp => sp.BienThes)
                 .ThenInclude(bt => bt.AnhBienThe)
-                .ToListAsync();
-
+                .AsQueryable();
+            // Tìm kiếm theo từ khoá
+            if (!string.IsNullOrWhiteSpace(tuKhoa))
+            {
+                query = query.Where(sp => 
+                sp.TenSanPham.Contains(tuKhoa) ||
+                sp.DanhMuc.TenDanhMuc.Contains(tuKhoa)
+                );
+            }
+            // Lọc theo trạng thái
+            if (!string.IsNullOrWhiteSpace(trangThai))
+            {
+                if (trangThai == "Hết hàng")
+                {
+                    query = query.Where(sp => sp.BienThes.Any(bt => bt.TinhTrang == "Hết hàng"));
+                }
+                else if (trangThai == "Sắp hết hàng")
+                {
+                    query = query.Where(sp => sp.BienThes.Any(bt => bt.SoLuongConLai <= 5));
+                }
+            }
+            var dsSanPham = await query.ToListAsync();
             var sanPhamList = dsSanPham.Select(sp => new QuanLySanPhamModel
             {
                 SanPham = sp,
@@ -59,8 +78,19 @@ namespace FShop6.Areas.Admin.Services
                     dsAnh = bt.AnhBienThe.ToList()
                 }).ToList()
             }).ToList();
+            var Ds = await _context.DanhMucSP
+                .Select(dm => new DanhMucModel
+                {
+                    Id = dm.Id,
+                    TenDanhMuc = dm.TenDanhMuc,
+                }).ToListAsync();
+            var DsHienThi = new QuanLySanPhamViewModel
+            {
+                DSDanhMuc = Ds
+            };
             return new QuanLySanPhamViewModel
             {
+                DSDanhMuc = DsHienThi.DSDanhMuc,
                 SanPhamList = sanPhamList
             };
         }
@@ -384,20 +414,6 @@ namespace FShop6.Areas.Admin.Services
                 Console.WriteLine($"Lỗi khi xoá biến thể sản phẩm: {ex.Message}");
                 return KetQuaXuLy.Loi("Lỗi khi xoá biến thể sản phẩm: " + ex.Message);
             }
-        }
-        public async Task<QuanLySanPhamViewModel> LayDanhMuc()
-        {
-            var Ds = await _context.DanhMucSP
-                .Select(dm => new DanhMucModel
-                {
-                    Id = dm.Id,
-                    TenDanhMuc = dm.TenDanhMuc,
-                }).ToListAsync();
-            var DsHienThi = new QuanLySanPhamViewModel
-            {
-                DSDanhMuc = Ds
-            };
-            return DsHienThi;
         }
         public bool ThemDanhMuc(string TenDanhMuc)
         {

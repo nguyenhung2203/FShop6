@@ -1,5 +1,6 @@
 ﻿using FShop6.Areas.Admin.Services;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace FShop6.Areas.Admin.Controllers
 {
@@ -12,9 +13,12 @@ namespace FShop6.Areas.Admin.Controllers
             _quanLySanPhamServices = quanLySanPhamServices;
         }
 
-        public async Task<IActionResult> QuanLySanPham()
+        [HttpGet]
+        public async Task<IActionResult> QuanLySanPham(string? tuKhoa, string? trangThai)
         {
-            var dsSanPham = await _quanLySanPhamServices.LayTatCaSanPhamAsync();
+            var dsSanPham = await _quanLySanPhamServices.LayTatCaSanPhamAsync(tuKhoa, trangThai);
+            ViewBag.TuKhoa = tuKhoa;
+            ViewBag.TrangThai = trangThai;
             return View(dsSanPham);
         }
         [HttpPost]

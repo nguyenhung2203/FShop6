@@ -167,7 +167,7 @@ table {
     color: var(--text-color-light);
     font-size: var(--small-font-size);
     text-decoration: line-through;
-    margin-left: 2rem;
+    margin-left: 1rem;
 }
 .product__sold {
     font-size: var(--large-font-size);
@@ -6317,4 +6317,7 @@ input[type="range"] {
 .main .login-register__container {
     max-width: 600px;
     height: 600px;
+}
+.danhmuc {
+    padding:0;
 }

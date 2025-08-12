@@ -33,6 +33,7 @@
 			<h3 class="details__title">@Model.TenSanPham</h3>
 			<div class="details__price flex">
 				<span class="new__price" id="product-price"></span> <!-- Hiển thị giá cho từng biến thể -->
+				<span class="old__price" id="product-discount" style="margin-left: 10px; font-size:20px"></span>
 			</div>
 			<p class="short__description">
 				@Model.MoTa
@@ -48,12 +49,13 @@
 			<div class="details__size flex">
 				<span class="details__size-title">Loại</span>
 				<ul class="size__list" style="display: flex; flex-wrap: wrap;">
-					@foreach (var bienThe in Model.BienThe.Where(bt => bt.SoLuongTon > 0))
+					@foreach (var bienThe in Model.BienThe.Where(bt => bt.TinhTrang != "Ngừng kinh doanh" && bt.TinhTrang != "Hết hàng" && bt.SoLuongTon > 0))
 					{
 						<li style="margin: 10px;">
 							<a href="#" class="size__link"
 							   data-id="@bienThe.MaBienThe"
 							   data-giaban="@bienThe.GiaBan"
+							   data-giamgia="@bienThe.GiamGia"
 							   data-soluong="@bienThe.SoLuongTon"
 							   data-sku="@bienThe.SKU"
 							   onclick="updateProductDetails(this)">
@@ -75,8 +77,8 @@
 				<form id="yeuthich" action="@Url.Action("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" })" method="post" style="margin-left: 20px;">
 					<input type="hidden" name="giaoDien" value="ok" />
 					<input type="hidden" name="maSanPham" value="@Model.MaSanPham" />
-					<button type="submit" class="btn-heart">
-						<i class="fi fi-rs-heart table__trash"></i>
+					<button type="submit" class="action__btn" aria-label="Thêm yêu thích">
+						<i class="fi fi-rs-heart"></i>
 					</button>
 				</form>
 			</div>
