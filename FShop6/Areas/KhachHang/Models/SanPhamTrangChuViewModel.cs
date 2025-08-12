@@ -8,5 +8,7 @@
         public decimal GiaBan { get; set; }
         public string TenDanhMuc { get; set; }
         public string MoTaNgan { get; set; }
+        public byte? GiamGia { get; set; } = 0;
+        public int SoLuongDaBan { get; set; }
     }
 }

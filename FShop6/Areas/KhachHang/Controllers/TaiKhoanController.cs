@@ -105,12 +105,53 @@ namespace FShop6.Areas.KhachHang.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
         }
-
+        [HttpGet]
         public async Task<IActionResult> HoSo()
         {
-            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
-            var moDel = await _taiKhoanServices.LayThongTinHoSo(maNguoiDung);
-            return View(moDel);
+            try
+            {
+                maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+                var moDel = await _taiKhoanServices.LayThongTinHoSo(maNguoiDung);
+                return View(moDel);
+            }
+            catch (SqlException ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra Database: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+                _logger.LogError(ex, "Lỗi khi lấy thông tin hồ sơ người dùng.");
+                return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
+            }
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+                _logger.LogError(ex, "Lỗi không xác định khi lấy thông tin hồ sơ người dùng.");
+                return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
+            }
+        }
+        [HttpPost]
+        public ActionResult MuaLai(int maDonHang)
+        {
+            try
+            {
+                bool ketQua = _taiKhoanServices.MuaLai(maDonHang);
+                if (ketQua)
+                {
+                    TempData["ThongBao"] = "Mua lại đơn hàng thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }
+                else
+                {
+                    TempData["ThongBao"] = "Không thể mua lại đơn hàng.";
+                    TempData["LoaiThongBao"] = "warning";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["LoaiThongBao"] = "error";
+            }
+            return RedirectToAction("HoSo", "TaiKhoan");
         }
         [HttpPost]
         public ActionResult HuyDon(int maDonHang, string noiDungHuy)

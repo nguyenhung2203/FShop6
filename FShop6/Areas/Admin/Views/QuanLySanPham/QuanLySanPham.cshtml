@@ -418,6 +418,7 @@
                                     <th>Loại biến thể</th>
                                     <th>Giá nhập</th>
                                     <th>Giá bán</th>
+                                    <th>Giảm giá</th>
                                     <th>Số lượng còn lại</th>
                                     <th>Tình trạng</th>
                                     <th>Hình ảnh</th>
@@ -435,6 +436,16 @@
                                             <td>@bt.LoaiBienThe</td>
                                             <td>@bt.GiaNhap.ToString("N0")</td>
                                             <td>@bt.GiaBan.ToString("N0")</td>
+											<td>
+												@if (bt.GiamGia > 0)
+												{
+													<span class="badge badge-success">@bt.GiamGia.ToString("N0")%</span>
+												}
+												else
+												{
+													<span class="badge badge-secondary">Không giảm</span>
+												}
+                                            </td>
                                             <td>@bt.SoLuongConLai</td>
                                             <td><span class="badge badge-warning">@bt.TinhTrang</span></td>
                                             <td>
@@ -452,6 +463,7 @@
                                                 data-loaibienthe="@bt.LoaiBienThe"
                                                 data-gianhap="@bt.GiaNhap.ToString("N0")"
                                                 data-giaban="@bt.GiaBan.ToString("N0")"
+                                                data-giamgia="@bt.GiamGia.ToString("N0")"
                                                 data-soluongconlai="@bt.SoLuongConLai"
                                                 data-tinhtrang="@bt.TinhTrang"
                                                 data-urlanhbtcu="@bt.AnhBienThe.FirstOrDefault()?.URL"
@@ -509,6 +521,10 @@
 							<label for="price_sell_add_detail">Giá bán</label>
                             <input type="text" class="form-control mb-2" id="price_sell_add_detail" name="GiaBan" pattern="^[0-9,]+$" title="Giá phải lớn hơn hoặc bằng 0" required>
 						</div>
+                        <div class="form-group">
+                            <label for="discount_add_detail">Giảm giá (đơn vị %)</label>
+                            <input type="number" max="100" min="0" class="form-control mb-2" id="discount_add_detail" name="GiamGia" required>
+                        </div>
 						<div class="form-group">
 							<label for="quantity_add_detail">Số lượng còn lại</label>
 							<input type="number" min="0" class="form-control mb-2" id="quantity_add_detail" name="SoLuongConLai" required>
@@ -570,6 +586,10 @@
                         <div class="form-group">
                             <label for="price_sell_edit_detail">Giá bán</label>
                             <input type="text" class="form-control mb-2" id="price_sell_edit_detail" name="GiaBan" pattern="^[0-9,]+$" title="Giá phải lớn hơn hoặc bằng 0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="discount_edit_detail">Giảm giá (đơn vị %)</label>
+                            <input type="number" max="100" min="0" class="form-control mb-2" id="discount_edit_detail" name="GiamGia" required>
                         </div>
                         <div class="form-group">
                             <label for="quantity_edit_detail">Số lượng còn lại</label>

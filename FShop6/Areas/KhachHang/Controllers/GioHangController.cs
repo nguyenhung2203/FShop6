@@ -65,7 +65,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             try
             {
                 var gioCanThanhToan = model.GioHang?.Where(x => x.DuocChon).ToList();
-                if (model == null || gioCanThanhToan.Count == 0)
+                if (model == null)
                 {
                     TempData["ThongBao"] = "Không có sản phẩm nào được chọn để thanh toán.";
                     TempData["LoaiThongBao"] = "warning";
@@ -101,7 +101,7 @@ namespace FShop6.Areas.KhachHang.Controllers
         public ActionResult ThemGioHang(int maBienThe, int soLuong, int maSanPham)
         {
             int id = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
-            if (id == null || id <= 0)
+            if (id <= 0)
             {
                 TempData["ThongBao"] = "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.";
                 TempData["LoaiThongBao"] = "warning";
