@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
+using static FShop6.Areas.KhachHang.Models.BienTheChiTietModel.BienTheModel;
 
 namespace FShop6.Areas.KhachHang.Services
 {
@@ -145,7 +146,7 @@ namespace FShop6.Areas.KhachHang.Services
                 SoLuongTon = bienthe.SoLuongConLai, // Thêm số lượng tồn kho
                 TinhTrang = bienthe.TinhTrang,
                 GiamGia = bienthe.GiamGia, // Thêm thông tin giảm giá
-                DanhSachAnh = bienthe.AnhBienThe.Select(a => a.URL).ToList()
+                URL = bienthe.AnhBienThe.Select(a => a.URL).FirstOrDefault() // Lấy ảnh đầu tiên của biến thể
             }).ToList();
 
             return new BienTheChiTietModel

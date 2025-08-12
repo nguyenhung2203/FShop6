@@ -304,6 +304,7 @@ namespace FShop6.Areas.KhachHang.Controllers
                 TempData["ThongBao"] = "Có lỗi xảy ra: " + ex.Message;
                 TempData["LoaiThongBao"] = "error";
             }
+            Console.WriteLine($"Giao diện: {giaoDien}");
             if (giaoDien == "sanpham")
             {
                 return RedirectToAction("SanPham", "CuaHang", new { area = "KhachHang" });

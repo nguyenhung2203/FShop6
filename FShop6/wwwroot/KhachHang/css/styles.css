@@ -6305,3 +6305,44 @@ input[type="range"] {
     max-width: 600px;
     height: 600px;
 }
+
+/*Slider*/
+.slider {
+    position: relative;
+    display: inline-block;
+}
+
+.details__big-img {
+    display: none;
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+}
+
+    .details__big-img.active {
+        display: block;
+    }
+
+.slide-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 36px;
+    text-align: center;
+}
+
+    .slide-btn.prev {
+        left: 8px;
+    }
+
+    .slide-btn.next {
+        right: 8px;
+    }
