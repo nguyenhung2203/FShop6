@@ -37,20 +37,20 @@
                                 <p>Không tìm thấy sản phẩm</p>
                             }
                             <!-- Ví dụ dữ liệu -->
-                            @foreach (var item in Model.SanPhamList)
+                            @foreach (var item in Model.DSDanhMuc)
                             {
                                 <tr>
-                                    <td>@item.DanhMuc.TenDanhMuc</td>
+                                    <td>@item.TenDanhMuc</td>
                                     <td>
                                         <button class="btn btn-sm btn-info edit-category-btn"
-                                                data-id="@item.DanhMuc.Id"
-                                                data-ten="@item.DanhMuc.TenDanhMuc"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editCategoryModal">
+                                                data-id="@item.Id"
+                                                data-ten="@item.TenDanhMuc"
+                                                data-toggle="modal"
+                                                data-target="#editCategoryModal">
                                             <i class="fa fa-pencil"></i> Sửa
                                         </button>
 
-                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal">
+                                        <button class="btn btn-sm btn-danger delete-category-btn" data-id="@item.Id" data-toggle="modal" data-target="#deleteCategoryModal">
                                             <i class="fa fa-trash"></i> Xóa
                                         </button>
                                     </td>
@@ -130,14 +130,39 @@
                         Bạn có chắc chắn muốn xóa danh mục này không?
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
-                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-sm btn-danger">
                             <i class="fa fa-trash"></i> Xóa</button>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- Bộ lọc và tìm kiếm -->
+		<div class="filter-section">
+			<div class="row align-items-center">
+				@using (Html.BeginForm("QuanLySanPham", "QuanLySanPham", FormMethod.Get, new { @class = "row g-2 col-md-12" }))
+				{
+					<div class="col-md-4">
+						<div class="input-group">
+							<span class="input-group-text"><i class="fas fa-search"></i></span>
+							<input name="tuKhoa" class="form-control" placeholder="Tên sản phẩm, tên danh mục" value="@ViewBag.TuKhoa" />
+						</div>
+					</div>
+					<div class="col-md-3">
+                        <select class="form-control" name="trangThai">
+                            <option value="">-- Chọn tình trạng --</option>
+                            <option value="Hết hàng">Hết hàng</option>
+                            <option value="Sắp hết hàng">Sắp hết hàng</option>
+                        </select>
+					</div>
+					<div class="col-md-2 d-flex gap-2">
+						<button type="submit" class="btn btn-primary w-100" style="margin: 0 10px;">Lọc</button>
+                        <a class="btn btn-secondary w-100" href="@Url.Action("QuanLySanPham","QuanLySanPham", new { area="Admin" })">Xóa</a>
+					</div>
+				}
+			</div>
+		</div>
         <!-- Quản lý sản phẩm -->
         <div class="card mb-3">
             <div class="card-header bg-primary text-white">
@@ -173,7 +198,7 @@
                                     <td>@item.DanhMuc.TenDanhMuc</td>
                                     <td>@item.SanPham.MoTa</td>
                                     <td>
-                                        <img src="~/KhachHang/images/@item.SanPham.HinhAnhDaiDien" alt="@item.SanPham.TenSanPham" style="width:40px;height:40px;">
+                                        <img src='@Url.Content($"~/KhachHang/images/{item.SanPham.HinhAnhDaiDien}")' alt="@item.SanPham.TenSanPham" style="width:40px;height:40px;">
                                     </td>
                                     <td class="text-center">
                                         @if (item.SanPham.NoiBat)
@@ -253,7 +278,7 @@
                                     <label for="category_select_add" class="mr-2">Chọn danh mục</label>
                                     <select class="form-control" id="category_select_add" name="DanhMucID" required>
                                         <option value="">-- Chọn danh mục --</option>
-                                        @foreach (var item in Model.SanPhamList.Select(sp => sp.DanhMuc).Distinct())
+                                        @foreach (var item in Model.DSDanhMuc)
                                         {
                                             <option value="@item.Id">@item.TenDanhMuc</option>
                                         }
@@ -317,10 +342,10 @@
                                 <label for="category_select_edit" class="form-label">Danh mục</label>
                                 <select class="form-control" id="category_select_edit" name="danhMucId" required>
                                     <option value="">-- Chọn danh mục --</option>
-                                    @foreach (var item in Model.SanPhamList.Select(sp => sp.DanhMuc).Distinct())
+                                    @foreach (var item in Model.DSDanhMuc)
                                     {
                                         <option value="@item.Id">@item.TenDanhMuc</option>
-                                    })
+                                    }
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -451,9 +476,7 @@
                                             <td>
                                                 @foreach (var hinh in bt.AnhBienThe)
                                                 {
-                                                    <a href="~/KhachHang/images/@hinh.URL">
-                                                        <img src="~/KhachHang/images/@hinh.URL" alt="Hình ảnh sản phẩm" style="width: 60px; height: 60px; object-fit: cover;" />
-                                                    </a>
+                                                    <img src='@Url.Content($"~/KhachHang/images/{hinh.URL}")' alt="Hình ảnh sản phẩm" style="width: 60px; height: 60px; object-fit: cover;" />
                                                 }
                                             </td>
                                             <td>
@@ -530,18 +553,13 @@
 							<input type="number" min="0" class="form-control mb-2" id="quantity_add_detail" name="SoLuongConLai" required>
 						</div>
 						<div class="form-group">
-							<label for="status_input_add">Tình trạng</label>
-							<input list="status_options_add" class="form-control" id="status_input_add" name="TinhTrang"
-								   placeholder="Chọn hoặc nhập loại sản phẩm">
-
-							<datalist id="status_options_add">
-                                <option>Còn hàng</option>
-                                <option>Hết hàng</option>
-								<option>Ngừng kinh doanh</option>
-                                <option>Đang cập nhật</option>
-                                <option>Đã bán hết</option>
-								<option>Đang bảo trì</option>
-							</datalist>
+                            <label for="status_input_add">Tình trạng</label>
+                            <select class="form-control" id="status_input_add" name="TinhTrang" required>
+                                <option value="">-- Chọn tình trạng --</option>
+                                <option value="Còn hàng">Còn hàng</option>
+                                <option value="Hết hàng">Hết hàng</option>
+                                <option value="Ngừng kinh doanh">Ngừng kinh doanh</option>
+                            </select>
 						</div>
 						<div class="form-group">
 							<label for="details_image_add">Hình ảnh</label>
@@ -596,18 +614,13 @@
                             <input type="number" min="0" class="form-control mb-2" id="quantity_edit_detail" name="SoLuongConLai" required>
                         </div>
                         <div class="form-group">
-                            <label for="category_input_edit">Tình trạng</label>
-                            <input list="status_options_edit" class="form-control" id="status_input_edit" name="TinhTrang"
-                                   placeholder="Chọn hoặc nhập loại sản phẩm">
-
-                            <datalist id="status_options_edit">
-                                <option>Còn hàng</option>
-                                <option>Hết hàng</option>
-                                <option>Ngừng kinh doanh</option>
-                                <option>Đang cập nhật</option>
-                                <option>Đã bán hết</option>
-                                <option>Đang bảo trì</option>
-                            </datalist>
+                            <label for="status_input_edit">Tình trạng</label>
+                            <select class="form-control" id="status_input_edit" name="TinhTrang" required> 
+                                <option value="">-- Chọn tình trạng --</option>
+                                <option value="Còn hàng">Còn hàng</option>
+                                <option value="Hết hàng">Hết hàng</option>
+                                <option value="Ngừng kinh doanh">Ngừng kinh doanh</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <img id="anhBTCu" class="img-thumbnail mt-2" style="max-height: 100px;" />
