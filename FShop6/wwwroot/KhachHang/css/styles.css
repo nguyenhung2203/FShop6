@@ -167,8 +167,26 @@ table {
     color: var(--text-color-light);
     font-size: var(--small-font-size);
     text-decoration: line-through;
-    margin-left: 6rem;
+    margin-left: 2rem;
 }
+.product__sold {
+    font-size: var(--large-font-size);
+    color: #888;
+    margin: 0 0 12px 0;
+    font-style: italic;
+}
+
+    .product__sold::before {
+        font-size: 0.95rem;
+    }
+.product__sold {
+    transition: color 0.3s ease;
+}
+
+    .product__sold:hover {
+        color: #ff6600;
+    }
+
 
 .form {
     row-gap: 1rem;
@@ -1640,12 +1658,12 @@ main {
 
     .table thead tr th:nth-child(2),
     .table tbody tr td:nth-child(2) {
-        width: 400px;
+        width: 150px;
     }
 
     .table thead tr th:nth-child(3),
     .table tbody tr td:nth-child(3) {
-        width: 108px;
+        width: 200px;
     }
 
     .table thead tr th:nth-child(4),
@@ -4276,11 +4294,6 @@ input[type="range"] {
     padding-top: 1.25rem;
 }
 
-.new__price {
-    font-size: var(--h4-font-size);
-    font-weight: var(--weight-700);
-    color: var(--first-color);
-}
 
 .product-card-actions {
     display: flex;

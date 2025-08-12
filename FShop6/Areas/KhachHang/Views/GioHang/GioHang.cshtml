@@ -33,6 +33,9 @@
                     <tbody>
                         @if (Model.GioHang == null || Model.GioHang.Count == 0)
                         {
+                            <tr>
+                                <td colspan="6" class="text-center">Chưa có sản phẩm trong giỏ hàng nào</td>
+                            </tr>
                         }
                         else
                         {

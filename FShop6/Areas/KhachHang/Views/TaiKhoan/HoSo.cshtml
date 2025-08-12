@@ -53,18 +53,60 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var donHang in Model.donHangModels)
+                                @foreach (var donHang in Model.donHangModels) 
                                 {
 									var id = donHang.ID;
                                     <tr>
                                         <td>@donHang.MaDonHang</td>
                                         <td>@donHang.ThoiGianDatHang</td>
-                                        <td>@donHang.TrangThai</td>
+                                        <td id="trangthai">@donHang.TrangThai</td>
                                         <td>@string.Format("{0:N0}₫", donHang.TongTien)</td>
                                         <td>
-                                            <button type="button" class="action__btnt" onclick="showCancelModal('@id')">
-                                                    Hủy
+                                            <button type="button" id="btn" class="action__btnt" style="border-color: red" onclick="showCancelModal('@id')">
+                                                    Huỷ đơn hàng
                                              </button>
+
+                                            <button type="button" class="action__btnt" style="margin-top:10px; background-color: blue" onclick="xemChiTiet('@id')">Xem chi tiết</button>
+                                            <div id="chiTiet_@id" style="display:none;">
+                                                <p><b>Mã đơn:</b> @donHang.MaDonHang</p>
+
+                                                <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+                                                    <thead style="background:#f5f5f5;">
+                                                        <tr>
+                                                            <th style="padding:8px; border:1px solid #ddd;">Tên sản phẩm</th>
+                                                            <th style="padding:8px; border:1px solid #ddd;">Loại</th>
+                                                            <th style="padding:8px; border:1px solid #ddd;">Số lượng</th>
+                                                            <th style="padding:8px; border:1px solid #ddd;">Giá</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var sp in Model.ChiTietDonHang.Where(x => x.MaDonHang == id))
+                                                        {
+                                                            <tr>
+                                                                <td style="padding:8px; border:1px solid #ddd;">@sp.TenSanPham</td>
+                                                                <td style="padding:8px; border:1px solid #ddd;">@sp.LoaiBienThe</td>
+                                                                <td style="padding:8px; border:1px solid #ddd; text-align:center;">@sp.SoLuong</td>
+                                                                <td style="padding:8px; border:1px solid #ddd; text-align:right;">@string.Format("{0:N0}₫", sp.DonGia)</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+
+                                                <form method="post" action="@Url.Action("MuaLai", "TaiKhoan", new { area = "KhachHang" })" style="margin-top:10px;">
+                                                    <input type="hidden" name="maDonHang" value="@donHang.ID" />
+
+                                                    <span style="margin-top:10px;">
+                                                        <b>Tổng tiền:</b> @string.Format("{0:N0}₫", donHang.TongTien)
+                                                    </span>
+
+                                                    <span>
+                                                        <button type="submit" id="btnmualai" class="action__btnt" style="background-color:green; margin:10px;">
+                                                            Mua lại
+                                                        </button>
+                                                    </span>
+                                                </form>
+                                            </div>
+
                                         </td>
                                     </tr>
                                 }
@@ -185,13 +227,48 @@
             </form>
         </div>
     </div>
+    <div id="modalChiTietDon" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:20px; width:400px; border-radius:8px;">
+            <span style="cursor:pointer; float:right;" onclick="dongModal()">&times;</span>
+            <div id="noiDungModal"></div>
+        </div>
+    </div>
 </main>
 
 <script>
+        function xemChiTiet(id) {
+			console.log("Xem chi tiết đơn hàng với ID:", id);
+        const html = document.getElementById("chiTiet_" + id).innerHTML;
+        document.getElementById("noiDungModal").innerHTML = html;
+        document.getElementById("modalChiTietDon").style.display = "flex";
+        }
+
+        function dongModal() {
+            document.getElementById("modalChiTietDon").style.display = "none";
+        }
+
+        document.querySelectorAll('#trangthai').forEach((trangthai, i) => {
+        const btn = document.querySelectorAll('#btn')[i];
+        const tt = trangthai.innerText.trim();
+		const btnmualai = document.querySelectorAll('#btnmualai')[i];
+
+        if (tt === "Chờ xác nhận") {
+            btn.disabled = false;
+        } else{
+            btn.style.display = "none";
+        }
+
+        if (tt !=="Đã huỷ")
+        {
+			btnmualai.style.display = "none";
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         // Lấy tất cả các tab buttons và tab contents
         const tabButtons = document.querySelectorAll('.account__tab');
         const tabContents = document.querySelectorAll('.tab__content');
+
 
         // Xử lý khi click vào tab
         tabButtons.forEach(button => {

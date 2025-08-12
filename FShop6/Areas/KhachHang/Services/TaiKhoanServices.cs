@@ -17,6 +17,7 @@ namespace FShop6.Areas.KhachHang.Services
         bool HuyDonHang(int donHangId, int maNguoiDung, string noiDungHuy);
         bool CapNhatThongTinHoSo(NguoiDungModel nguoiDungModel);
         bool DoiMatKhau(int nguoiDungId, string matKhauCu, string matKhauMoi);
+        bool MuaLai(int maDonHang);
     }
     public interface ITaiKhoanServices : ISanPhamYeuThichServices, IHoSoServices
     {
@@ -153,24 +154,63 @@ namespace FShop6.Areas.KhachHang.Services
             var donHang = await _context.DonHang
                 .Where(dh => dh.MaNguoiDung == nguoiDungId)
                 .ToListAsync();
+
+            var chiTietDonHang = await _context.DonHang
+                 .Where(dh => dh.MaNguoiDung == nguoiDungId)
+                 .Include(dh => dh.ChiTietDonHangs) 
+                     .ThenInclude(ct => ct.BienThe) 
+                        .ThenInclude(bt => bt.SanPham)
+                 .SelectMany(dh => dh.ChiTietDonHangs.Select(ct => new ChiTietDonHangViewModel
+                 {
+                     MaDonHang = dh.ID,
+                     TenSanPham = ct.BienThe.SanPham.TenSanPham,
+                     LoaiBienThe = ct.BienThe.LoaiBienThe,
+                     SoLuong = ct.SoLuong,
+                     DonGia = ct.DonGia
+                 }))
+                 .ToListAsync();
+
+
             var hoSo = new HoSoViewModel
             {
                 nguoiDungModels = nguoiDung,
-                donHangModels = donHang
+                donHangModels = donHang,
+                ChiTietDonHang = chiTietDonHang
             };
             return hoSo;
         }
 
+        public bool MuaLai(int maDonHang)
+        {
+            try
+            {
+                Console.WriteLine($"Attempting to re-purchase order with ID: {maDonHang}");
+                var donHang = _context.DonHang.FirstOrDefault(dh => dh.ID == maDonHang && dh.TrangThai == "Đã huỷ");
+                if (donHang != null)
+                {
+                    donHang.TrangThai = "Chờ xác nhận";
+                    donHang.NgayCapNhat = DateTime.Now;
+                    _context.DonHang.Update(donHang);
+                    _context.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error: {ex.Message}");
+                return false;
+            }
+        }
         public bool HuyDonHang(int donHangId, int maNguoiDung, string noiDungHuy)
         {
-            Console.WriteLine($"Hủy đơn hàng: ID {donHangId}, Người dùng {maNguoiDung}, Nội dung hủy: {noiDungHuy}");
             try
             {
                 var donHang = _context.DonHang.FirstOrDefault(dh => dh.ID == donHangId && dh.TrangThai == "Chờ xác nhận" && dh.MaNguoiDung == maNguoiDung);
 
                 if (donHang != null)
                 {
-                    donHang.TrangThai = "Đã hủy";
+                    donHang.TrangThai = "Đã huỷ";
                     donHang.GhiChu = noiDungHuy;
                     donHang.NgayCapNhat = DateTime.Now;
                     _context.DonHang.Update(donHang);

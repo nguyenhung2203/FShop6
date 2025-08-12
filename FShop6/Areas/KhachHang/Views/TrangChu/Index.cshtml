@@ -113,13 +113,17 @@
                                         <i class="fi fi-rs-shuffle"></i>
                                     </a> *@
                                 </div>
-                                <div class="product__badge light-green">-22%</div>
+                                <div class="product__badge light-green">
+                                    @(sanPham.GiamGia > 0 ? $"-{sanPham.GiamGia}%" : "Mua ngay")
+                                </div>
+
                             </div>
                             <div class="product__content">
                                 <div class="product__content-top">
                                     <span class="product__category">@sanPham.TenDanhMuc</span>
                                     <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                                         <h3 class="product__title">@sanPham.TenSanPham</h3>
+                                        <p class="product__sold">Đã bán (@sanPham.SoLuongDaBan)</p>
                                     </a>
                                 </div>
 
@@ -137,10 +141,14 @@
                                 </div>
 
                                 <div class="product__content-bottom">
-                                    <div class="product__price flex">
-                                        <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                        <span class="old__price">10000</span>
-                                    </div>
+                                    <span class="new__price">
+                                        @string.Format("{0:N0}₫", sanPham.GiaBan * (100 - (sanPham.GiamGia ?? 0)) / 100)
+                                    </span>
+                                    @if (sanPham.GiamGia > 0)
+                                    {
+                                        <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                    }
+
                                 </div>
                             </div>
                         </div>
@@ -175,7 +183,9 @@
                                     <i class="fi fi-rs-shuffle"></i>
                                 </a> *@
                             </div>
-                            <div class="product__badge light-green">-22%</div>
+                            <div class="product__badge light-green">
+                                @(sanPham.GiamGia > 0 ? $"-{sanPham.GiamGia}%" : "HOT")
+                            </div>
                         </div>
                         <div class="product__content">
                             <div class="product__content-top">
@@ -199,10 +209,14 @@
                             </div>
 
                             <div class="product__content-bottom">
-                                <div class="product__price flex">
-                                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                    <span class="old__price">10</span>
-                                </div>
+                                <span class="new__price">
+                                    @string.Format("{0:N0}₫", sanPham.GiaBan * (100 - (sanPham.GiamGia ?? 0)) / 100)
+                                </span>
+                                @if (sanPham.GiamGia > 0)
+                                {
+                                    <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                }
+
                             </div>
                         </div>
                     </div>
@@ -265,10 +279,7 @@
                             </div>
 
                             <div class="product__content-bottom">
-                                <div class="product__price flex">
-                                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                    <span class="old__price">10</span>
-                                </div>
+                                <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
                             </div>
                         </div>
                     </div>
