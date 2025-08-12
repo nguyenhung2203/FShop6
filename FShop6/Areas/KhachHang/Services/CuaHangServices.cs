@@ -11,6 +11,7 @@ namespace FShop6.Areas.KhachHang.Services
     public interface ICuaHangServices
     {
         Task<PhanTrangSanPhamViewModel> LaySanPhamDaLoc(int? maDanhMuc, decimal? giaToiDa, int? loaiXapXep, int trang = 1, int kichThuocTrang = 8);
+        Task<int> SoLuongDaBan(int maSanPham);
     }
 
     public interface IChiTietSanPhamService
@@ -31,6 +32,13 @@ namespace FShop6.Areas.KhachHang.Services
         public ShopService(AppDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<int> SoLuongDaBan(int maSanPham)
+        {
+            return await _context.ChiTietDonHang
+                .Where(ct => ct.BienThe.SanPham.MaSanPham == maSanPham && ct.DonHang.TrangThai == "Đã giao")
+                .SumAsync(ct => ct.SoLuong);
         }
 
         public async Task<PhanTrangSanPhamViewModel> LaySanPhamDaLoc(int? maDanhMuc, decimal? giaToiDa, int? loaiXapXep, int trang = 1, int kichThuocTrang = 8)
@@ -81,7 +89,6 @@ namespace FShop6.Areas.KhachHang.Services
                 }
             }
 
-            // 5. Bây giờ mới PHÂN TRANG dựa trên câu truy vấn đã hoàn chỉnh
             var tongSoSanPham = await query.CountAsync();
             var tongSoTrang = (int)Math.Ceiling(tongSoSanPham / (double)kichThuocTrang);
 
@@ -95,9 +102,14 @@ namespace FShop6.Areas.KhachHang.Services
                     HinhAnhDaiDien = sp.HinhAnhDaiDien,
                     GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
                     MoTaNgan = sp.MoTa,
-                    TenDanhMuc = sp.DanhMuc.TenDanhMuc
+                    TenDanhMuc = sp.DanhMuc.TenDanhMuc,
+                    GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia
                 })
                 .ToListAsync();
+            foreach (var sp in danhSachSanPham)
+            {
+                sp.SoLuongDaBan = await SoLuongDaBan(sp.MaSanPham);
+            }
 
             var danhSachDanhMuc = await LayDanhMuc();
 

@@ -53,21 +53,60 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var donHang in Model.donHangModels)
+                                @foreach (var donHang in Model.donHangModels) 
                                 {
+									var id = donHang.ID;
                                     <tr>
                                         <td>@donHang.MaDonHang</td>
-                                        <td>@donHang.ThoiGianDatHang</td>
-                                        <td>@donHang.TrangThai</td>
+                                        <td>@donHang.ThoiGianDatHang.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td id="trangthai">@donHang.TrangThai</td>
                                         <td>@string.Format("{0:N0}₫", donHang.TongTien)</td>
                                         <td>
-                                            @using (Html.BeginForm("HuyDon", "TaiKhoan", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
-                                            {
-                                                @Html.Hidden("maDonHang", donHang.MaDonHang)
-                                                <button type="submit" class="action__btn" data-confirm="Bạn có chắc chắn muốn hủy đơn hàng này?">
-                                                    Hủy
-                                                </button>
-                                            }
+                                            <button type="button" id="btn" class="action__btnt" style="border-color: red" onclick="showCancelModal('@id')">
+                                                    Huỷ đơn hàng
+                                             </button>
+
+                                            <button type="button" class="action__btnt" style="margin-top:10px; background-color: #007bff" onclick="xemChiTiet('@id')">Xem chi tiết</button>
+                                            <div id="chiTiet_@id" style="display:none;">
+                                                <p><b>Mã đơn:</b> @donHang.MaDonHang</p>
+
+                                                <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+                                                    <thead style="background:#f5f5f5;">
+                                                        <tr>
+                                                            <th style="padding:8px; border:1px solid #ddd;">Tên sản phẩm</th>
+                                                            <th style="padding:8px; border:1px solid #ddd;">Loại</th>
+                                                            <th style="padding:8px; border:1px solid #ddd;">Số lượng</th>
+                                                            <th style="padding:8px; border:1px solid #ddd;">Giá</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var sp in Model.ChiTietDonHang.Where(x => x.MaDonHang == id))
+                                                        {
+                                                            <tr>
+                                                                <td style="padding:8px; text-align:left; border:1px solid #ddd;">@sp.TenSanPham</td>
+                                                                <td style="padding:8px; text-align:left; border:1px solid #ddd;">@sp.LoaiBienThe</td>
+                                                                <td style="padding:8px; text-align:center; border:1px solid #ddd;">@sp.SoLuong</td>
+                                                                <td style="padding:8px; text-align:left; border:1px solid #ddd;">@string.Format("{0:N0}₫", sp.DonGia)</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+
+                                                <form method="post" action="@Url.Action("MuaLai", "TaiKhoan", new { area = "KhachHang" })" style="margin-top:10px;">
+                                                    <input type="hidden" name="maDonHang" value="@donHang.ID" />
+
+                                                    <span style="margin-top:10px; font-size:1.125rem; color: #f36f21">
+                                                        <b>Tổng tiền:</b> @string.Format("{0:N0}₫", donHang.TongTien)
+                                                    </span>
+
+                                                    <span>
+                                                        <button type="submit" id="btnmualai" class="action__btnt" style="background-color:green; margin:10px;">
+                                                            Mua lại
+                                                        </button>
+                                                    </span>
+                                                </form>
+                                            </div>
+
                                         </td>
                                     </tr>
                                 }
@@ -144,13 +183,92 @@
             </div>
         </div>
     </section>
+
+    <div class="modal-overlay" id="cancelOrderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Hủy đơn hàng</h3>
+                <button class="modal-close" onclick="hideCancelModal()">&times;</button>
+            </div>
+
+            <form id="cancelOrderForm" action="@Url.Action("HuyDon", "TaiKhoan", new { area = "KhachHang" })" method="post">
+                <input type="hidden" id="orderCode" name="maDonHang" value="">
+                <input type="hidden" name="noiDungHuy" id="selectedReason" value="">
+
+                <div class="form-group">
+                    <label class="form-label">Vui lòng chọn lý do hủy đơn hàng:</label>
+
+                    <div class="reason-options">
+                        <div class="reason-option">
+                            <input type="radio" id="reason1" name="reasonSelect" value="Thay đổi ý định mua hàng">
+                            <label for="reason1">Thay đổi ý định mua hàng</label>
+                        </div>
+                        <div class="reason-option">
+                            <input type="radio" id="reason2" name="reasonSelect" value="Tìm thấy sản phẩm tốt hơn">
+                            <label for="reason2">Tìm thấy sản phẩm tốt hơn</label>
+                        </div>
+                        <div class="reason-option">
+                            <input type="radio" id="reason3" name="reasonSelect" value="Thời gian giao hàng quá lâu">
+                            <label for="reason3">Thời gian giao hàng quá lâu</label>
+                        </div>
+                        <div class="reason-option">
+                            <input type="radio" id="reason4" name="reasonSelect" value="Lý do khác">
+                            <label for="reason4">Lý do khác</label>
+                        </div>
+                    </div>
+
+                    <textarea id="customReason" name="noiDungHuy" class="custom-reason-input" placeholder="Vui lòng nhập lý do cụ thể..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="hideCancelModal()">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-confirm" id="confirmBtn" disabled>Xác nhận hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="modalChiTietDon" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:20px; width:600px; border-radius:8px;">
+            <span style="cursor:pointer; float:right;" onclick="dongModal()">&times;</span>
+            <div id="noiDungModal"></div>
+        </div>
+    </div>
 </main>
 
 <script>
+        function xemChiTiet(id) {
+			console.log("Xem chi tiết đơn hàng với ID:", id);
+        const html = document.getElementById("chiTiet_" + id).innerHTML;
+        document.getElementById("noiDungModal").innerHTML = html;
+        document.getElementById("modalChiTietDon").style.display = "flex";
+        }
+
+        function dongModal() {
+            document.getElementById("modalChiTietDon").style.display = "none";
+        }
+
+        document.querySelectorAll('#trangthai').forEach((trangthai, i) => {
+        const btn = document.querySelectorAll('#btn')[i];
+        const tt = trangthai.innerText.trim();
+		const btnmualai = document.querySelectorAll('#btnmualai')[i];
+
+        if (tt === "Chờ xác nhận") {
+            btn.disabled = false;
+        } else{
+            btn.style.display = "none";
+        }
+
+        if (tt !=="Đã huỷ")
+        {
+			btnmualai.style.display = "none";
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         // Lấy tất cả các tab buttons và tab contents
         const tabButtons = document.querySelectorAll('.account__tab');
         const tabContents = document.querySelectorAll('.tab__content');
+
 
         // Xử lý khi click vào tab
         tabButtons.forEach(button => {
@@ -186,5 +304,270 @@
                 targetButton.click();
             }
         }
+		// Xử lý modal hủy đơn hàng
+        const reasonRadios = document.querySelectorAll('input[name="reasonSelect"]'); 
+        const customReasonTextarea = document.getElementById('customReason');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const selectedReasonInput = document.getElementById('selectedReason');
+
+        reasonRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Cập nhật giá trị cho hidden input
+                selectedReasonInput.value = this.value;
+
+                // Hiện/ẩn textarea cho "Lý do khác"
+                if (this.value === 'Lý do khác') {
+                    customReasonTextarea.classList.add('show');
+                    customReasonTextarea.required = true;
+                } else {
+                    customReasonTextarea.classList.remove('show');
+                    customReasonTextarea.required = false;
+                    customReasonTextarea.value = '';
+                }
+
+                // Enable confirm button khi đã chọn lý do
+                updateConfirmButton();
+            });
+        });
+
+        // Xử lý thay đổi trong textarea
+        customReasonTextarea.addEventListener('input', updateConfirmButton);
+
+        function updateConfirmButton() {
+            const selectedReason = document.querySelector('input[name="reasonSelect"]:checked');
+            let canConfirm = false;
+
+            if (selectedReason) {
+                if (selectedReason.value === 'Lý do khác') {
+                    canConfirm = customReasonTextarea.value.trim().length > 0;
+                } else {
+                    canConfirm = true;
+                }
+            }
+
+            confirmBtn.disabled = !canConfirm;
+        }
+
+        // Xử lý submit form
+        document.getElementById('cancelOrderForm').addEventListener('submit', function(e) {
+            const selectedReason = document.querySelector('input[name="reasonSelect"]:checked');
+
+            if (selectedReason) {
+                if (selectedReason.value === 'Lý do khác') {
+                    selectedReasonInput.value = customReasonTextarea.value.trim();
+                } else {
+                    selectedReasonInput.value = selectedReason.value;
+                }
+            }
+
+            // Để form submit bình thường - xóa e.preventDefault()
+            // Form sẽ được gửi đến server
+        });
+
+        // Xử lý khi click outside modal để đóng
+        document.getElementById('cancelOrderModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideCancelModal();
+            }
+        });
     });
+
+    // Hiển thị modal
+    function showCancelModal(orderCode) {
+        console.log('Mã đơn hàng nhận được:', orderCode);
+        document.getElementById('orderCode').value = orderCode;
+        document.getElementById('cancelOrderModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Ẩn modal
+    function hideCancelModal() {
+        document.getElementById('cancelOrderModal').classList.remove('show');
+        document.body.style.overflow = '';
+
+        // Reset form
+        document.getElementById('cancelOrderForm').reset();
+        document.getElementById('customReason').classList.remove('show');
+        document.getElementById('selectedReason').value = '';
+        document.getElementById('confirmBtn').disabled = true;
+    }
 </script>
+
+<style>
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+        .modal-overlay.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+    .modal-content {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        width: 90%;
+        max-width: 450px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.show .modal-content {
+        transform: scale(1);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #999;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .reason-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .reason-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .reason-option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .reason-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .reason-option label {
+            cursor: pointer;
+            margin: 0;
+            flex: 1;
+        }
+
+    .custom-reason-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 80px;
+        display: none;
+    }
+
+        .custom-reason-input.show {
+            display: block;
+        }
+
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+
+    .btn-cancel {
+        background-color: #f5f5f5;
+        color: #333;
+    }
+
+        .btn-cancel:hover {
+            background-color: #e5e5e5;
+        }
+
+    .btn-confirm {
+        background-color: #dc3545;
+        color: white;
+    }
+
+        .btn-confirm:hover {
+            background-color: #c82333;
+        }
+
+        .btn-confirm:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+    /* Demo table button */
+    .action__btnt {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .action__btnt:hover {
+            background-color: #c82333;
+        }
+</style>

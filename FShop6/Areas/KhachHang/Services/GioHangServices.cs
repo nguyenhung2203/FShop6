@@ -104,6 +104,12 @@ namespace FShop6.Areas.KhachHang.Services
 
         public bool ThanhToan(GioHangViewModel sanPham)
         {
+            Console.WriteLine("Bắt đầu quá trình thanh toán...");
+            if (sanPham == null || sanPham.GioHang == null || !sanPham.GioHang.Any())
+            {
+                Console.WriteLine("Không có sản phẩm nào trong giỏ hàng để thanh toán.");
+                return false;
+            }
             var gioHang = sanPham.GioHang.ToList();
             var diaChi = sanPham.DiaChi;
             string diaChiChiTiet;
@@ -125,9 +131,15 @@ namespace FShop6.Areas.KhachHang.Services
             }
             try
             {
+                var maDonHang = "DH" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                var maDonHangTonTai = _context.DonHang.Any(dh => dh.MaDonHang == maDonHang);
+                if (maDonHangTonTai)
+                {
+                    maDonHang = "DH" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                }
                 var donHang = new DonHangModel
                 {
-                    MaDonHang = Guid.NewGuid().ToString(),
+                    MaDonHang = maDonHang,
                     MaNguoiDung = sanPham.MaNguoiDung,
                     DiaChiGiaoHang = diaChiChiTiet,
                     PhuongThucThanhToan = phuongThucThanhToan,

@@ -27,11 +27,15 @@
                         <i class="fi fi-rs-shuffle"></i>
                     </a> *@
                 </div>
+                <div class="product__badge light-green">
+                    @(sanPham.GiamGia > 0 ? $"-{sanPham.GiamGia}%" : "Mua ngay")
+                </div>
             </div>
             <div class="product__content">
                 <span class="product__category">@sanPham.TenDanhMuc</span>
                 <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                     <h3 class="product__title">@sanPham.TenSanPham</h3>
+                    <p class="product__sold">Đã bán (@sanPham.SoLuongDaBan)</p>
                 </a>
                 <div class="product__content-middle">
                     @* <div class="product__rating">
@@ -48,8 +52,13 @@
             </div>
             <div class="product__content-bottom">
                 <div class="product__price flex shop">
-                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                    <span class="old__price">100000</span>
+                    <span class="new__price">
+                        @string.Format("{0:N0}₫", sanPham.GiaBan * (100 - (sanPham.GiamGia ?? 0)) / 100)
+                    </span>
+                    @if (sanPham.GiamGia > 0)
+                    {
+                        <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                    }
                 </div>
             </div>
         </div>

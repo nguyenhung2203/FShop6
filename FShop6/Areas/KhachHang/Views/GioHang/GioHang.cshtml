@@ -33,6 +33,9 @@
                     <tbody>
                         @if (Model.GioHang == null || Model.GioHang.Count == 0)
                         {
+                            <tr>
+                                <td colspan="6" class="text-center">Chưa có sản phẩm trong giỏ hàng nào</td>
+                            </tr>
                         }
                         else
                         {
@@ -51,7 +54,7 @@
                                         @Html.HiddenFor(m => m.GioHang[i].MaBienThe)
                                     </td>
                                     <td>
-                                        <img src="@item.HinhAnhDaiDien" alt="@item.TenSanPham" class="table__img" />
+                                        <img src="@("/KhachHang/images/" + @item.HinhAnhDaiDien)" alt="@item.TenSanPham" class="table__img" />
                                         @Html.HiddenFor(m => m.GioHang[i].HinhAnhDaiDien)
                                     </td>
                                     <td>

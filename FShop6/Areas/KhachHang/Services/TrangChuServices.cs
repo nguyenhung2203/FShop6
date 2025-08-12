@@ -8,6 +8,7 @@ namespace FShop6.Areas.KhachHang.Services
     public interface ITrangChuService
     {
         Task<TrangChuViewModel> LayDuLieuTrangChuDataAsync();
+        Task<int> SoLuongDaBan(int maSanPham);
     }
 
     public class TrangChuServices : ITrangChuService
@@ -17,17 +18,26 @@ namespace FShop6.Areas.KhachHang.Services
         {
             _context = context;
         }
-
+        public async Task<int> SoLuongDaBan(int maSanPham)
+        {
+            return await _context.ChiTietDonHang
+                .Where(ct => ct.BienThe.SanPham.MaSanPham == maSanPham && ct.DonHang.TrangThai == "Đã giao")
+                .SumAsync(ct => ct.SoLuong);
+        }
         public async Task<TrangChuViewModel> LayDuLieuTrangChuDataAsync()
         {
             // Danh mục phổ biến
-            var danhMucPhoBien = await _context.DanhMucSP
-                .OrderBy(d => d.TenDanhMuc)
-                .Take(10)
-                .Select(d => new DanhMucModel
+            var danhMucPhoBien = await _context.ChiTietDonHang
+                .Include(ct => ct.BienThe)
+                    .ThenInclude(bt => bt.SanPham)
+                        .ThenInclude(sp => sp.DanhMuc)
+                .GroupBy(ct => ct.BienThe.SanPham.DanhMuc.TenDanhMuc)
+                .OrderByDescending(g => g.Sum(x => x.SoLuong))
+                .Take(6)
+                .Select(g => new DanhMucModel
                 {
-                    Id = d.Id,
-                    TenDanhMuc = d.TenDanhMuc
+                    Id = g.First().BienThe.SanPham.DanhMuc.Id,
+                    TenDanhMuc = g.Key
                 }).ToListAsync();
 
             // Sản phẩm nổi bật
@@ -40,10 +50,14 @@ namespace FShop6.Areas.KhachHang.Services
                     TenSanPham = sp.TenSanPham,
                     HinhAnhDaiDien = sp.HinhAnhDaiDien,
                     MoTaNgan = sp.MoTa,
-                    GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan
+                    GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
+                    GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia
                 })
                 .ToListAsync();
-
+            foreach (var sp in sanPhamNoiBat)
+            {
+                sp.SoLuongDaBan = await SoLuongDaBan(sp.MaSanPham);
+            }
 
             // Sản phẩm mới (dựa trên ngày tạo)
             var sanPhamMoi = await _context.SanPham
@@ -56,10 +70,10 @@ namespace FShop6.Areas.KhachHang.Services
                 TenSanPham = sp.TenSanPham,
                 HinhAnhDaiDien = sp.HinhAnhDaiDien,
                 GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).Select(bt => bt.GiaBan).FirstOrDefault(),
-                MoTaNgan = sp.MoTa
+                MoTaNgan = sp.MoTa,
+                GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia
             })
             .ToListAsync();
-
 
             // Sản phẩm phổ biến (dựa trên số lượng đã bán)
             var sanPhamPhoBien = await _context.ChiTietDonHang
@@ -76,7 +90,12 @@ namespace FShop6.Areas.KhachHang.Services
                     HinhAnhDaiDien = g.First().BienThe.SanPham.HinhAnhDaiDien,
                     GiaBan = g.First().BienThe.GiaBan,
                     MoTaNgan = g.First().BienThe.SanPham.MoTa,
+                    GiamGia = g.First().BienThe.GiamGia
                 }).ToListAsync();
+            foreach (var sp in sanPhamPhoBien)
+            {
+                sp.SoLuongDaBan = await SoLuongDaBan(sp.MaSanPham);
+            }
             //Tin tức
             var tinTuc = await _context.TinTuc
                 .OrderByDescending(t => t.ThoiGianTao)
