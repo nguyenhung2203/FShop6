@@ -61,7 +61,7 @@
             <div class="swiper-wrapper">
                 @foreach (var dm in Model.DanhMucPhoBien)
                 {
-                    <a href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = dm.Id, loai = 1 })" class="category__item swiper-slide">
+                    <a href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang", maDanhMuc = dm.Id, loai = 1 })" class="danhmuc category__item swiper-slide">
                         <img src=""
                              alt=""
                              class="category__img" />
@@ -102,13 +102,13 @@
                                     @* <a href="#" class="action__btn cart__btn" aria-label="Thêm giỏ hàng">
                                         <i class="fi fi-rs-shopping-bag-add"></i>
                                     </a> *@
-                                    @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                    @* @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
                                     {
                                         @Html.Hidden("maSanPham", sanPham.MaSanPham)
                                         <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
                                             <i class="fi fi-rs-heart"></i>
                                         </button>
-                                    }
+                                    } *@
                                     @* <a href="#" class="action__btn" aria-label="Mua ngay">
                                         <i class="fi fi-rs-shuffle"></i>
                                     </a> *@
@@ -141,15 +141,25 @@
                                 </div>
 
                                 <div class="product__content-bottom">
-                                    <span class="new__price">
-                                        @string.Format("{0:N0}₫", sanPham.GiaBan * (100 - (sanPham.GiamGia ?? 0)) / 100)
-                                    </span>
-                                    @if (sanPham.GiamGia > 0)
-                                    {
-                                        <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                    }
+                                    <div>
+                                        <span class="new__price">
+                                            @string.Format("{0:N0}₫", sanPham.GiaBan * (100 - (sanPham.GiamGia ?? 0)) / 100)
+                                        </span>
+                                        @if (sanPham.GiamGia > 0)
+                                        {
+                                            <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                        }
+                                    </div>
 
+                                    @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                    {
+                                        @Html.Hidden("maSanPham", sanPham.MaSanPham)
+                                        <button type="submit" class="action__btn" aria-label="Yêu thích">
+                                            <i class="fi fi-rs-heart"></i>
+                                        </button>
+                                    }
                                 </div>
+
                             </div>
                         </div>
                     }
@@ -172,13 +182,13 @@
                                 @* <a href="#" class="action__btn cart__btn" aria-label="Thêm giỏ hàng">
                                     <i class="fi fi-rs-shopping-bag-add"></i>
                                 </a> *@
-                                @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                @* @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
                                 {
                                     @Html.Hidden("maSanPham", sanPham.MaSanPham)
                                     <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
                                         <i class="fi fi-rs-heart"></i>
                                     </button>
-                                }
+                                } *@
                                 @* <a href="#" class="action__btn" aria-label="Mua ngay">
                                     <i class="fi fi-rs-shuffle"></i>
                                 </a> *@
@@ -192,6 +202,7 @@
                                 <span class="product__category">@sanPham.TenDanhMuc</span>
                                 <a href="@Url.Action("ChiTietSanPham", "CuaHang", new { area = "KhachHang", maSanPham = sanPham.MaSanPham })">
                                     <h3 class="product__title">@sanPham.TenSanPham</h3>
+                                    <p class="product__sold">Đã bán (@sanPham.SoLuongDaBan)</p>
                                 </a>
                             </div>
 
@@ -209,14 +220,23 @@
                             </div>
 
                             <div class="product__content-bottom">
-                                <span class="new__price">
-                                    @string.Format("{0:N0}₫", sanPham.GiaBan * (100 - (sanPham.GiamGia ?? 0)) / 100)
-                                </span>
-                                @if (sanPham.GiamGia > 0)
-                                {
-                                    <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                }
+                                <div>
+                                    <span class="new__price">
+                                        @string.Format("{0:N0}₫", sanPham.GiaBan * (100 - (sanPham.GiamGia ?? 0)) / 100)
+                                    </span>
+                                    @if (sanPham.GiamGia > 0)
+                                    {
+                                        <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                    }
+                                </div>
 
+                                @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                {
+                                    @Html.Hidden("maSanPham", sanPham.MaSanPham)
+                                    <button type="submit" class="action__btn" aria-label="Yêu thích">
+                                        <i class="fi fi-rs-heart"></i>
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -244,13 +264,13 @@
                                 @* <a href="#" class="action__btn cart__btn" aria-label="Thêm giỏ hàng">
                                     <i class="fi fi-rs-shopping-bag-add"></i>
                                 </a> *@
-                                @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                @* @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
                                 {
                                     @Html.Hidden("maSanPham", sanPham.MaSanPham)
                                     <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
                                         <i class="fi fi-rs-heart"></i>
                                     </button>
-                                }
+                                } *@
                                 @* <a href="#" class="action__btn" aria-label="Mua ngay">
                                     <i class="fi fi-rs-shuffle"></i>
                                 </a> *@
@@ -279,7 +299,17 @@
                             </div>
 
                             <div class="product__content-bottom">
-                                <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                <div>
+                                    <span class="new__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
+                                </div>
+
+                                @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
+                                {
+                                    @Html.Hidden("maSanPham", sanPham.MaSanPham)
+                                    <button type="submit" class="action__btn" aria-label="Yêu thích">
+                                        <i class="fi fi-rs-heart"></i>
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -403,3 +433,21 @@
         </div>
     </section> *@
 </main>
+<style>
+    .product__content-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* hoặc flex-end nếu muốn dồn về bên phải */
+        gap: 8px; /* khoảng cách giữa các phần tử */
+    }
+
+        .product__content-bottom .new__price,
+        .product__content-bottom .old__price {
+            display: inline-block;
+        }
+
+        .product__content-bottom form {
+            margin: 0; /* bỏ khoảng cách form mặc định */
+        }
+
+</style>
