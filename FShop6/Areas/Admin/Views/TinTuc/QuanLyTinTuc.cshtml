@@ -258,10 +258,8 @@
 
 @section Scripts {
     <script>
-        // base path cho ảnh
         var imageBase = '@Url.Content("~/KhachHang/images/")';
 
-        // Fill edit modal
         $('#editTinTucModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var id = button.data('matintuc');
@@ -283,19 +281,6 @@
                 $('#edit_image_preview').hide();
             }
         });
-
-        // Fill delete modal
-        $('#deleteTinTucModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var id = button.data('matintuc');
-            $('#delete_ma_tin_tuc').val(id);
-        });
-
-        // Show full content
-        $('#viewContentModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var noidung = button.data('noidung') ?? "";
-            $('#fullContentContainer').text(noidung);
-        });
     </script>
 }
+
