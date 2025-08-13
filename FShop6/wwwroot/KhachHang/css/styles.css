@@ -6365,3 +6365,11 @@ input[type="range"] {
         right: 8px;
     }
 
+
+.favorite-active {
+    background-color: rgb(243, 111, 33);
+}
+
+    .favorite-active i {
+        color: var(--container-color);
+    }

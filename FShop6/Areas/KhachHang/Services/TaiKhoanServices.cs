@@ -10,6 +10,7 @@ namespace FShop6.Areas.KhachHang.Services
         bool ThemSanPham(int nguoiDungId, int sanPhamId);
         Task<List<SPYeuThichModel>> LayDanhSach(int maNguoiDung);
         bool XoaSanPham(int nguoiDungId, int sanPhamId);
+        bool KiemTraSanPhamYeuThich(int nguoiDungId, int sanPhamId);
     }
     public interface IHoSoServices
     {
