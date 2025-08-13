@@ -78,7 +78,7 @@
 				<form id="yeuthich" action="@Url.Action("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" })" method="post" style="margin-left: 20px;">
 					<input type="hidden" name="giaoDien" value="chitiet" />
 					<input type="hidden" name="maSanPham" value="@Model.MaSanPham" />
-					<button type="submit" class="action__btn" aria-label="Thêm yêu thích">
+					<button type="submit" class="action__btn @(ViewBag.IsFavorite ? "favorite-active" : "")" aria-label="Thêm yêu thích">
 						<i class="fi fi-rs-heart"></i>
 					</button>
 				</form>
