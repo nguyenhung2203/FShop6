@@ -74,8 +74,8 @@ public class QuanLyTinTucService : IQuanLyTinTucService
                     File.Delete(pathOld);
             }
 
-            // Lưu ảnh mới
-            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + Path.GetFileName(AnhDaiDien.FileName);
+            // Lưu ảnh mới (không kèm thời gian)
+            var fileName = Path.GetFileName(AnhDaiDien.FileName);
             var folderPath = Path.Combine(_webHostEnvironment.WebRootPath, "KhachHang", "images");
             var filePath = Path.Combine(folderPath, fileName);
 
@@ -92,6 +92,7 @@ public class QuanLyTinTucService : IQuanLyTinTucService
 
         return (true, "Sửa tin tức thành công.");
     }
+
     public async Task<(bool ThanhCong, string ThongBao)> Xoa(int maTinTuc)
     {
         try
