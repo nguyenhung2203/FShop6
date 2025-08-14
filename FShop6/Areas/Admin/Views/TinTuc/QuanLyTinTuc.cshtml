@@ -1,0 +1,286 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/CustomerLayout.cshtml";
+    ViewData["Title"] = "Quản Lý Tin Tức";
+}
+@model List<FShop6.Areas.Admin.Models.TinTucViewModel>
+
+<main>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+
+            <!-- Thông báo -->
+            @if (TempData["ThongBao"] != null)
+            {
+                var loaiThongBao = TempData["LoaiThongBao"]?.ToString() ?? "info";
+                var alertClass = loaiThongBao == "success" ? "alert-success" :
+                loaiThongBao == "warning" ? "alert-warning" :
+                loaiThongBao == "error" ? "alert-danger" : "alert-info";
+
+                <div class="alert @alertClass alert-dismissible fade show" role="alert">
+                    @TempData["ThongBao"]
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            }
+
+            <!-- Breadcrumb -->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item active">Tin Tức</li>
+            </ol>
+
+            <!-- Card -->
+            <div class="card mb-3 shadow">
+                <div class="card-header bg-primary text-white">
+                    <i class="fa fa-newspaper-o"></i> Quản lý tin tức
+                    <a href="#" class="text-white" data-toggle="modal" data-target="#addTinTucModal"
+                       style="float:right; margin-right:10px;">
+                        <i class="fa fa-plus"></i> Thêm tin tức mới
+                    </a>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Tiêu đề</th>
+                                    <th>Mô tả ngắn</th>
+                                    <th>Nội dung (tóm tắt)</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thời gian tạo</th>
+                                    <th>Ngày cập nhật</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.TieuDe</td>
+                                        <td>@item.MoTaNgan</td>
+                                        <td>
+                                            @{
+                                                var text = item.NoiDung ?? "";
+                                                var summary = text.Length > 150 ? text.Substring(0, 150) + "..." : text;
+                                            }
+                                            <span>@summary</span>
+                                            <br />
+                                            <button type="button" class="btn btn-sm btn-link p-0" data-toggle="modal" data-target="#viewContentModal"
+                                                    data-noidung="@item.NoiDung">
+                                                Xem đầy đủ
+                                            </button>
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.HinhAnhDaiDien))
+                                            {
+                                                <img src="@Url.Content($"~/KhachHang/images/{item.HinhAnhDaiDien}")" style="width:60px;height:60px;object-fit:cover;" />
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.TrangThai) && item.TrangThai.Trim().ToLower().Contains("hiển"))
+                                            {
+                                                <span class="badge badge-success">Hiển thị</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-secondary">Ẩn</span>
+                                            }
+                                        </td>
+                                        <td>@(item.ThoiGianTao == DateTime.MinValue ? "" : item.ThoiGianTao.ToString("dd/MM/yyyy HH:mm"))</td>
+                                        <td>@(item.NgayCapNhat == DateTime.MinValue ? "" : item.NgayCapNhat.ToString("dd/MM/yyyy HH:mm"))</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-info"
+                                                    data-toggle="modal" data-target="#editTinTucModal"
+                                                    data-matintuc="@item.MaTinTuc"
+                                                    data-tieude="@Html.Raw(item.TieuDe?.Replace("\"", "&quot;"))"
+                                                    data-motangan="@Html.Raw(item.MoTaNgan?.Replace("\"", "&quot;"))"
+                                                    data-noidung="@Html.Raw(item.NoiDung?.Replace("\"", "&quot;"))"
+                                                    data-trangthai="@item.TrangThai"
+                                                    data-hinhanh="@item.HinhAnhDaiDien">
+                                                <i class="fa fa-pencil"></i> Sửa
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                    data-toggle="modal" data-target="#deleteTinTucModal"
+                                                    data-matintuc="@item.MaTinTuc">
+                                                <i class="fa fa-trash"></i> Xóa
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Thêm tin tức -->
+            <div class="modal fade" id="addTinTucModal" tabindex="-1" aria-labelledby="addTinTucLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    @using (Html.BeginForm("ThemTinTuc", "QuanLyTinTuc", FormMethod.Post, new { enctype = "multipart/form-data", @class = "modal-content" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title">Thêm tin tức mới</h5>
+                            <button class="close text-white" type="button" data-dismiss="modal">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Tiêu đề</label>
+                                <input name="TieuDe" class="form-control" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Mô tả ngắn</label>
+                                <textarea name="MoTaNgan" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Nội dung</label>
+                                <textarea name="NoiDung" class="form-control" rows="8" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Hình ảnh</label>
+                                <input type="file" name="AnhDaiDien" class="form-control-file" />
+                            </div>
+                            <div class="form-group">
+                                <label>Trạng thái</label>
+                                <select name="TrangThai" class="form-control">
+                                    <option value="Hiển thị">Hiển thị</option>
+                                    <option value="Ẩn">Ẩn</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-success">Thêm</button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Modal Sửa tin tức -->
+            <div class="modal fade" id="editTinTucModal" tabindex="-1" aria-labelledby="editTinTucLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    @using (Html.BeginForm("SuaTinTuc", "QuanLyTinTuc", FormMethod.Post, new { enctype = "multipart/form-data", @class = "modal-content" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="MaTinTuc" id="edit_ma_tin_tuc" />
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title">Sửa tin tức</h5>
+                            <button class="close text-white" type="button" data-dismiss="modal">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Tiêu đề</label>
+                                <input name="TieuDe" id="edit_tieu_de" class="form-control" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Mô tả ngắn</label>
+                                <textarea name="MoTaNgan" id="edit_mo_ta_ngan" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Nội dung</label>
+                                <textarea name="NoiDung" id="edit_noi_dung" class="form-control" rows="8" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Ảnh hiện tại</label>
+                                <div>
+                                    <img id="edit_image_preview" src="" alt="Ảnh" style="max-height:120px; display:none; margin-bottom:8px;" />
+                                </div>
+                                <label>Thay ảnh (nếu muốn)</label>
+                                <input type="file" name="AnhDaiDien" class="form-control-file" />
+                            </div>
+                            <div class="form-group">
+                                <label>Trạng thái</label>
+                                <select name="TrangThai" id="edit_trang_thai" class="form-control">
+                                    <option value="Hiển thị">Hiển thị</option>
+                                    <option value="Ẩn">Ẩn</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Modal Xóa tin tức -->
+            <div class="modal fade" id="deleteTinTucModal" tabindex="-1" role="dialog" aria-labelledby="deleteTinTucLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    @using (Html.BeginForm("XoaTinTuc", "QuanLyTinTuc", FormMethod.Post, new { @class = "modal-content" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="MaTinTuc" id="delete_ma_tin_tuc">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">Xóa tin tức</h5>
+                            <button class="close text-white" type="button" data-dismiss="modal">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Bạn có chắc chắn muốn xóa tin tức này không?
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                            <button class="btn btn-danger" type="submit">Xóa</button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Modal xem nội dung đầy đủ -->
+            <div class="modal fade" id="viewContentModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info text-white">
+                            <h5 class="modal-title">Nội dung chi tiết</h5>
+                            <button class="close text-white" type="button" data-dismiss="modal"><span>×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="fullContentContainer" style="white-space:pre-wrap;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        var imageBase = '@Url.Content("~/KhachHang/images/")';
+
+        $('#editTinTucModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('matintuc');
+            var tieude = button.data('tieude') ?? "";
+            var motangan = button.data('motangan') ?? "";
+            var noidung = button.data('noidung') ?? "";
+            var trangthai = button.data('trangthai') ?? "";
+            var hinhanh = button.data('hinhanh') ?? "";
+
+            $('#edit_ma_tin_tuc').val(id);
+            $('#edit_tieu_de').val(tieude);
+            $('#edit_mo_ta_ngan').val(motangan);
+            $('#edit_noi_dung').val(noidung);
+            $('#edit_trang_thai').val(trangthai);
+
+            if (hinhanh) {
+                $('#edit_image_preview').attr('src', imageBase + hinhanh).show();
+            } else {
+                $('#edit_image_preview').hide();
+            }
+        });
+    </script>
+}
+
