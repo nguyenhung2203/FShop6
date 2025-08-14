@@ -24,8 +24,7 @@ namespace FShop6.Areas.KhachHang.Controllers
             ViewBag.TongSoSanPhamYeuThich = header.TongYeuThich;
             ViewBag.MaNguoiDung = maNguoiDung;
             ViewBag.TenNguoiDung = header.HoTen;
-
-            await next(); 
+            await next();
         }
     }
 }

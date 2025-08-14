@@ -43,7 +43,8 @@ namespace FShop6.Areas.KhachHang.Services
                     HinhAnhDaiDien = x.BienThe.SanPham.HinhAnhDaiDien,
                     GiaBan = x.BienThe.GiaBan,
                     SoLuong = x.SoLuong,
-                    LoaiBienThe = x.BienThe.LoaiBienThe
+                    LoaiBienThe = x.BienThe.LoaiBienThe,
+                    SoLuongTon = x.BienThe.SoLuongConLai
                 }).ToListAsync();
             var diaChi = await _context.NguoiDung.Where(nd => nd.MaNguoiDung == maNguoiDung).FirstOrDefaultAsync();
             return new GioHangViewModel

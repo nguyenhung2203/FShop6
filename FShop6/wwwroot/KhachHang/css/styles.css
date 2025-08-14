@@ -1653,12 +1653,12 @@ main {
 
     .table thead tr th:nth-child(1),
     .table tbody tr td:nth-child(1) {
-        width: 216px;
+        width: 150px;
     }
 
     .table thead tr th:nth-child(2),
     .table tbody tr td:nth-child(2) {
-        width: 150px;
+        width: 200px;
     }
 
     .table thead tr th:nth-child(3),
@@ -1668,12 +1668,12 @@ main {
 
     .table thead tr th:nth-child(4),
     .table tbody tr td:nth-child(4) {
-        width: 220px;
+        width: 180px;
     }
 
     .table thead tr th:nth-child(5),
     .table tbody tr td:nth-child(5) {
-        width: 200px;
+        width: 180px;
     }
 
     .table thead tr th:nth-child(6),
@@ -2249,12 +2249,12 @@ main {
 
     .table thead tr th:nth-child(4),
     .table tbody tr td:nth-child(4) {
-        width: 220px;
+        width: 180px;
     }
 
     .table thead tr th:nth-child(5),
     .table tbody tr td:nth-child(5) {
-        width: 160px;
+        width: 180px;
     }
 
     .table thead tr th:nth-child(6),
@@ -3853,7 +3853,6 @@ input[type="range"] {
 
 /* Styling cho header checkbox */
 .table thead th:first-child {
-    display: flex;
     align-items: center;
     justify-content: flex-start;
     padding: 12px 8px;
@@ -3923,7 +3922,7 @@ input[type="range"] {
     position: relative;
     background: linear-gradient(135deg, var(--first-color) 0%, #ff8c42 100%);
     overflow: hidden;
-    min-height: 50vh;
+    min-height: 69vh;
     display: flex;
     align-items: center;
 }
@@ -6373,3 +6372,9 @@ input[type="range"] {
     .favorite-active i {
         color: var(--container-color);
     }
+
+.fi-rs-heart {
+    display: flex; /* Kích hoạt flexbox */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+}
