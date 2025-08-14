@@ -7,8 +7,9 @@ namespace FShop6.Areas.KhachHang.Services
 {
     public interface ITrangChuService
     {
-        Task<TrangChuViewModel> LayDuLieuTrangChuDataAsync();
+        Task<TrangChuViewModel> LayDuLieuTrangChuDataAsync(int maNguoiDung);
         Task<int> SoLuongDaBan(int maSanPham);
+        Task<bool> TinhTrangYeuThich(int maSanPham, int maNguoiDung);
     }
 
     public class TrangChuServices : ITrangChuService
@@ -24,7 +25,12 @@ namespace FShop6.Areas.KhachHang.Services
                 .Where(ct => ct.BienThe.SanPham.MaSanPham == maSanPham && ct.DonHang.TrangThai == "Đã giao")
                 .SumAsync(ct => ct.SoLuong);
         }
-        public async Task<TrangChuViewModel> LayDuLieuTrangChuDataAsync()
+        public async Task<bool> TinhTrangYeuThich(int maSanPham, int maNguoiDung)
+        {
+            return await _context.SPYeuThich
+                .AnyAsync(yt => yt.MaSanPham == maSanPham && yt.MaNguoiDung == maNguoiDung);
+        }
+        public async Task<TrangChuViewModel> LayDuLieuTrangChuDataAsync(int maNguoiDung)
         {
             // Danh mục phổ biến
             var danhMucPhoBien = await _context.ChiTietDonHang
@@ -51,12 +57,13 @@ namespace FShop6.Areas.KhachHang.Services
                     HinhAnhDaiDien = sp.HinhAnhDaiDien,
                     MoTaNgan = sp.MoTa,
                     GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
-                    GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia
+                    GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia,
                 })
                 .ToListAsync();
             foreach (var sp in sanPhamNoiBat)
             {
                 sp.SoLuongDaBan = await SoLuongDaBan(sp.MaSanPham);
+                sp.TinhTrangYeuThich = await TinhTrangYeuThich(sp.MaSanPham, maNguoiDung);
             }
 
             // Sản phẩm mới (dựa trên ngày tạo)
@@ -74,6 +81,10 @@ namespace FShop6.Areas.KhachHang.Services
                 GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia
             })
             .ToListAsync();
+            foreach (var sp in sanPhamMoi)
+            {
+                sp.TinhTrangYeuThich = await TinhTrangYeuThich(sp.MaSanPham, maNguoiDung);
+            }
 
             // Sản phẩm phổ biến (dựa trên số lượng đã bán)
             var sanPhamPhoBien = await _context.ChiTietDonHang
@@ -95,6 +106,7 @@ namespace FShop6.Areas.KhachHang.Services
             foreach (var sp in sanPhamPhoBien)
             {
                 sp.SoLuongDaBan = await SoLuongDaBan(sp.MaSanPham);
+                sp.TinhTrangYeuThich = await TinhTrangYeuThich(sp.MaSanPham, maNguoiDung);
             }
             //Tin tức
             var tinTuc = await _context.TinTuc
@@ -108,22 +120,6 @@ namespace FShop6.Areas.KhachHang.Services
                     NoiDung = t.NoiDung,
                     ThoiGianTao = t.ThoiGianTao
                 }).ToListAsync();
-            // Sản phẩm theo danh mục
-            var sanPhamTheoDanhMuc = await _context.SanPham
-            .Include(sp => sp.DanhMuc)
-            .GroupBy(sp => sp.DanhMuc.TenDanhMuc)
-            .Take(4)
-            .Select(group => new DanhMucSanPhamViewModel
-            {
-                TenDanhMuc = group.Key,
-                SanPhams = group.Take(3).Select(sp => new SanPhamTrangChuViewModel
-                {
-                    MaSanPham = sp.MaSanPham,
-                    TenSanPham = sp.TenSanPham,
-                    HinhAnhDaiDien = sp.HinhAnhDaiDien,
-                    GiaBan = sp.BienThes.FirstOrDefault().GiaBan
-                }).ToList()
-            }).ToListAsync();
 
             // Trả về ViewModel tổng hợp
             return new TrangChuViewModel
@@ -132,8 +128,7 @@ namespace FShop6.Areas.KhachHang.Services
                 SanPhamNoiBat = sanPhamNoiBat,
                 SanPhamMoi = sanPhamMoi,
                 SanPhamPhoBien = sanPhamPhoBien,
-                TinTuc = tinTuc,
-                DanhMucSanPhamHienThi = sanPhamTheoDanhMuc,
+                TinTuc = tinTuc
             };
         }
     }

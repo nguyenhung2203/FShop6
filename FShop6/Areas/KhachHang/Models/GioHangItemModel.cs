@@ -9,6 +9,7 @@
         public decimal GiaBan { get; set; }
         public int SoLuong { get; set; }
         public string? LoaiBienThe { get; set; }
+        public int SoLuongTon { get; set; }
     }
 
     public class DiaChiViewModel

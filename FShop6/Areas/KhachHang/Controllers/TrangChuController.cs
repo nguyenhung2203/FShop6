@@ -17,7 +17,8 @@ namespace FShop6.Areas.KhachHang.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = await _trangChuService.LayDuLieuTrangChuDataAsync();
+            int maNguoiDung = HttpContext.Session.GetInt32("MaNguoiDung") ?? 0;
+            var model = await _trangChuService.LayDuLieuTrangChuDataAsync(maNguoiDung);
             return View(model);
         }
     }

@@ -10,5 +10,6 @@
         public string MoTaNgan { get; set; }
         public byte? GiamGia { get; set; } = 0;
         public int SoLuongDaBan { get; set; }
+        public bool TinhTrangYeuThich { get; set; } = false;
     }
 }
