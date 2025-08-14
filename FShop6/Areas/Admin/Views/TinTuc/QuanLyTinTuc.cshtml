@@ -78,7 +78,11 @@
                                         <td>
                                             @if (!string.IsNullOrEmpty(item.HinhAnhDaiDien))
                                             {
-                                                <img src="@Url.Content($"~/KhachHang/images/{item.HinhAnhDaiDien}")" style="width:60px;height:60px;object-fit:cover;" />
+                                                var anhList = item.HinhAnhDaiDien.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                                                foreach (var anh in anhList)
+                                                {
+                                                    <img src="@Url.Content($"~/KhachHang/images/{anh}")" style="width:60px;height:60px;object-fit:cover;margin-right:4px;" />
+                                                }
                                             }
                                         </td>
                                         <td>
@@ -144,8 +148,8 @@
                                 <textarea name="NoiDung" class="form-control" rows="8" required></textarea>
                             </div>
                             <div class="form-group">
-                                <label>Hình ảnh</label>
-                                <input type="file" name="AnhDaiDien" class="form-control-file" />
+                                <label>Hình ảnh (có thể chọn nhiều)</label>
+                                <input type="file" name="AnhDaiDien" class="form-control-file" multiple />
                             </div>
                             <div class="form-group">
                                 <label>Trạng thái</label>
@@ -191,11 +195,9 @@
                             </div>
                             <div class="form-group">
                                 <label>Ảnh hiện tại</label>
-                                <div>
-                                    <img id="edit_image_preview" src="" alt="Ảnh" style="max-height:120px; display:none; margin-bottom:8px;" />
-                                </div>
-                                <label>Thay ảnh (nếu muốn)</label>
-                                <input type="file" name="AnhDaiDien" class="form-control-file" />
+                                <div id="edit_image_preview" style="display:none; margin-bottom:8px;"></div>
+                                <label>Thay ảnh (nếu muốn, có thể chọn nhiều)</label>
+                                <input type="file" name="AnhDaiDien" class="form-control-file" multiple />
                             </div>
                             <div class="form-group">
                                 <label>Trạng thái</label>
@@ -262,12 +264,12 @@
 
         $('#editTinTucModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
-            var id = button.data('matintuc');
-            var tieude = button.data('tieude') ?? "";
-            var motangan = button.data('motangan') ?? "";
-            var noidung = button.data('noidung') ?? "";
-            var trangthai = button.data('trangthai') ?? "";
-            var hinhanh = button.data('hinhanh') ?? "";
+            var id = button.data('matintuc') || "";
+            var tieude = button.data('tieude') || "";
+            var motangan = button.data('motangan') || "";
+            var noidung = button.data('noidung') || "";
+            var trangthai = button.data('trangthai') || "";
+            var hinhanh = button.data('hinhanh') || "";
 
             $('#edit_ma_tin_tuc').val(id);
             $('#edit_tieu_de').val(tieude);
@@ -276,11 +278,27 @@
             $('#edit_trang_thai').val(trangthai);
 
             if (hinhanh) {
-                $('#edit_image_preview').attr('src', imageBase + hinhanh).show();
+                var images = hinhanh.split(';');
+                var html = '';
+                for (var i = 0; i < images.length; i++) {
+                    html += '<img src="' + imageBase + images[i] + '" style="max-height:120px; margin-right:4px;">';
+                }
+                $('#edit_image_preview').html(html).show();
             } else {
                 $('#edit_image_preview').hide();
             }
         });
+
+        $('#deleteTinTucModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('matintuc') || "";
+            $('#delete_ma_tin_tuc').val(id);
+        });
+
+        $('#viewContentModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var noidung = button.data('noidung') || "";
+            $('#fullContentContainer').text(noidung);
+        });
     </script>
 }
-
