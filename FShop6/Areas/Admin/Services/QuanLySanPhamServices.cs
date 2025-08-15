@@ -67,7 +67,7 @@ namespace FShop6.Areas.Admin.Services
                     query = query.Where(sp => sp.BienThes.Any(bt => bt.SoLuongConLai <= 5));
                 }
             }
-            var dsSanPham = await query.ToListAsync();
+            var dsSanPham = await query.OrderByDescending(sp => sp.NgayTao).ToListAsync();
             var sanPhamList = dsSanPham.Select(sp => new QuanLySanPhamModel
             {
                 SanPham = sp,
