@@ -2,6 +2,7 @@
 using FShop6.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FShop6.Areas.KhachHang.Services
 {
@@ -10,10 +11,11 @@ namespace FShop6.Areas.KhachHang.Services
         bool ThemSanPham(int nguoiDungId, int sanPhamId);
         Task<List<SPYeuThichModel>> LayDanhSach(int maNguoiDung);
         bool XoaSanPham(int nguoiDungId, int sanPhamId);
+        bool KiemTraSanPhamYeuThich(int nguoiDungId, int sanPhamId);
     }
     public interface IHoSoServices
     {
-        Task<HoSoViewModel> LayThongTinHoSo(int nguoiDungId);
+        Task<HoSoViewModel> LayThongTinHoSo(int nguoiDungId, int trang = 1, int kichThuocTrang = 4);
         bool HuyDonHang(int donHangId, int maNguoiDung, string noiDungHuy);
         bool CapNhatThongTinHoSo(NguoiDungModel nguoiDungModel);
         bool DoiMatKhau(int nguoiDungId, string matKhauCu, string matKhauMoi);
@@ -75,6 +77,7 @@ namespace FShop6.Areas.KhachHang.Services
             try
             {
                 var daTonTai = KiemTraSanPhamYeuThich(nguoiDungId, sanPhamId);
+                var spyeuThich = _context.SPYeuThich.FirstOrDefault(sp => sp.MaNguoiDung == nguoiDungId && sp.MaSanPham == sanPhamId);
                 if (!daTonTai)
                 {
                     var yeuThich = new SPYeuThichModel
@@ -87,6 +90,11 @@ namespace FShop6.Areas.KhachHang.Services
                     _context.SaveChanges();
                     return true;
                 }
+                else
+                {
+                    _context.SPYeuThich.Remove(spyeuThich);
+                    _context.SaveChanges();
+                }    
                 return false;
             }
             catch (SqlException ex)
@@ -137,7 +145,7 @@ namespace FShop6.Areas.KhachHang.Services
             }
         }
 
-        public async Task<HoSoViewModel> LayThongTinHoSo(int nguoiDungId)
+        public async Task<HoSoViewModel> LayThongTinHoSo(int nguoiDungId, int trang = 1, int kichThuocTrang = 4)
         {
             var nguoiDung = await _context.NguoiDung
                 .Where(nd => nd.MaNguoiDung == nguoiDungId)
@@ -150,10 +158,7 @@ namespace FShop6.Areas.KhachHang.Services
                     DiaChi = nd.DiaChi
                 })
                 .FirstOrDefaultAsync();
-
-            var donHang = await _context.DonHang
-                .Where(dh => dh.MaNguoiDung == nguoiDungId)
-                .ToListAsync();
+        
 
             var chiTietDonHang = await _context.DonHang
                  .Where(dh => dh.MaNguoiDung == nguoiDungId)
@@ -169,13 +174,29 @@ namespace FShop6.Areas.KhachHang.Services
                      DonGia = ct.DonGia
                  }))
                  .ToListAsync();
+            var tongSoSanPham = await _context.DonHang.CountAsync(dh => dh.MaNguoiDung == nguoiDungId);
+            Console.WriteLine($"Total products for user {nguoiDungId}: {tongSoSanPham}");
+            var tongSoTrang = (int)Math.Ceiling(tongSoSanPham / (double)kichThuocTrang);
+            if (tongSoTrang< 1)
+            {
+                tongSoTrang = 1; 
+            }
 
+            var donHang = await _context.DonHang
+               .Where(dh => dh.MaNguoiDung == nguoiDungId)            
+               .OrderByDescending(dh => dh.ThoiGianDatHang)
+               .Skip((trang - 1) * kichThuocTrang)
+               .Take(kichThuocTrang)
+               .ToListAsync();
 
             var hoSo = new HoSoViewModel
             {
                 nguoiDungModels = nguoiDung,
                 donHangModels = donHang,
-                ChiTietDonHang = chiTietDonHang
+                ChiTietDonHang = chiTietDonHang,
+                TrangHienTai = trang,
+                TongSoTrang = tongSoTrang,
+
             };
             return hoSo;
         }

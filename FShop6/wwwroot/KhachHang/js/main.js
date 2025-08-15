@@ -352,37 +352,77 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-function updateProductDetails(element) {
-    // Lấy các giá trị từ thuộc tính data của thẻ <a> được click
-    var maBienThe = element.getAttribute("data-id");
-    var giaBan = parseInt(element.getAttribute("data-giaban"));
-    var soLuong = element.getAttribute("data-soluong");
-    var maSku = element.getAttribute("data-sku");
-    var giamGia = element.getAttribute("data-giamgia");
-    // Tính toán giảm giá
-    if (giamGia > 0) {
-        giaKhiGiam = (giaBan * (100-giamGia))/100;
-    }
-    // Cập nhật thông tin sản phẩm vào các thẻ li tương ứng
-    document.getElementById('nhap-so-luong').max = soLuong;
-    document.getElementById('product-sku').textContent = maSku; // Hiển thị mã SKU
-    document.getElementById('product-status').textContent = 'Còn ' + soLuong + ' sản phẩm'; // Hiển thị số lượng
-    if (giamGia > 0) {
-        document.getElementById('product-discount').textContent = giaBan.toLocaleString('vi-VN') + "đ";
-        document.getElementById('product-price').textContent = giaKhiGiam.toLocaleString('vi-VN') + "đ";
-    }
-    else {
-        document.getElementById('product-discount').textContent = '';
-        document.getElementById('product-price').textContent = giaBan.toLocaleString('vi-VN') + "đ";
+(function () {
+    const duongDanCoSo = '/KhachHang/images/';
+
+    // --- SLIDER ---
+    let danhSachAnhLon = [];
+    let chiSoHienTai = 0;
+
+    function hienThiSlide(chiSo) {
+        if (!danhSachAnhLon.length) return;
+        danhSachAnhLon.forEach((img, i) => img.classList.toggle('active', i === chiSo));
+        chiSoHienTai = chiSo;
     }
 
-    // Nếu có thay đổi về số lượng, cập nhật thêm số lượng vào input
-    document.getElementById('hiddenMaBienThe').value = maBienThe;
-}
-window.onload = function () {
-    // Chọn thẻ <a> đầu tiên
-    var firstLink = document.querySelector('.size__list a');
-    if (firstLink) {
-        firstLink.click(); // Mô phỏng việc click vào thẻ <a> đầu tiên
+    function hienThiSlideTheoTenFile(tenFile) {
+        if (!tenFile) return;
+
+        const viTri = danhSachAnhLon.findIndex(img => img.getAttribute('src').endsWith(tenFile));
+        if (viTri >= 0) {
+            hienThiSlide(viTri);
+        }
     }
-}
+
+    function ganNutChuyenSlide() {
+        document.getElementById('prev-btn')?.addEventListener('click', () => {
+            hienThiSlide((chiSoHienTai - 1 + danhSachAnhLon.length) % danhSachAnhLon.length);
+        });
+        document.getElementById('next-btn')?.addEventListener('click', () => {
+            hienThiSlide((chiSoHienTai + 1) % danhSachAnhLon.length);
+        });
+    }
+
+    // --- CẬP NHẬT THEO BIẾN THỂ ---
+    // Gộp logic cập nhật giá/sku/tồn + chuyển ảnh
+    window.updateProductDetails = function (element) {
+        var maBienThe = element.getAttribute("data-id");
+        var giaBan = parseInt(element.getAttribute("data-giaban"));
+        var soLuong = element.getAttribute("data-soluong");
+        var maSku = element.getAttribute("data-sku");
+        var giamGia = parseInt(element.getAttribute("data-giamgia")) || 0;
+        var hinhAnh = element.getAttribute("data-hinhanh");
+
+        // Tính giá & hiển thị
+        document.getElementById('nhap-so-luong').max = soLuong;
+        document.getElementById('product-sku').textContent = maSku;
+        document.getElementById('product-status').textContent = 'Còn ' + soLuong + ' sản phẩm';
+
+        if (giamGia > 0) {
+            var giaKhiGiam = (giaBan * (100 - giamGia)) / 100;
+            document.getElementById('product-discount').textContent = giaBan.toLocaleString('vi-VN') + "đ";
+            document.getElementById('product-price').textContent = giaKhiGiam.toLocaleString('vi-VN') + "đ";
+        } else {
+            document.getElementById('product-discount').textContent = '';
+            document.getElementById('product-price').textContent = giaBan.toLocaleString('vi-VN') + "đ";
+        }
+        document.getElementById('hiddenMaBienThe').value = maBienThe;
+
+        // Chuyển slide theo ảnh của biến thể
+        hienThiSlideTheoTenFile(hinhAnh);
+    };
+
+    // --- KHỞI TẠO ---
+    window.addEventListener('load', function () {
+        danhSachAnhLon = Array.from(document.querySelectorAll('.details__big-img'));
+        if (!danhSachAnhLon.length) return;
+
+        // Hiển thị ảnh đầu tiên
+        hienThiSlide(0);
+        ganNutChuyenSlide();
+
+        // Click biến thể đầu tiên để đồng bộ giá/ảnh
+        var lienKetDauTien = document.querySelector('.size__list a');
+        if (lienKetDauTien) lienKetDauTien.click();
+    });
+})();

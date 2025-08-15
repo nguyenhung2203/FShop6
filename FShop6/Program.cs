@@ -33,7 +33,9 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<ITrangChuAdminServices, TrangChuAdminService>();
 builder.Services.AddScoped<IHoSoService, HoSoService>();
-builder.Services.AddScoped<IKhachHangService, KhachHangService>();
+builder.Services.AddScoped<IKhachHangService, FShop6.Areas.Admin.Services.KhachHangService>();
+builder.Services.AddScoped<IQuanLyTinTucService, QuanLyTinTucService>();
+
 // 🟢 Đăng ký dịch vụ TrangChuService
 builder.Services.AddScoped<IShopService, ShopService>();
 // Đảm bảo đăng ký dịch vụ đúng cách
@@ -93,11 +95,11 @@ app.UseStaticFiles();
 // Định tuyến cho Areas
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=TrangChu}/{action=Index}/{id?}");
+    pattern: "{area:exists}/{controller=QuanLyTinTuc}/{action=QuanLyTinTuc}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=TrangChu}/{action=Index}/{id?}",
-    defaults: new { area = "KhachHang" });
+    pattern: "{controller=QuanLyTinTuc}/{action=QuanLyTinTuc}/{id?}",
+    defaults: new { area = "Admin" });
 
 app.Run();

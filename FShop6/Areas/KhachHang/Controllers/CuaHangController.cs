@@ -36,6 +36,14 @@ namespace FShop6.Areas.KhachHang.Controllers
             {
                 return NotFound();
             }
+            int maNguoiDung = HttpContext.Session.GetInt32("MaNguoiDung") ?? 0;
+            bool isFavorite = false;
+            if (maNguoiDung > 0)
+            {
+                var taiKhoanServices = HttpContext.RequestServices.GetService<ITaiKhoanServices>();
+                isFavorite = taiKhoanServices.KiemTraSanPhamYeuThich(maNguoiDung, maSanPham);
+            }
+            ViewBag.IsFavorite = isFavorite;
             return View(model);
         }
 

@@ -17,47 +17,54 @@
             <div class="card-header bg-info text-white">
                 <i class="fa fa-tags"></i>
                 Quản lý danh mục
+                <button id="toggleCategoryBtn"
+                        class="btn btn-outline-light btn-sm"
+                        style="float:right; margin-left:10px;">
+                    Ẩn
+                </button>
                 <a href="#" class="btn btn-outline-light btn-sm ml-2" data-toggle="modal" data-target="#addCategoryModal"
                 style="float:right;">
                     <i class="fa fa-plus"></i> Thêm danh mục
                 </a>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="categoryTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Tên danh mục</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.DSDanhMuc == null)
-                            {
-                                <p>Không tìm thấy sản phẩm</p>
-                            }
-                            <!-- Ví dụ dữ liệu -->
-                            @foreach (var item in Model.DSDanhMuc)
-                            {
+            <div id="categorySection">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="categoryTable" width="100%" cellspacing="0">
+                            <thead>
                                 <tr>
-                                    <td>@item.TenDanhMuc</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info edit-category-btn"
-                                                data-id="@item.Id"
-                                                data-ten="@item.TenDanhMuc"
-                                                data-toggle="modal"
-                                                data-target="#editCategoryModal">
-                                            <i class="fa fa-pencil"></i> Sửa
-                                        </button>
-
-                                        <button class="btn btn-sm btn-danger delete-category-btn" data-id="@item.Id" data-toggle="modal" data-target="#deleteCategoryModal">
-                                            <i class="fa fa-trash"></i> Xóa
-                                        </button>
-                                    </td>
+                                    <th>Tên danh mục</th>
+                                    <th>Thao tác</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @if (Model.DSDanhMuc == null)
+                                {
+                                    <p>Không tìm thấy sản phẩm</p>
+                                }
+                                <!-- Ví dụ dữ liệu -->
+                                @foreach (var item in Model.DSDanhMuc)
+                                {
+                                    <tr>
+                                        <td>@item.TenDanhMuc</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info edit-category-btn"
+                                                    data-id="@item.Id"
+                                                    data-ten="@item.TenDanhMuc"
+                                                    data-toggle="modal"
+                                                    data-target="#editCategoryModal">
+                                                <i class="fa fa-pencil"></i> Sửa
+                                            </button>
+
+                                            <button class="btn btn-sm btn-danger delete-category-btn" data-id="@item.Id" data-toggle="modal" data-target="#deleteCategoryModal">
+                                                <i class="fa fa-trash"></i> Xóa
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -683,6 +690,19 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('toggleCategoryBtn');
+        const sec = document.getElementById('categorySection');
+
+        btn.addEventListener('click', function () {
+            const hidden = sec.style.display === 'none';
+            sec.style.display = hidden ? '' : 'none';
+            btn.textContent = hidden ? 'Ẩn' : 'Hiện';
+        });
+    });
+</script>
+
 
 
 
