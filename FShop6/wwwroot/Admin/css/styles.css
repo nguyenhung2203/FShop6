@@ -734,3 +734,84 @@ table.dataTable.no-footer {
         text-align: center;
     }
 }
+
+/*=============== PAGINATION (FIXED & ENHANCED) ===============*/
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem; /* Khoảng cách giữa các nút */
+    margin-top: 2.75rem;
+    padding: 0.5rem 0;
+}
+
+.pagination__link {
+    /* Sửa lại cách căn giữa cho ổn định */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    color: var(--text-color);
+    font-size: var(--large-font-size);
+    font-weight: var(--weight-700);
+    border-radius: 50%; /* Nút tròn */
+    background: var(--container-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1.5px solid var(--border-color-alt);
+    transition: all 0.2s ease-in-out;
+}
+
+    /* Trạng thái khi di chuột vào hoặc được chọn */
+    .pagination__link.active,
+    .pagination__link:hover {
+        background-color: var(--first-color);
+        color: var(--body-color);
+        border-color: var(--first-color);
+        box-shadow: 0 4px 16px rgba(243,111,33,0.18);
+        transform: translateY(-2px);
+    }
+
+    /* Nút chứa icon (mũi tên) */
+    .pagination__link.icon {
+        font-size: 1.25rem;
+        background: var(--first-color-alt);
+        color: var(--first-color);
+        border-color: var(--first-color-alt);
+    }
+
+        .pagination__link.icon:hover {
+            background: var(--first-color);
+            color: var(--body-color);
+            border-color: var(--first-color); /* Thêm vào để đồng bộ */
+        }
+
+    /* THÊM VÀO: Trạng thái bị vô hiệu hóa (khi ở trang đầu/cuối) */
+    .pagination__link.disabled {
+        background-color: var(--border-color-alt);
+        color: var(--text-color-light);
+        box-shadow: none;
+        transform: none;
+        cursor: not-allowed;
+    }
+        /* Ghi đè lại hiệu ứng hover cho nút bị vô hiệu hóa */
+        .pagination__link.disabled:hover {
+            background-color: var(--border-color-alt);
+            color: var(--text-color-light);
+            border-color: var(--border-color-alt);
+        }
+
+
+/* Responsive: thu nhỏ kích thước trên màn hình nhỏ */
+@media screen and (max-width: 576px) {
+    .pagination {
+        gap: 0.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .pagination__link {
+        width: 34px;
+        height: 34px;
+        font-size: var(--normal-font-size);
+    }
+}

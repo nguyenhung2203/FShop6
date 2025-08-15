@@ -13,38 +13,39 @@
             <li class="breadcrumb-item active">Quản lý sản phẩm</li>
         </ol>
         <!-- Bộ lọc và tìm kiếm -->
-		<div class="filter-section">
-			<div class="row align-items-center">
-				@using (Html.BeginForm("QuanLySanPham", "QuanLySanPham", FormMethod.Get, new { @class = "row g-2 col-md-12" }))
-				{
-					<div class="col-md-4">
-						<div class="input-group">
-							<span class="input-group-text"><i class="fas fa-search"></i></span>
-							<input name="tuKhoa" class="form-control" placeholder="Tên sản phẩm, tên danh mục" value="@ViewBag.TuKhoa" />
-						</div>
-					</div>
-					<div class="col-md-3">
+        <div class="filter-section">
+            <div class="row align-items-center">
+                @using (Html.BeginForm("QuanLySanPham", "QuanLySanPham", FormMethod.Get, new { @class = "row g-2 col-md-12" }))
+                {
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input name="tuKhoa" class="form-control" placeholder="Tên sản phẩm, tên danh mục" value="@ViewBag.TuKhoa" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <select class="form-control" name="trangThai">
                             <option value="">-- Chọn tình trạng --</option>
                             <option value="Hết hàng">Hết hàng</option>
                             <option value="Sắp hết hàng">Sắp hết hàng</option>
+                            <option value="Bán chạy">Sản phẩm bán chạy</option>
                         </select>
-					</div>
-					<div class="col-md-2 d-flex gap-2">
-						<button type="submit" class="btn btn-primary w-100" style="margin: 0 10px;">Lọc</button>
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100" style="margin: 0 10px;">Lọc</button>
                         <a class="btn btn-secondary w-100" href="@Url.Action("QuanLySanPham","QuanLySanPham", new { area="Admin" })">Xóa</a>
-					</div>
-				}
-			</div>
-		</div>
+                    </div>
+                }
+            </div>
+        </div>
         <!-- Quản lý sản phẩm -->
         <div class="card mb-3">
             <div class="card-header bg-primary text-white">
                 <i class="fa fa-tags"></i>
                 Quản lý sản phẩm
                 <button id="toggleProductBtn"
-                        class="btn btn-outline-light btn-sm"
-                        style="float:right; margin-left:10px;">
+                class="btn btn-outline-light btn-sm"
+                style="float:right; margin-left:10px;">
                     Ẩn
                 </button>
                 <a href="#" class="btn btn-outline-light btn-sm ml-2" data-toggle="modal" data-target="#addProductModal"
@@ -62,22 +63,22 @@
                         <table class="table table-bordered" id="productTable" width="100%" cellspacing="0">
                             <tbody>
                                 <tr>
-                                    <th>Tên sản phẩm</th>
-                                    <th>Loại danh mục</th>
-                                    <th>Mô tả</th>
+                                    <th style="width:233px;">Tên sản phẩm</th>
+                                    <th style="width:210px;">Loại danh mục</th>
+                                    <th style="width:368px;">Mô tả</th>
                                     <th>Hình ảnh đại diện</th>
                                     <th>Nổi bật</th>
                                     <th>Trạng thái</th>
                                     <th>Chi tiết loại sản phẩm</th>
-                                    <th>Thao tác</th>
+                                    <th style="width:169px;">Thao tác</th>
                                 </tr>
                                 @foreach (var item in Model.SanPhamList)
                                 {
                                     <tr>
                                         <td style="word-break: break-word;">@item.SanPham.TenSanPham</td>
-                                        <td>@item.DanhMuc.TenDanhMuc</td>
+                                        <td style="word-break: break-word;">@item.DanhMuc.TenDanhMuc</td>
                                         <td style="word-break: break-word;">@item.SanPham.MoTa</td>
-                                        <td>
+                                        <td class="text-center">
                                             <img src='@Url.Content($"~/KhachHang/images/{item.SanPham.HinhAnhDaiDien}")' alt="@item.SanPham.TenSanPham" style="width:40px;height:40px;">
                                         </td>
                                         <td class="text-center">
@@ -104,28 +105,28 @@
 
                                         <td style="text-align: center;">
                                             <button type="button"
-                                                    class="btn btn-sm btn-info"
-                                                    data-toggle="modal"
-                                                    data-target="#viewProductDetails"
-                                                    data-masanpham="@item.SanPham.MaSanPham"
-                                                    onclick="showProductVariants(this)">
+                                            class="btn btn-sm btn-info"
+                                            data-toggle="modal"
+                                            data-target="#viewProductDetails"
+                                            data-masanpham="@item.SanPham.MaSanPham"
+                                            onclick="showProductVariants(this)">
                                                 <i class="fa fa-eye"></i> Xem
                                             </button>
                                         </td>
                                         <td>
                                             <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editProductModal"
-                                                    data-masanpham="@item.SanPham.MaSanPham"
-                                                    data-tensanpham="@item.SanPham.TenSanPham"
-                                                    data-mota="@item.SanPham.MoTa"
-                                                    data-danhmucid="@item.DanhMuc.Id"
-                                                    data-noibat="@item.SanPham.NoiBat"
-                                                    data-trangthai="@item.SanPham.TrangThai"
-                                                    data-anhdaidien="@item.SanPham.HinhAnhDaiDien"
-                                                    onclick="openEditModal(this)">
+                                            data-masanpham="@item.SanPham.MaSanPham"
+                                            data-tensanpham="@item.SanPham.TenSanPham"
+                                            data-mota="@item.SanPham.MoTa"
+                                            data-danhmucid="@item.DanhMuc.Id"
+                                            data-noibat="@item.SanPham.NoiBat"
+                                            data-trangthai="@item.SanPham.TrangThai"
+                                            data-anhdaidien="@item.SanPham.HinhAnhDaiDien"
+                                            onclick="openEditModal(this)">
                                                 <i class="fa fa-pencil"></i> Sửa
                                             </button>
                                             <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteProductModal" data-masanpham="@item.SanPham.MaSanPham"
-                                                    onclick="openDeleteModal(this)">
+                                            onclick="openDeleteModal(this)">
                                                 <i class="fa fa-trash"></i> Xóa
                                             </button>
                                         </td>
@@ -138,6 +139,51 @@
                 </div>
             </div>
         </div>
+
+		<div class="pagination">
+			@if (Model.TongSoTrang > 1)
+			{
+				<!-- Nút « -->
+				<li>
+					<a class="pagination__link icon @(Model.TrangHienTai == 1 ? "disabled" : "")"
+					   href="@Url.Action("QuanLySanPham", "QuanLySanPham",
+                       new { area = "Admin",
+                             tuKhoa = ViewBag.TuKhoa,
+                             trangThai = ViewBag.TrangThai,
+                             trangHienTai = Model.TrangHienTai - 1 })">
+						«
+					</a>
+				</li>
+
+				<!-- Các trang số -->
+				@for (int i = 1; i <= Model.TongSoTrang; i++)
+				{
+					<li>
+						<a class="pagination__link @(Model.TrangHienTai == i ? "active" : "")"
+						   href="@Url.Action("QuanLySanPham", "QuanLySanPham",
+                           new { area = "Admin",
+                                 tuKhoa = ViewBag.TuKhoa,
+                                 trangThai = ViewBag.TrangThai,
+                                 trangHienTai = i })">
+							@i
+						</a>
+					</li>
+				}
+
+				<!-- Nút » -->
+				<li>
+					<a class="pagination__link icon @(Model.TrangHienTai == Model.TongSoTrang ? "disabled" : "")"
+					   href="@Url.Action("QuanLySanPham", "QuanLySanPham",
+                       new { area = "Admin",
+                             tuKhoa = ViewBag.TuKhoa,
+                             trangThai = ViewBag.TrangThai,
+                             trangHienTai = Model.TrangHienTai + 1 })">
+						»
+					</a>
+				</li>
+			}
+		</div>
+
         <!-- Modal Thêm sản phẩm -->
         <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductLabel"
              aria-hidden="true">
