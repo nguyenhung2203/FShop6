@@ -70,7 +70,7 @@
                                         @Html.HiddenFor(m => m.GioHang[i].GiaBan)
                                     </td>
                                     <td>
-                                        @Html.TextBoxFor(m => m.GioHang[i].SoLuong, new { @class = "quantity", type = "number", min = "1" })
+                                        @Html.TextBoxFor(m => m.GioHang[i].SoLuong, new { @class = "quantity", type = "number", min = "1", max = item.SoLuongTon })
                                     </td>
                                     <td>
                                         <span class="subtotal">@((item.GiaBan * item.SoLuong).ToString("N0"))</span>
@@ -118,7 +118,7 @@
 
                         <!-- Existing Address Container -->
                         <div class="existing-address-container hidden" id="existing-address-container">
-                            <input type="text" class="form__input" name="@Model.DiaChiMacDinh" value="@Model.DiaChiMacDinh" placeholder="Số nhà, tên đường..." />
+                            <input type="text" class="form__input" style="opacity:1;pointer-events:none" name="@Model.DiaChiMacDinh" value="@Model.DiaChiMacDinh" placeholder="Số nhà, tên đường..." />
                         </div>
 
                         <!-- New Address Container -->
@@ -137,7 +137,8 @@
                                     <option value="" disabled selected>Chọn Phường/Xã</option>
                                 </select>
 
-                                <input type="text" class="form__input" name="DiaChi.CuThe" placeholder="Số nhà, tên đường..." />
+                                <input type="text" id="diachi" class="form__input" name="DiaChi.CuThe" placeholder="Số nhà, tên đường..." />
+                                <p id="thongbao" style="display: none"></p>
                             </div>
                         </div>
                     </div>
@@ -187,6 +188,9 @@
 
         const shippingFee = 0;
 
+        const diachi = document.getElementById('diachi');
+        const diachiRegex = /^[\p{L}0-9\s,\.]{1,200}$/u;
+        const thongbao = document.getElementById('thongbao');      
         // Function to format currency
         function formatCurrency(amount) {
             return amount.toLocaleString('vi-VN') + '₫';
@@ -208,10 +212,34 @@
             grandTotal.textContent = formatCurrency(total + (count > 0 ? shippingFee : 0));
             selectedCount.textContent = count;
 
-            // Update checkout button state
             if (count > 0) {
                 checkoutBtn.style.opacity = '1';
                 checkoutBtn.style.pointerEvents = 'auto';
+           diachi.addEventListener('input', function () {
+        // Chỉ kiểm tra khi có ký tự
+        if (diachi.value.trim().length > 0) {
+            if (!diachiRegex.test(diachi.value)) {
+                thongbao.style.display = 'block';
+                thongbao.textContent = 'Địa chỉ không hợp lệ hoặc quá 200 ký tự';
+                thongbao.style.color = 'red';
+                diachi.style.borderColor = 'red';
+                checkoutBtn.style.opacity = '0.6';
+                checkoutBtn.style.pointerEvents = 'none';
+            } else {
+                thongbao.style.display = 'none';
+                diachi.style.borderColor = '';
+                 checkoutBtn.style.opacity = '1';
+                checkoutBtn.style.pointerEvents = 'auto';
+            }
+        } else {
+            thongbao.textContent = 'Vui lòng nhập địa chỉ giao hàng';
+            thongbao.style.color = 'red';
+            thongbao.style.display = 'none';
+            diachi.style.borderColor = '';
+            checkoutBtn.style.opacity = '0.6';
+            checkoutBtn.style.pointerEvents = 'none';
+        }
+        });
             } else {
                 checkoutBtn.style.opacity = '0.6';
                 checkoutBtn.style.pointerEvents = 'none';

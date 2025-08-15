@@ -53,9 +53,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var donHang in Model.donHangModels) 
+                                @foreach (var donHang in Model.donHangModels)
                                 {
-									var id = donHang.ID;
+                                    var id = donHang.ID;
                                     <tr>
                                         <td>@donHang.MaDonHang</td>
                                         <td>@donHang.ThoiGianDatHang.ToString("dd/MM/yyyy HH:mm")</td>
@@ -63,8 +63,8 @@
                                         <td>@string.Format("{0:N0}₫", donHang.TongTien)</td>
                                         <td>
                                             <button type="button" id="btn" class="action__btnt" style="border-color: red" onclick="showCancelModal('@id')">
-                                                    Huỷ đơn hàng
-                                             </button>
+                                                Huỷ đơn hàng
+                                            </button>
 
                                             <button type="button" class="action__btnt" style="margin-top:10px; background-color: #007bff" onclick="xemChiTiet('@id')">Xem chi tiết</button>
                                             <div id="chiTiet_@id" style="display:none;">
@@ -92,7 +92,25 @@
                                                     </tbody>
                                                 </table>
 
-                                                <form method="post" action="@Url.Action("MuaLai", "TaiKhoan", new { area = "KhachHang" })" style="margin-top:10px;">
+                                                <div id="boxDiaChi" style="margin-top: 15px;">
+                                                    @if (!string.IsNullOrEmpty(donHang.DiaChiGiaoHang))
+                                                    {
+                                                        <div class="address-box">
+                                                            <div><strong>Tên người nhận:</strong> @Model.nguoiDungModels.HoTen</div>
+                                                            <div><strong>Địa chỉ:</strong> @donHang.DiaChiGiaoHang</div>
+                                                            <div><strong>Số điện thoại:</strong> @Model.nguoiDungModels.SoDienThoai</div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="address-box text-muted">
+                                                            Bạn chưa cập nhật địa chỉ.
+                                                        </div>
+                                                    }
+
+                                                </div>
+
+                                                <form method="post" action="@Url.Action("MuaLai", "TaiKhoan", new { area = "KhachHang", tab = "orders"  })" style="margin-top:10px;">
                                                     <input type="hidden" name="maDonHang" value="@donHang.ID" />
 
                                                     <span style="margin-top:10px; font-size:1.125rem; color: #f36f21">
@@ -106,13 +124,50 @@
                                                     </span>
                                                 </form>
                                             </div>
-
                                         </td>
                                     </tr>
                                 }
+
                             </tbody>
                         </table>
                     </div>
+                     <div class="pagination" style="margin-top: 20px">
+                    @if (Model.TongSoTrang > 1)
+                    {
+                        <!-- Nút « -->
+                        <li>
+                            <a class="pagination__link icon @(Model.TrangHienTai == 1 ? "disabled" : "")"
+                               href="@Url.Action("HoSo", "TaiKhoan", 
+                               new { area = "KhachHang", 
+                                     trang = Model.TrangHienTai - 1, tab = "orders" })">
+                                «
+                            </a>
+                        </li>
+
+                        <!-- Các trang số -->
+                        @for (int i = 1; i <= Model.TongSoTrang; i++)
+                        {
+                            <li>
+                                <a class="pagination__link @(Model.TrangHienTai == i ? "active" : "")"
+                                   href="@Url.Action("HoSo", "TaiKhoan", 
+                                   new { area = "KhachHang",      
+                                         trang = i, tab = "orders" })">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        <!-- Nút » -->
+                        <li>
+                            <a class="pagination__link icon @(Model.TrangHienTai == Model.TongSoTrang ? "disabled" : "")"
+                               href="@Url.Action("HoSo", "TaiKhoan", 
+                               new { area = "KhachHang", 
+                                     trang = Model.TrangHienTai + 1,tab = "orders" })">
+                                »
+                            </a>
+                        </li>
+                    }
+                </div>
                 </div>
                 <div class="tab__content" id="update-profile">
                     <h3 class="tab__header">Cập nhật hồ sơ</h3>
@@ -233,6 +288,20 @@
             <div id="noiDungModal"></div>
         </div>
     </div>
+    <div class="modal-overlay" id="addressModal">
+    <div class="modal-content">
+        <h3>Sửa địa chỉ giao hàng</h3>
+        <form>
+            <input type="text" id="diaChiGiaoHang" />
+            <div class="modal-actions">
+                <button type="button" class="btn btn-cancel" onclick="hideAddressModal()">Hủy</button>
+                <button type="submit" class="btn btn-confirm">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 </main>
 
 <script>

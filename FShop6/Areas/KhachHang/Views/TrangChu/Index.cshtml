@@ -154,7 +154,7 @@
                                     @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
                                     {
                                         @Html.Hidden("maSanPham", sanPham.MaSanPham)
-                                        <button type="submit" class="action__btn" aria-label="Yêu thích">
+                                        <button type="submit" class="action__btn @(sanPham.TinhTrangYeuThich ? "favorite-active" : "")" aria-label="Yêu thích">
                                             <i class="fi fi-rs-heart"></i>
                                         </button>
                                     }
@@ -233,7 +233,7 @@
                                 @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
                                 {
                                     @Html.Hidden("maSanPham", sanPham.MaSanPham)
-                                    <button type="submit" class="action__btn" aria-label="Yêu thích">
+                                    <button type="submit" class="action__btn @(sanPham.TinhTrangYeuThich ? "favorite-active" : "")" aria-label="Yêu thích">
                                         <i class="fi fi-rs-heart"></i>
                                     </button>
                                 }
@@ -261,19 +261,6 @@
                                      class="product__img default" />
                             </a>
                             <div class="product__actions">
-                                @* <a href="#" class="action__btn cart__btn" aria-label="Thêm giỏ hàng">
-                                    <i class="fi fi-rs-shopping-bag-add"></i>
-                                </a> *@
-                                @* @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
-                                {
-                                    @Html.Hidden("maSanPham", sanPham.MaSanPham)
-                                    <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
-                                        <i class="fi fi-rs-heart"></i>
-                                    </button>
-                                } *@
-                                @* <a href="#" class="action__btn" aria-label="Mua ngay">
-                                    <i class="fi fi-rs-shuffle"></i>
-                                </a> *@
                             </div>
                             <div class="product__badge light-green">New</div>
                         </div>
@@ -286,13 +273,6 @@
                             </div>
 
                             <div class="product__content-middle">
-                                @* <div class="product__rating">
-                                    <i class="fi fi-rs-star"></i>
-                                    <i class="fi fi-rs-star"></i>
-                                    <i class="fi fi-rs-star"></i>
-                                    <i class="fi fi-rs-star"></i>
-                                    <i class="fi fi-rs-star"></i>
-                                </div> *@
                                 <div class="product__description-wrapper">
                                     <p class="product__description">@sanPham.MoTaNgan</p>
                                 </div>
@@ -306,7 +286,7 @@
                                 @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
                                 {
                                     @Html.Hidden("maSanPham", sanPham.MaSanPham)
-                                    <button type="submit" class="action__btn" aria-label="Yêu thích">
+                                    <button type="submit" class="action__btn @(sanPham.TinhTrangYeuThich ? "favorite-active" : "")" aria-label="Yêu thích">
                                         <i class="fi fi-rs-heart"></i>
                                     </button>
                                 }

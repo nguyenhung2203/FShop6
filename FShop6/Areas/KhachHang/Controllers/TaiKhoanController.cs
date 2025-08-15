@@ -105,18 +105,21 @@ namespace FShop6.Areas.KhachHang.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
         }
-        [HttpGet]
-        public async Task<IActionResult> HoSo()
+        public async Task<IActionResult> HoSo(int trang = 1)
         {
             try
             {
                 maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
-                var moDel = await _taiKhoanServices.LayThongTinHoSo(maNguoiDung);
+                if (maNguoiDung <= 0)
+                {
+                    return RedirectToAction("DangNhap", "TaiKhoan");
+                }
+                var moDel = await _taiKhoanServices.LayThongTinHoSo(maNguoiDung, trang);
                 return View(moDel);
             }
             catch (SqlException ex)
             {
-                TempData["ThongBao"] = "Có lỗi xảy ra Database: " + ex.Message;
+                TempData["ThongBao"] = "Có lỗi xảy ra Database: " + ex.Message + trang;
                 TempData["LoaiThongBao"] = "error";
                 _logger.LogError(ex, "Lỗi khi lấy thông tin hồ sơ người dùng.");
                 return RedirectToAction("Index", "TrangChu", new { area = "KhachHang" });
@@ -358,12 +361,7 @@ namespace FShop6.Areas.KhachHang.Controllers
                 {
                     TempData["ThongBao"] = "Thêm sản phẩm yêu thích thành công.";
                     TempData["LoaiThongBao"] = "success";
-                }
-                else
-                {
-                    TempData["ThongBao"] = "Sản phẩm đã tồn tại trong danh sách yêu thích.";
-                    TempData["LoaiThongBao"] = "warning";
-                }               
+                }              
             }
             catch (Exception ex)
             {
