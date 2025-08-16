@@ -19,8 +19,10 @@
 	<div class="details__container container grid">
 		<div class="details__group">
 			<div class="slider">
+				<!-- Thông báo hết hàng -->
+				<div id="het-hang-overlay"></div>
 				<button type="button" class="slide-btn prev" id="prev-btn">‹</button>
-				@foreach (var image in Model.BienThe.Where(bt => bt.TinhTrang != "Ngừng kinh doanh" && bt.TinhTrang != "Hết hàng" && bt.SoLuongTon > 0))
+				@foreach (var image in Model.BienThe.Where(bt => bt.TinhTrang != "Ngừng kinh doanh"))
 				{
 					<img src="~/KhachHang/images/@image.URL" alt="Ảnh sản phẩm lớn" class="details__big-img" />
 				}
@@ -48,7 +50,7 @@
 			<div class="details__size flex">
 				<span class="details__size-title">Loại</span>
 				<ul class="size__list" style="display: flex; flex-wrap: wrap;">
-					@foreach (var bienThe in Model.BienThe.Where(bt => bt.TinhTrang != "Ngừng kinh doanh" && bt.TinhTrang != "Hết hàng" && bt.SoLuongTon > 0))
+					@foreach (var bienThe in Model.BienThe.Where(bt => bt.TinhTrang != "Ngừng kinh doanh"))
 					{
 						<li style="margin: 10px;">
 							<a href="#" class="size__link"
@@ -72,7 +74,7 @@
 					@Html.Hidden("maSanPham", Model.MaSanPham, new { id = "hiddenMaSanPham" })
 					@Html.Hidden("maBienThe", "", new { id = "hiddenMaBienThe" })
 					<input id="nhap-so-luong" type="number" name="soLuong" class="quantity" value="1" min="1" max="" />
-					<button type="submit" class="btn btn--sm">Thêm vào giỏ hàng</button>
+					<button type="submit" id="add-to-cart-btn" class="btn btn--sm">Thêm vào giỏ hàng</button>
 				}
 
 				<form id="yeuthich" action="@Url.Action("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" })" method="post" style="margin-left: 20px;">

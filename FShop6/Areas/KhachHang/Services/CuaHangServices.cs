@@ -93,6 +93,7 @@ namespace FShop6.Areas.KhachHang.Services
             var tongSoTrang = (int)Math.Ceiling(tongSoSanPham / (double)kichThuocTrang);
 
             var danhSachSanPham = await query
+                .Where(sp => sp.TrangThai == true)
                 .Skip((trang - 1) * kichThuocTrang)
                 .Take(kichThuocTrang)
                 .Select(sp => new SanPhamTrangChuViewModel
