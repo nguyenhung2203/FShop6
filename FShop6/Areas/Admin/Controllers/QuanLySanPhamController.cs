@@ -14,9 +14,10 @@ namespace FShop6.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> QuanLySanPham(string? tuKhoa, string? trangThai)
+        public async Task<IActionResult> QuanLySanPham(string? tuKhoa, string? trangThai, int trangHienTai = 1)
         {
-            var dsSanPham = await _quanLySanPhamServices.LayTatCaSanPhamAsync(tuKhoa, trangThai);
+            int soSanPhamMoiTrang = 8;
+            var dsSanPham = await _quanLySanPhamServices.LayTatCaSanPhamAsync(tuKhoa, trangThai, trangHienTai, soSanPhamMoiTrang);
             ViewBag.TuKhoa = tuKhoa;
             ViewBag.TrangThai = trangThai;
             return View(dsSanPham);
