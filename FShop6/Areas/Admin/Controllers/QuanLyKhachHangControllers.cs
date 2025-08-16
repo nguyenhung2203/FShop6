@@ -6,11 +6,11 @@ using FShop6.Areas.KhachHang.Services;
 namespace FShop6.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class KhachHangController : Controller
+    public class QuanLyKhachHangController : Controller
     {
         private readonly IKhachHangService _khachHangService;
 
-        public KhachHangController(IKhachHangService khachHangService)
+        public QuanLyKhachHangController(IKhachHangService khachHangService)
         {
             _khachHangService = khachHangService;
         }

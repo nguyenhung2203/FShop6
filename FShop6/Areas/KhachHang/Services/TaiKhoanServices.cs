@@ -168,6 +168,7 @@ namespace FShop6.Areas.KhachHang.Services
                  .SelectMany(dh => dh.ChiTietDonHangs.Select(ct => new ChiTietDonHangViewModel
                  {
                      MaDonHang = dh.ID,
+                     AnhSanPham = ct.BienThe.SanPham.HinhAnhDaiDien,
                      TenSanPham = ct.BienThe.SanPham.TenSanPham,
                      LoaiBienThe = ct.BienThe.LoaiBienThe,
                      SoLuong = ct.SoLuong,

@@ -73,6 +73,7 @@
                                                 <table style="width:100%; border-collapse:collapse; margin-top:10px;">
                                                     <thead style="background:#f5f5f5;">
                                                         <tr>
+                                                            <th style="padding:8px; border:1px solid #ddd;">Ảnh sản phẩm</th>
                                                             <th style="padding:8px; border:1px solid #ddd;">Tên sản phẩm</th>
                                                             <th style="padding:8px; border:1px solid #ddd;">Loại</th>
                                                             <th style="padding:8px; border:1px solid #ddd;">Số lượng</th>
@@ -83,10 +84,13 @@
                                                         @foreach (var sp in Model.ChiTietDonHang.Where(x => x.MaDonHang == id))
                                                         {
                                                             <tr>
-                                                                <td style="padding:8px; text-align:left; border:1px solid #ddd;">@sp.TenSanPham</td>
-                                                                <td style="padding:8px; text-align:left; border:1px solid #ddd;">@sp.LoaiBienThe</td>
+                                                                <td style="padding:8px; text-align:center; border:1px solid #ddd;">
+                                                                    <img src="@("/KhachHang/images/" + @sp.AnhSanPham)" alt="@sp.AnhSanPham" class="table__img"/>
+                                                                </td>
+                                                                <td style="padding:8px; text-align:center; border:1px solid #ddd;">@sp.TenSanPham</td>
+                                                                <td style="padding:8px; text-align:center; border:1px solid #ddd;">@sp.LoaiBienThe</td>
                                                                 <td style="padding:8px; text-align:center; border:1px solid #ddd;">@sp.SoLuong</td>
-                                                                <td style="padding:8px; text-align:left; border:1px solid #ddd;">@string.Format("{0:N0}₫", sp.DonGia)</td>
+                                                                <td style="padding:8px; text-align:center; border:1px solid #ddd;">@string.Format("{0:N0}₫", sp.DonGia)</td>
                                                             </tr>
                                                         }
                                                     </tbody>
@@ -283,7 +287,7 @@
         </div>
     </div>
     <div id="modalChiTietDon" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
-        <div style="background:#fff; padding:20px; width:600px; border-radius:8px;">
+        <div style="background:#fff; padding:20px; width:800px; border-radius:8px;">
             <span style="cursor:pointer; float:right;" onclick="dongModal()">&times;</span>
             <div id="noiDungModal"></div>
         </div>

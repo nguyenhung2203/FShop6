@@ -75,8 +75,7 @@ namespace FShop6.Areas.KhachHang.Controllers
                 var ketQua = _gioHangServices.ThanhToan(model);
                 if (ketQua)
                 {
-                    TempData["ThongBao"] = "Đặt hàng thành công!";
-                    TempData["LoaiThongBao"] = "success";
+                    return RedirectToAction("DatHangThanhCong", "CuaHang", new { area = "KhachHang" });
                 }
                 else
                 {
