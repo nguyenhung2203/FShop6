@@ -10,8 +10,9 @@ namespace FShop6.Areas.KhachHang.Services
 {
     public interface ICuaHangServices
     {
-        Task<PhanTrangSanPhamViewModel> LaySanPhamDaLoc(int? maDanhMuc, decimal? giaToiDa, int? loaiXapXep, int trang = 1, int kichThuocTrang = 8);
+        Task<PhanTrangSanPhamViewModel> LaySanPhamDaLoc(int maNguoiDung, int? maDanhMuc, decimal? giaToiDa, int? loaiXapXep, int trang = 1, int kichThuocTrang = 8);
         Task<int> SoLuongDaBan(int maSanPham);
+        Task<bool> TinhTrangYeuThich(int maSanPham, int maNguoiDung);
     }
 
     public interface IChiTietSanPhamService
@@ -34,6 +35,11 @@ namespace FShop6.Areas.KhachHang.Services
             _context = context;
         }
 
+        public async Task<bool> TinhTrangYeuThich(int maSanPham, int maNguoiDung)
+        {
+            return await _context.SPYeuThich
+                .AnyAsync(yt => yt.MaSanPham == maSanPham && yt.MaNguoiDung == maNguoiDung);
+        }
         public async Task<int> SoLuongDaBan(int maSanPham)
         {
             return await _context.ChiTietDonHang
@@ -41,7 +47,7 @@ namespace FShop6.Areas.KhachHang.Services
                 .SumAsync(ct => ct.SoLuong);
         }
 
-        public async Task<PhanTrangSanPhamViewModel> LaySanPhamDaLoc(int? maDanhMuc, decimal? giaToiDa, int? loaiXapXep, int trang = 1, int kichThuocTrang = 8)
+        public async Task<PhanTrangSanPhamViewModel> LaySanPhamDaLoc(int maNguoiDung, int? maDanhMuc, decimal? giaToiDa, int? loaiXapXep, int trang = 1, int kichThuocTrang = 8)
         {
             // 1. Bắt đầu với một câu truy vấn gốc, chưa thực thi
             IQueryable<SanPhamModel> query = _context.SanPham
@@ -93,6 +99,7 @@ namespace FShop6.Areas.KhachHang.Services
             var tongSoTrang = (int)Math.Ceiling(tongSoSanPham / (double)kichThuocTrang);
 
             var danhSachSanPham = await query
+                .Where(sp => sp.TrangThai == true)
                 .Skip((trang - 1) * kichThuocTrang)
                 .Take(kichThuocTrang)
                 .Select(sp => new SanPhamTrangChuViewModel
@@ -103,12 +110,13 @@ namespace FShop6.Areas.KhachHang.Services
                     GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
                     MoTaNgan = sp.MoTa,
                     TenDanhMuc = sp.DanhMuc.TenDanhMuc,
-                    GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia
+                    GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia,
                 })
                 .ToListAsync();
             foreach (var sp in danhSachSanPham)
             {
                 sp.SoLuongDaBan = await SoLuongDaBan(sp.MaSanPham);
+                sp.TinhTrangYeuThich = await TinhTrangYeuThich(sp.MaSanPham, maNguoiDung);
             }
 
             var danhSachDanhMuc = await LayDanhMuc();

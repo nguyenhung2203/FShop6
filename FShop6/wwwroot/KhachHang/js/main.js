@@ -407,7 +407,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('product-price').textContent = giaBan.toLocaleString('vi-VN') + "đ";
         }
         document.getElementById('hiddenMaBienThe').value = maBienThe;
-
+        
         // Chuyển slide theo ảnh của biến thể
         hienThiSlideTheoTenFile(hinhAnh);
     };
@@ -421,8 +421,34 @@ document.addEventListener("DOMContentLoaded", function () {
         hienThiSlide(0);
         ganNutChuyenSlide();
 
-        // Click biến thể đầu tiên để đồng bộ giá/ảnh
-        var lienKetDauTien = document.querySelector('.size__list a');
-        if (lienKetDauTien) lienKetDauTien.click();
+        // 👉 Làm mờ và disable tất cả biến thể có số lượng = 0
+        const listBienThe = document.querySelectorAll('.size__list a');
+        let bienTheCoSan = null;
+
+        listBienThe.forEach(link => {
+            const soLuong = parseInt(link.getAttribute("data-soluong")) || 0;
+            if (soLuong <= 0) {
+                link.classList.add("out-of-stock");
+                link.removeAttribute("onclick");
+                link.style.opacity = "0.5";
+                link.style.pointerEvents = "none";
+                link.style.cursor = "not-allowed";
+            } else if (!bienTheCoSan) {
+                bienTheCoSan = link;
+            }
+        });
+
+        
+        // Nếu có ít nhất 1 biến thể còn hàng → click vào nó
+        if (bienTheCoSan) {
+            bienTheCoSan.click();
+            document.getElementById('add-to-cart-btn')?.removeAttribute('disabled');
+        } else {
+            // Nếu tất cả đều hết hàng → disable nút Thêm giỏ hàng
+            document.getElementById('add-to-cart-btn')?.setAttribute('disabled', 'disabled');
+            document.getElementById('het-hang-overlay').textContent = "Hết hàng";
+            document.getElementById('het-hang-overlay')?.classList.add('het-hang-hidden');
+        }
     });
+
 })();

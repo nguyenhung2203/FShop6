@@ -18,8 +18,8 @@ namespace FShop6.Areas.KhachHang.Controllers
 
         public async Task<IActionResult> SanPham(int? maDanhMuc, int? loai, int? loaiXapXep, decimal? khoangGia, int trang = 1)
         {
-            var viewModel = await _shopService.LaySanPhamDaLoc(maDanhMuc, khoangGia, loaiXapXep, trang);
-
+            int maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
+            var viewModel = await _shopService.LaySanPhamDaLoc(maNguoiDung, maDanhMuc, khoangGia, loaiXapXep, trang);
             ViewBag.MaDanhMuc = maDanhMuc;
             ViewBag.Loai = loai;
             ViewBag.LoaiXapXep = loaiXapXep;

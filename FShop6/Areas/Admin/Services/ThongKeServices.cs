@@ -77,12 +77,6 @@ namespace FShop6.Areas.Admin.Services
                 .Where(nd => nd.ThoiGianTao.Date == homNay.Date)
                 .Distinct()
                 .CountAsync();
-            if (sanPhamBanChayCham.Count <= 5)
-            {
-                sanPhamBanChayCham.Clear();
-                sanPhamBanChayCham.Add(new SanPhamBanChamVM { Ten = "Không có sản phẩm", SoLuongBan = 0, SoLuongConLai = 0 });
-
-            }
             var trangThaiDonHangNgay = new int[]
             {
                 await _context.DonHang.CountAsync(dh => dh.ThoiGianDatHang.Date == homNay.Date && dh.TrangThai == "Đã giao"),

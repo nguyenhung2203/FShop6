@@ -17,7 +17,7 @@ namespace FShop6.Areas.Admin.Services
     }
     public interface IQuanLySanPhamServices
     {
-        Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync(string? tuKhoa, string? trangThai);
+        Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync(string? tuKhoa, string? trangThai, int trangHienTai = 1, int soSanPhamMoiTrang = 8);
         bool ThemDanhMuc(string TenDanhMuc);
         bool SuaDanhMucAsync(int MaDanhMuc, string TenDanhMuc);
         Task<bool> XoaDanhMucAsync(int MaDanhMuc);
@@ -40,21 +40,24 @@ namespace FShop6.Areas.Admin.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync(string? tuKhoa, string? trangThai)
+        public async Task<QuanLySanPhamViewModel> LayTatCaSanPhamAsync(string? tuKhoa, string? trangThai, int trangHienTai = 1, int soSanPhamMoiTrang = 8)
         {
+            // Truy vấn cơ bản: Lấy sản phẩm kèm Danh mục và Biến thể (ảnh)
             var query = _context.SanPham
                 .Include(sp => sp.DanhMuc)
                 .Include(sp => sp.BienThes)
-                .ThenInclude(bt => bt.AnhBienThe)
+                    .ThenInclude(bt => bt.AnhBienThe)
                 .AsQueryable();
-            // Tìm kiếm theo từ khoá
+
+            // Tìm kiếm theo từ khóa
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
-                query = query.Where(sp => 
-                sp.TenSanPham.Contains(tuKhoa) ||
-                sp.DanhMuc.TenDanhMuc.Contains(tuKhoa)
+                query = query.Where(sp =>
+                    sp.TenSanPham.Contains(tuKhoa) ||
+                    sp.DanhMuc.TenDanhMuc.Contains(tuKhoa)
                 );
             }
+
             // Lọc theo trạng thái
             if (!string.IsNullOrWhiteSpace(trangThai))
             {
@@ -66,8 +69,67 @@ namespace FShop6.Areas.Admin.Services
                 {
                     query = query.Where(sp => sp.BienThes.Any(bt => bt.SoLuongConLai <= 5));
                 }
+                else if (trangThai == "Bán chạy")
+                {
+                    // Lọc bán chạy: Sắp xếp theo tổng số lượng bán trong ChiTietDonHang
+                    var queryBanChay = query
+                        .OrderByDescending(sp => _context.ChiTietDonHang
+                            .Where(ct => ct.MaBienThe != null && ct.BienThe.MaSanPham == sp.MaSanPham)
+                            .Sum(ct => (int?)ct.SoLuong) ?? 0);
+
+                    // Đếm tổng sản phẩm bán chạy
+                    int tongSoSanPhamBC = await queryBanChay.CountAsync();
+
+                    // Lấy dữ liệu phân trang
+                    var dsSPBanChay = await queryBanChay
+                        .Skip((trangHienTai - 1) * soSanPhamMoiTrang)
+                        .Take(soSanPhamMoiTrang)
+                        .ToListAsync();
+
+                    // Map sang ViewModel
+                    var SPBanChayList = dsSPBanChay.Select(sp => new QuanLySanPhamModel
+                    {
+                        SanPham = sp,
+                        DanhMuc = sp.DanhMuc,
+                        ChiTietSanPham = sp.BienThes.Select(bt => new ChiTietSanPhamModel
+                        {
+                            BienThes = bt,
+                            dsAnh = bt.AnhBienThe.ToList()
+                        }).ToList()
+                    }).ToList();
+
+                    // Lấy danh mục sản phẩm để hiển thị
+                    var danhMucList = await _context.DanhMucSP
+                        .Select(dm => new DanhMucModel
+                        {
+                            Id = dm.Id,
+                            TenDanhMuc = dm.TenDanhMuc,
+                        }).ToListAsync();
+
+                    // Trả về ViewModel cho "Bán chạy"
+                    return new QuanLySanPhamViewModel
+                    {
+                        TongSoSanPham = tongSoSanPhamBC,
+                        TrangHienTai = trangHienTai,
+                        SoSanPhamMoiTrang = soSanPhamMoiTrang,
+                        TongSoTrang = (int)Math.Ceiling((double)tongSoSanPhamBC / soSanPhamMoiTrang),
+                        DSDanhMuc = danhMucList,
+                        SanPhamList = SPBanChayList
+                    };
+                }
             }
-            var dsSanPham = await query.ToListAsync();
+
+            // Trường hợp mặc định (không phải "Bán chạy")
+            int tongSoSanPham = await query.CountAsync();
+
+            // Lấy dữ liệu phân trang
+            var dsSanPham = await query
+                .OrderByDescending(sp => sp.NgayTao) // Sắp xếp mới nhất
+                .Skip((trangHienTai - 1) * soSanPhamMoiTrang)
+                .Take(soSanPhamMoiTrang)
+                .ToListAsync();
+
+            // Map sang ViewModel
             var sanPhamList = dsSanPham.Select(sp => new QuanLySanPhamModel
             {
                 SanPham = sp,
@@ -78,19 +140,23 @@ namespace FShop6.Areas.Admin.Services
                     dsAnh = bt.AnhBienThe.ToList()
                 }).ToList()
             }).ToList();
-            var Ds = await _context.DanhMucSP
+
+            // Lấy danh mục sản phẩm
+            var danhMucListMacDinh = await _context.DanhMucSP
                 .Select(dm => new DanhMucModel
                 {
                     Id = dm.Id,
                     TenDanhMuc = dm.TenDanhMuc,
                 }).ToListAsync();
-            var DsHienThi = new QuanLySanPhamViewModel
-            {
-                DSDanhMuc = Ds
-            };
+
+            // Trả về ViewModel cuối cùng
             return new QuanLySanPhamViewModel
             {
-                DSDanhMuc = DsHienThi.DSDanhMuc,
+                TongSoSanPham = tongSoSanPham,
+                TrangHienTai = trangHienTai,
+                SoSanPhamMoiTrang = soSanPhamMoiTrang,
+                TongSoTrang = (int)Math.Ceiling((double)tongSoSanPham / soSanPhamMoiTrang),
+                DSDanhMuc = danhMucListMacDinh,
                 SanPhamList = sanPhamList
             };
         }
