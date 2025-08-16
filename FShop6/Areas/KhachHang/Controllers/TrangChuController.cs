@@ -1,5 +1,4 @@
-﻿using FShop6.Areas.KhachHang.Models;
-using FShop6.Areas.KhachHang.Services;
+﻿using FShop6.Areas.KhachHang.Services;
 using FShop6.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

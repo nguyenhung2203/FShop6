@@ -12,20 +12,14 @@
                          class="product__img default" />
                 </a>
                 <div class="product__actions">
-                    @* <a href="#" class="action__btn cart__btn" aria-label="Thêm giỏ hàng">
-                        <i class="fi fi-rs-shopping-bag-add"></i>
-                    </a> *@
                     @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
                     {
                         @Html.Hidden("maSanPham", sanPham.MaSanPham)
                         <input type="hidden" name="giaoDien" value="sanpham" />
-                        <button type="submit" class="action__btn" aria-label="Thêm yêu thích">
+                        <button type="submit" class="action__btn  @(sanPham.TinhTrangYeuThich ? "favorite-active" : "")" aria-label="Thêm yêu thích">
                             <i class="fi fi-rs-heart"></i>
                         </button>
                     }
-                    @* <a href="#" class="action__btn" aria-label="Mua ngay">
-                        <i class="fi fi-rs-shuffle"></i>
-                    </a> *@
                 </div>
                 <div class="product__badge light-green">
                     @(sanPham.GiamGia > 0 ? $"-{sanPham.GiamGia}%" : "Mua ngay")
@@ -38,13 +32,6 @@
                     <p class="product__sold">Đã bán (@sanPham.SoLuongDaBan)</p>
                 </a>
                 <div class="product__content-middle">
-                    @* <div class="product__rating">
-                        <i class="fi fi-rs-star"></i>
-                        <i class="fi fi-rs-star"></i>
-                        <i class="fi fi-rs-star"></i>
-                        <i class="fi fi-rs-star"></i>
-                        <i class="fi fi-rs-star"></i>
-                    </div> *@
                     <div class="product__description-wrapper">
                         <p class="product__description">@sanPham.MoTaNgan</p>
                     </div>

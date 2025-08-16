@@ -16,12 +16,12 @@ namespace FShop6.Areas.KhachHang.Controllers
             _gioHangServices = gioHangServices;
         }
         int maNguoiDung;
-        public async Task<IActionResult> GioHang()
+        public async Task<IActionResult> GioHang(int trang = 1)
         {
             maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
             if (maNguoiDung <= 0)
                 return RedirectToAction("DangNhap", "TaiKhoan", new { area = "KhachHang"});
-            var model = await _gioHangServices.LayGioHang(maNguoiDung);
+            var model = await _gioHangServices.LayGioHang(maNguoiDung, trang);
             if (model == null)
             {
                 TempData["ThongBao"] = "Giỏ hàng của bạn hiện đang trống.";
@@ -133,6 +133,7 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             try
             {
+                maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
                 bool ketQua = _gioHangServices.xoaGioHang(maNguoiDung, maBienThe);
                 if (ketQua)
                 {
