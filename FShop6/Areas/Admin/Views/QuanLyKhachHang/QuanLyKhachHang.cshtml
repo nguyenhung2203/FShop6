@@ -33,6 +33,7 @@
                                 <th>Email</th>
                                 <th>Số điện thoại</th>
                                 <th>Địa chỉ</th>
+                                <th>Tài khoản</th>
                                 <th>Mật khẩu</th>
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
@@ -46,6 +47,7 @@
                                     <td>@item.Email</td>
                                     <td>@item.SDT</td>
                                     <td>@item.DiaChi</td>
+                                    <td>@item.TaiKhoan</td>
                                     <td>******</td>
                                     <td>
                                         @{
@@ -82,13 +84,12 @@
                     </table>
                 </div>
             </div>
-            <div class="card-footer small text-muted">Cập nhật gần đây</div>
         </div>
 
         <!-- Modal sửa -->
         <div class="modal fade" id="editCustomerModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
-                <form action="@Url.Action("ChinhSua", "KhachHang", new { area = "Admin" })" method="post" class="modal-content">
+                <form action="@Url.Action("ChinhSua", "QuanLyKhachHang", new { area = "Admin" })" method="post" class="modal-content">
                     <div class="modal-header bg-info text-white">
                         <h5 class="modal-title">Sửa thông tin khách hàng</h5>
                         <button class="close text-white" type="button" data-dismiss="modal"><span>×</span></button>
@@ -125,7 +126,7 @@
         <!-- Modal xóa -->
         <div class="modal fade" id="deleteCustomerModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
-                <form action="@Url.Action("XoaNguoiDung", "KhachHang", new { area = "Admin" })"
+                <form action="@Url.Action("XoaNguoiDung", "QuanLyKhachHang", new { area = "Admin" })"
                       method="post" class="modal-content">
                     <div class="modal-header bg-danger text-white">
                         <h5 class="modal-title">Xóa khách hàng</h5>

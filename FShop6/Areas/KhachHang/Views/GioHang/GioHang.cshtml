@@ -70,7 +70,7 @@
                                         @Html.HiddenFor(m => m.GioHang[i].GiaBan)
                                     </td>
                                     <td>
-                                        @Html.TextBoxFor(m => m.GioHang[i].SoLuong, new { @class = "quantity", type = "number", min = "1", max = item.SoLuongTon })
+                                        @Html.TextBoxFor(m => m.GioHang[i].SoLuong, new { @id = "quantity",  @class = "quantity", type = "number", min = "1", max = item.SoLuongTon })
                                     </td>
                                     <td>
                                         <span class="subtotal">@((item.GiaBan * item.SoLuong).ToString("N0"))</span>
@@ -185,6 +185,8 @@
         const newAddressRadio = document.getElementById('new-address');
         const existingAddressContainer = document.getElementById('existing-address-container');
         const newAddressContainer = document.getElementById('new-address-container');
+        const soLuongMua = parseInt(document.getElementById('quantity').value);
+        const maxSoLuong = parseInt(document.getElementById('quantity').max);
 
         const shippingFee = 0;
 

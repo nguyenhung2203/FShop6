@@ -36,9 +36,9 @@
         <div class="footer__content">
             <h3 class="footer__title">Tài khoản của tôi</h3>
             <ul class="footer__links">
-                <li><a asp-controller="Cart" asp-action="Index" class="footer__link">Giỏ hàng</a></li>
-                <li><a asp-controller="Wishlist" asp-action="Index" class="footer__link">Yêu thích</a></li>
-                <li><a asp-controller="Account" asp-action="Orders" class="footer__link">Lịch sử đơn hàng</a></li>
+                <li><a href="@Url.Action("GioHang", "GioHang", new { area = "KhachHang" })" class="footer__link">Giỏ hàng</a></li>
+                <li><a href="@Url.Action("SanPhamYeuThich", "TaiKhoan", new { area = "KhachHang" })" class="footer__link">Yêu thích</a></li>
+                <li><a href="@Url.Action("HoSo", "TaiKhoan", new { area = "KhachHang", tab = "orders" })" class="footer__link">Lịch sử đơn hàng</a></li>
             </ul>
         </div>
 
