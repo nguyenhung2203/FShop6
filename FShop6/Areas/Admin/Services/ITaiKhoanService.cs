@@ -7,5 +7,6 @@ namespace FShop6.Areas.Admin.Services
         List<TaiKhoanViewModel> GetAll();
         bool CapNhatTrangThai(int maNguoiDung, string trangThai, string? matKhauMoi = null);
         bool XoaTaiKhoan(int maNguoiDung);
+        bool ThemTaiKhoan(TaiKhoanViewModel model);
     }
 }
