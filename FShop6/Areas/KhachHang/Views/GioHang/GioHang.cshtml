@@ -206,6 +206,12 @@
 </main>
 
 <script>
+    document.querySelector("form").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && e.target.id !== "checkout-btn") {
+        e.preventDefault(); // chặn submit khi nhấn Enter trong input
+    }
+});
+
     document.addEventListener('DOMContentLoaded', function() {
         // Cart functionality
         const selectAllCheckbox = document.getElementById('select-all');

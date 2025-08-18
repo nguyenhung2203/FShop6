@@ -221,6 +221,7 @@ namespace FShop6.Areas.KhachHang.Controllers
         [HttpPost]
         public ActionResult DoiMatKhau(string? matKhauCu, string? matKhauMoi, string? matKhauNhapLai)
         {
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
             if (string.IsNullOrEmpty(matKhauCu) || string.IsNullOrEmpty(matKhauMoi) || string.IsNullOrEmpty(matKhauNhapLai))
             {
                 TempData["ThongBao"] = "Vui lòng nhập đầy đủ thông tin.";
