@@ -871,7 +871,7 @@ main {
     }
 
     .product__badge.light-green {
-        background-color: hsl(155, 20%, 67%);
+        background: linear-gradient(135deg, #ff416c, #ff4b2b);
     }
 
     .product__badge.light-orange {

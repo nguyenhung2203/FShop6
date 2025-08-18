@@ -111,7 +111,7 @@ namespace FShop6.Areas.Admin.Services
                 if (donHang == null)
                     return false;
                 var trangThai = form["TrangThai"];
-                if (trangThai == "Đã hủy")
+                if (trangThai == "Đã huỷ")
                 {
                     var chiTietDonHang = await _context.ChiTietDonHang
                         .Where(ct => ct.IDDonHang == ID)
@@ -122,6 +122,7 @@ namespace FShop6.Areas.Admin.Services
                         var bienThe = await _context.BienThe.FindAsync(ct.MaBienThe);
                         if (bienThe != null)
                         {
+                            Console.WriteLine($"Cập nhật số lượng cho Biến thể: {bienThe.MaSKU}, Số lượng cũ: {bienThe.SoLuongConLai}, Số lượng hủy: {ct.SoLuong}");
                             bienThe.SoLuongConLai += ct.SoLuong;
                             _context.BienThe.Update(bienThe);
                         }

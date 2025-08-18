@@ -24,6 +24,8 @@
 				<button type="button" class="slide-btn prev" id="prev-btn">‹</button>
 				@foreach (var image in Model.BienThe.Where(bt => bt.TinhTrang != "Ngừng kinh doanh"))
 				{
+					<div class="product__badge light-green" id="product__badge">
+					</div>
 					<img src="~/KhachHang/images/@image.URL" alt="Ảnh sản phẩm lớn" class="details__big-img" />
 				}
 				<button type="button" class="slide-btn next" id="next-btn">›</button>
