@@ -13,8 +13,6 @@ namespace FShop6.Areas.KhachHang.Models
         public int MaBienThe { get; set; }
         [Required]
         public string URL { get; set; }
-        [Required]
-        public string mota { get; set; }
 
         [ForeignKey("MaBienThe")]
         public BienTheModels BienThe { get; set; }
