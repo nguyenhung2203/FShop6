@@ -78,7 +78,7 @@
                                     <td>
                                         @using (Html.BeginForm("XoaGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
                                         {
-                                             @Html.HiddenFor(m => m.GioHang[i].MaBienThe)
+                                            @Html.Hidden("MaBienThe", Model.GioHang[i].MaBienThe)
                                             <button type="submit" data-confirm="Bạn có chắc chắn muốn xóa sản phẩm này?">
                                                 <i class="fi fi-rs-trash table__trash"></i>
                                             </button>
