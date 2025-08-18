@@ -871,7 +871,7 @@ main {
     }
 
     .product__badge.light-green {
-        background-color: hsl(155, 20%, 67%);
+        background: linear-gradient(135deg, #ff416c, #ff4b2b);
     }
 
     .product__badge.light-orange {
@@ -6328,11 +6328,13 @@ input[type="range"] {
     position: relative;
     display: inline-block;
 }
-
+#slide_ctsp {
+    padding-left: 70px;
+}
 .details__big-img {
     display: none;
     width: 400px;
-    height: 400px;
+    height: 550px;
     object-fit: cover;
 }
 

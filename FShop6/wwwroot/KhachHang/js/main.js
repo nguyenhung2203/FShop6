@@ -402,9 +402,11 @@ document.addEventListener("DOMContentLoaded", function () {
             var giaKhiGiam = (giaBan * (100 - giamGia)) / 100;
             document.getElementById('product-discount').textContent = giaBan.toLocaleString('vi-VN') + "đ";
             document.getElementById('product-price').textContent = giaKhiGiam.toLocaleString('vi-VN') + "đ";
+            document.getElementById('product__badge').textContent = '-' + giamGia.toLocaleString() + '%';
         } else {
             document.getElementById('product-discount').textContent = '';
             document.getElementById('product-price').textContent = giaBan.toLocaleString('vi-VN') + "đ";
+            document.getElementById('product__badge').textContent = 'Mua ngay';
         }
         document.getElementById('hiddenMaBienThe').value = maBienThe;
         
