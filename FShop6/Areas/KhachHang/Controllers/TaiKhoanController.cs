@@ -361,7 +361,12 @@ namespace FShop6.Areas.KhachHang.Controllers
                 {
                     TempData["ThongBao"] = "Thêm sản phẩm yêu thích thành công.";
                     TempData["LoaiThongBao"] = "success";
-                }              
+                } 
+                else
+                {
+                    TempData["ThongBao"] = "Xóa sản phẩm yêu thích thành công.";
+                    TempData["LoaiThongBao"] = "success";
+                }    
             }
             catch (Exception ex)
             {

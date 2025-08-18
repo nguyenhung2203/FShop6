@@ -168,6 +168,7 @@ namespace FShop6.Areas.KhachHang.Services
                  .SelectMany(dh => dh.ChiTietDonHangs.Select(ct => new ChiTietDonHangViewModel
                  {
                      MaDonHang = dh.ID,
+                     AnhSanPham = ct.BienThe.SanPham.HinhAnhDaiDien,
                      TenSanPham = ct.BienThe.SanPham.TenSanPham,
                      LoaiBienThe = ct.BienThe.LoaiBienThe,
                      SoLuong = ct.SoLuong,
@@ -175,7 +176,6 @@ namespace FShop6.Areas.KhachHang.Services
                  }))
                  .ToListAsync();
             var tongSoSanPham = await _context.DonHang.CountAsync(dh => dh.MaNguoiDung == nguoiDungId);
-            Console.WriteLine($"Total products for user {nguoiDungId}: {tongSoSanPham}");
             var tongSoTrang = (int)Math.Ceiling(tongSoSanPham / (double)kichThuocTrang);
             if (tongSoTrang< 1)
             {

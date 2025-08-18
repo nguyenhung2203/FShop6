@@ -70,7 +70,7 @@
                                         @Html.HiddenFor(m => m.GioHang[i].GiaBan)
                                     </td>
                                     <td>
-                                        @Html.TextBoxFor(m => m.GioHang[i].SoLuong, new { @class = "quantity", type = "number", min = "1", max = item.SoLuongTon })
+                                        @Html.TextBoxFor(m => m.GioHang[i].SoLuong, new { @id = "quantity",  @class = "quantity", type = "number", min = "1", max = item.SoLuongTon })
                                     </td>
                                     <td>
                                         <span class="subtotal">@((item.GiaBan * item.SoLuong).ToString("N0"))</span>
@@ -78,7 +78,7 @@
                                     <td>
                                         @using (Html.BeginForm("XoaGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
                                         {
-                                            @Html.Hidden("maBienThe", item.MaBienThe)
+                                             @Html.HiddenFor(m => m.GioHang[i].MaBienThe)
                                             <button type="submit" data-confirm="Bạn có chắc chắn muốn xóa sản phẩm này?">
                                                 <i class="fi fi-rs-trash table__trash"></i>
                                             </button>
@@ -90,9 +90,45 @@
                     </tbody>
                 </table>
             </div>
+             <div class="pagination" style="margin-top: 0;">
+                    @if (Model.TongSoTrang > 1)
+                    {
+                        <!-- Nút « -->
+                        <li>
+                            <a class="pagination__link icon @(Model.TrangHienTai == 1 ? "disabled" : "")"
+                               href="@Url.Action("GioHang", "GioHang", 
+                               new { area = "KhachHang", 
+                                     trang = Model.TrangHienTai - 1})">
+                                «
+                            </a>
+                        </li>
 
+                        <!-- Các trang số -->
+                        @for (int i = 1; i <= Model.TongSoTrang; i++)
+                        {
+                            <li>
+                                <a class="pagination__link @(Model.TrangHienTai == i ? "active" : "")"
+                                   href="@Url.Action("GioHang", "GioHang", 
+                                   new { area = "KhachHang",      
+                                         trang = i})">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        <!-- Nút » -->
+                        <li>
+                            <a class="pagination__link icon @(Model.TrangHienTai == Model.TongSoTrang ? "disabled" : "")"
+                               href="@Url.Action("GioHang", "GioHang", 
+                               new { area = "KhachHang", 
+                                     trang = Model.TrangHienTai + 1})">
+                                »
+                            </a>
+                        </li>
+                    }
+                </div>
             <div class="cart__actions">
-                <a href="@Url.Action("SanPham", "CuaHang", new { area = "KhachHang" })" class="btn flex btn__md">
+                <a href="@Url.Action("SanPham", "GioHang", new { area = "GioHang" })" class="btn flex btn__md">
                     <i class="fi-rs-shopping-bag"></i> Tiếp tục mua sắm
                 </a>
             </div>
@@ -185,6 +221,8 @@
         const newAddressRadio = document.getElementById('new-address');
         const existingAddressContainer = document.getElementById('existing-address-container');
         const newAddressContainer = document.getElementById('new-address-container');
+        const soLuongMua = parseInt(document.getElementById('quantity').value);
+        const maxSoLuong = parseInt(document.getElementById('quantity').max);
 
         const shippingFee = 0;
 

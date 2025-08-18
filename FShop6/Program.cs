@@ -62,9 +62,13 @@ builder.Services.AddScoped<IQuanLySanPhamServices, QuanLySanPhamServices>();
 // 🟢 Đăng ký dịch vụ TinTucService
 builder.Services.AddScoped<ITinTucService, TinTucService>();
 
+// 🟢 Đăng ký dịch vụ AdminService
+builder.Services.AddScoped<IAdminService, AdminService>();
+
 // Đăng ký DichVuAIThongMinh như Scoped service
 builder.Services.AddScoped<DichVuAIThongMinh>();
 var app = builder.Build();
+
 
 if (!app.Environment.IsDevelopment())
 {
@@ -91,11 +95,11 @@ app.UseStaticFiles();
 // Định tuyến cho Areas
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=QuanLyTinTuc}/{action=QuanLyTinTuc}/{id?}");
+    pattern: "{area:exists}/{controller=QuanLyTaiKhoan}/{action=QuanLyTaiKhoan}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=QuanLyTinTuc}/{action=QuanLyTinTuc}/{id?}",
+    pattern: "{controller=QuanLyTaiKhoan}/{action=QuanLyTaiKhoan}/{id?}",
     defaults: new { area = "Admin" });
 
 app.Run();

@@ -26,7 +26,7 @@ namespace FShop6.Areas.Admin.Services
                     HoTen = nd.HoTen ?? "",
                     Email = nd.Email ?? "",
                     SDT = nd.SoDienThoai ?? "",
-                    MatKhau = "******",
+                    TaiKhoan = nd.TaiKhoan ?? "",
                     MatKhauThuc = nd.MatKhau,
                     DiaChi = nd.DiaChi ?? "",
                     TTHoatDong = nd.TTHoatDong ?? "",
