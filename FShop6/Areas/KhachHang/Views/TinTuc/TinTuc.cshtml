@@ -22,7 +22,7 @@
                     var baiNoiBat = Model.First();
                     <div class="featured-post">
                         <a href="/KhachHang/TinTuc/ChiTietTinTuc/@baiNoiBat.MaTinTuc" class="featured-post__image">
-                            <img src="@baiNoiBat.HinhAnhDaiDien" alt="@baiNoiBat.TieuDe" />
+                            <img src="@("/KhachHang/images/" + baiNoiBat.HinhAnhDaiDien)" alt="@baiNoiBat.TieuDe" />
                         </a>
                         <div class="featured-post__content">
                             <a href="/KhachHang/TinTuc/ChiTietTinTuc/@baiNoiBat.MaTinTuc"><h2 class="featured-post__title">@baiNoiBat.TieuDe</h2></a>
@@ -39,7 +39,7 @@
                         {
                             <div class="post-card">
                                 <a href="@Url.Action("ChiTietTinTuc", "TinTuc", new {area = "KhachHang", id = tin.MaTinTuc})" class="post-card__image">
-                                    <img src="@tin.HinhAnhDaiDien" alt="@tin.TieuDe" />
+                                    <img src="@("/KhachHang/images/" + tin.HinhAnhDaiDien)" alt="@tin.TieuDe" />
                                 </a>
                                 <div class="post-card__content">
                                     <span class="product__category">Tin tức</span>
