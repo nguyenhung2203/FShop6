@@ -319,9 +319,17 @@ namespace FShop6.Areas.Admin.Services
                 int maSanPham = int.Parse(form["MaSanPham"]);
                 var sanPham = await _context.SanPham.FindAsync(maSanPham);
                 if (sanPham == null) return KetQuaXuLy.Loi("Không tìm thấy sản phẩm để thêm biến thể.");
+                string maSKU = form["MaSKU"];
+
+                // ✅ Kiểm tra SKU đã tồn tại chưa
+                bool skuTonTai = await _context.BienThe.AnyAsync(b => b.MaSKU == maSKU);
+                if (skuTonTai)
+                {
+                    return KetQuaXuLy.Loi("Mã SKU đã tồn tại. Vui lòng nhập mã khác.");
+                }
                 var bienThe = new BienTheModels
                 {
-                    MaSKU = form["MaSKU"],
+                    MaSKU = maSKU,
                     MaSanPham = maSanPham,
                     LoaiBienThe = form["LoaiBienThe"],
                     GiaBan = decimal.Parse(form["GiaBan"]),
