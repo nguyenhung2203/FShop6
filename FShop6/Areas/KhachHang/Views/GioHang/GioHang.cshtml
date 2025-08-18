@@ -48,7 +48,6 @@
                                         <input type="checkbox"
                                                name="GioHang[@i].DuocChon"
                                                value="true"
-                                               @(item.DuocChon ? "checked" : "")
                                                class="item-checkbox product-checkbox"
                                                data-price="@(item.GiaBan* item.SoLuong)" />
                                         @Html.HiddenFor(m => m.GioHang[i].MaBienThe)
@@ -76,12 +75,26 @@
                                         <span class="subtotal">@((item.GiaBan * item.SoLuong).ToString("N0"))</span>
                                     </td>
                                     <td>
-                                        @using (Html.BeginForm("XoaGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
+                                        @if(i == 0)
                                         {
-                                             @Html.HiddenFor(m => m.GioHang[i].MaBienThe)
-                                            <button type="submit" data-confirm="Bạn có chắc chắn muốn xóa sản phẩm này?">
-                                                <i class="fi fi-rs-trash table__trash"></i>
-                                            </button>
+                                            <form></form>
+                                            @using (Html.BeginForm("XoaGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
+                                            {
+                                                @Html.Hidden("MaBienThe", Model.GioHang[i].MaBienThe)
+                                                <button type="submit" data-confirm="Bạn có chắc chắn muốn xóa sản phẩm này?">
+                                                    <i class="fi fi-rs-trash table__trash"></i>
+                                                </button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @using (Html.BeginForm("XoaGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
+                                            {
+                                                @Html.Hidden("MaBienThe", Model.GioHang[i].MaBienThe)
+                                                <button type="submit" data-confirm="Bạn có chắc chắn muốn xóa sản phẩm này?">
+                                                    <i class="fi fi-rs-trash table__trash"></i>
+                                                </button>
+                                            }
                                         }
                                     </td>
                                 </tr>
@@ -89,44 +102,7 @@
                         }
                     </tbody>
                 </table>
-            </div>
-             <div class="pagination" style="margin-top: 0;">
-                    @if (Model.TongSoTrang > 1)
-                    {
-                        <!-- Nút « -->
-                        <li>
-                            <a class="pagination__link icon @(Model.TrangHienTai == 1 ? "disabled" : "")"
-                               href="@Url.Action("GioHang", "GioHang", 
-                               new { area = "KhachHang", 
-                                     trang = Model.TrangHienTai - 1})">
-                                «
-                            </a>
-                        </li>
-
-                        <!-- Các trang số -->
-                        @for (int i = 1; i <= Model.TongSoTrang; i++)
-                        {
-                            <li>
-                                <a class="pagination__link @(Model.TrangHienTai == i ? "active" : "")"
-                                   href="@Url.Action("GioHang", "GioHang", 
-                                   new { area = "KhachHang",      
-                                         trang = i})">
-                                    @i
-                                </a>
-                            </li>
-                        }
-
-                        <!-- Nút » -->
-                        <li>
-                            <a class="pagination__link icon @(Model.TrangHienTai == Model.TongSoTrang ? "disabled" : "")"
-                               href="@Url.Action("GioHang", "GioHang", 
-                               new { area = "KhachHang", 
-                                     trang = Model.TrangHienTai + 1})">
-                                »
-                            </a>
-                        </li>
-                    }
-                </div>
+            </div>         
             <div class="cart__actions">
                 <a href="@Url.Action("SanPham", "GioHang", new { area = "GioHang" })" class="btn flex btn__md">
                     <i class="fi-rs-shopping-bag"></i> Tiếp tục mua sắm
@@ -203,9 +179,55 @@
             </div>
         </section>
     }
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="modalTitle" class="modal-title">Xác nhận</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="modalCancel" class="btn btn-secondary">Hủy</button>
+                <button id="modalConfirm" class="btn btn-primary">Xác nhận</button>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script>
+       
+   const inputs = document.querySelectorAll(".quantity");
+
+inputs.forEach(input => {
+    input.addEventListener("input", function () {
+        let raw = this.value.trim(); // giá trị gốc nhập vào
+        let min = parseInt(this.min) || 1;
+        let max = parseInt(this.max) || 9999;
+
+        if (raw === "") {
+            this.value = min;
+            alert("Không được để trống số lượng! Đã đặt lại = " + min);
+            return;
+        }
+
+        let value = parseInt(raw);
+
+        if (isNaN(value)) {
+            this.value = min;
+            alert("Vui lòng nhập số hợp lệ!");
+        }
+        // Nếu nhỏ hơn min
+        else if (value < min) {
+            this.value = min;
+            alert("Số lượng tối thiểu là " + min);
+        }
+        // Nếu lớn hơn max
+        else if (value > max) {
+            this.value = max;
+            alert("Chỉ còn " + max + " sản phẩm trong kho!");
+        }
+    });
+});
+
+
     document.querySelector("form").addEventListener("keydown", function (e) {
     if (e.key === "Enter" && e.target.id !== "checkout-btn") {
         e.preventDefault(); // chặn submit khi nhấn Enter trong input

@@ -7,7 +7,7 @@
     <div class="container">
         @using (Html.BeginForm("SanPhamThanhToan", "GioHang", FormMethod.Post, new { area = "KhachHang" }))
         {
-            var TongTien = Model.GioHang.Sum(sp => sp.SoLuong * sp.GiaBan);
+            var TongTien = Model.GioHang.Where(x => x.DuocChon).Sum(sp => sp.SoLuong * sp.GiaBan);
             @Html.AntiForgeryToken()
 
             @Html.HiddenFor(m => m.MaNguoiDung)
@@ -164,20 +164,20 @@
                 <div class="modal-bank-info__content">
                     <h4>Thông tin chuyển khoản</h4>
                     <div class="modal-bank-info__details">
-                        <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=180&h=180&fit=crop"
+                        <img src="~/KhachHang/images/maqr.jpg"
                              alt="QR chuyển khoản" class="modal-bank-info__qr">
                         <div class="bank-info-text">
                             <p>
                                 <strong>Ngân hàng:</strong>
-                                <span>TPBank</span>
+                                <span>TechcomBank</span>
                             </p>
                             <p>
                                 <strong>Số tài khoản:</strong>
-                                <span>123456789</span>
+                                <span>1905 0747 8490 11</span>
                             </p>
                             <p>
                                 <strong>Chủ tài khoản:</strong>
-                                <span>Nguyễn Văn A</span>
+                                <span>NGUYEN QUOC HUNG</span>
                             </p>
                             <p>
                                 <strong>Nội dung:</strong>

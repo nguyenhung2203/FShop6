@@ -10,7 +10,7 @@ namespace FShop6.Areas.KhachHang.Services
     {
         bool ThemVaoGioHang(int maNguoiDung, int maBienThe, int soLuong);
         bool xoaGioHang(int maNguoiDung, int maBienThe);
-        Task<GioHangViewModel> LayGioHang(int maNguoiDung, int trang = 1, int kichThuocTrang = 4);
+        Task<GioHangViewModel> LayGioHang(int maNguoiDung);
     }
     public interface IThanhToan
     {
@@ -30,28 +30,20 @@ namespace FShop6.Areas.KhachHang.Services
             _context = context;
         }
 
-        public async Task<GioHangViewModel> LayGioHang(int maNguoiDung, int trang = 1, int kichThuocTrang = 4)
+        public async Task<GioHangViewModel> LayGioHang(int maNguoiDung)
         {
-            var tongSoSanPham = await _context.GioHang.CountAsync(dh => dh.MaNguoiDung == maNguoiDung);
-            var tongSoTrang = (int)Math.Ceiling(tongSoSanPham / (double)kichThuocTrang);
-            if (tongSoTrang < 1)
-            {
-                tongSoTrang = 1;
-            }
             var gioHang = await _context.GioHang
                 .Where(x => x.MaNguoiDung == maNguoiDung)
                 .Include(x => x.BienThe)
                 .ThenInclude(bt => bt.AnhBienThe)
                 .OrderByDescending(x => x.NgayThem)
-                .Skip((trang - 1) * kichThuocTrang)
-                .Take(kichThuocTrang)
                 .Select(x => new GioHangItemModel
                 {
                     MaBienThe = x.MaBienThe,
                     DuocChon = true,
                     TenSanPham = x.BienThe.SanPham.TenSanPham,
                     HinhAnhDaiDien = x.BienThe.AnhBienThe.FirstOrDefault().URL,
-                    GiaBan = x.BienThe.GiaBan,
+                    GiaBan = x.BienThe.GiaBan - (x.BienThe.GiaBan * x.BienThe.GiamGia / 100),
                     SoLuong = x.SoLuong,
                     LoaiBienThe = x.BienThe.LoaiBienThe,
                     SoLuongTon = x.BienThe.SoLuongConLai
@@ -61,8 +53,6 @@ namespace FShop6.Areas.KhachHang.Services
             {
                 GioHang = gioHang,
                 DiaChiMacDinh = diaChi?.DiaChi ?? string.Empty,
-                TrangHienTai = trang,
-                TongSoTrang = tongSoTrang,
             };
         }
 

@@ -9,39 +9,28 @@
 <main class="main">
     <section class="breadcrumb">
         <ul class="breadcrumb__list flex container">
-            <li><a href="index.html" class="breadcrumb__link">Trang chủ</a></li>
+            <li><a href="@Url.Action("Index", "TrangChu", new { area = "KhachHang" })" class="breadcrumb__link">Trang chủ</a></li>
             <li><span class="breadcrumb__link">></span></li>
-            <li><a href="news.html" class="breadcrumb__link">Tin tức</a></li>
+            <li><a href ="@Url.Action("TinTuc", "TinTuc", new { area = "KhachHang" })" class="breadcrumb__link">Tin tức</a></li>
             <li><span class="breadcrumb__link">></span></li>
             <li><span class="breadcrumb__link">Chi tiết bài viết...</span></li>
         </ul>
     </section>
 
     <section class="news-detail-page container section--lg">
-        <div class="news-page__container grid">
-            <div class="news-page__main">
-                <article class="post-content">
-                    <h1 class="post-content__title">@Model.TieuDe</h1>
-                    <div class="author-info" style="margin-bottom: 1.5rem;">
-                        <span>Đăng bởi <strong>Admin</strong></span> |
-                        <span>@Model.ThoiGianTao</span> |
-                    </div>
-                    <img src=" @("/KhachHang/images/" + Model.HinhAnhDaiDien)" alt="Tiêu đề bài viết" class="post-content__image">
-
-                    <p>@Model.NoiDung</p>
-
-                   
-                </article>
-            </div>
-
-
-            <aside class="news-page__sidebar">
-                <div class="sidebar__widget">
-                    <h4 class="widget__title">Bài viết gần đây</h4>
-                    <ul class="widget__list recent-posts">
-                    </ul>
+        <div class="news-page__main">
+            <article class="post-content">
+                <h1 class="post-content__title">@Model.TieuDe</h1>
+                <div class="author-info" style="margin-bottom: 1.5rem;">
+                    <span>Đăng bởi <strong>Admin</strong></span> |
+                    <span>@Model.ThoiGianTao</span> |
                 </div>
-            </aside>
+                <img src=" @("/KhachHang/images/" + Model.HinhAnhDaiDien)" alt="Tiêu đề bài viết" class="post-content__image">
+
+                <p>@Model.NoiDung</p>
+
+
+            </article>
         </div>
     </section>
 </main> 

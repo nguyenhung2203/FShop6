@@ -21,7 +21,7 @@ namespace FShop6.Areas.KhachHang.Controllers
         {
             var danhSachTinTuc = await _tinTucService.LayTinTucHienThiAsync();
 
-            if (danhSachTinTuc == null || !danhSachTinTuc.Any())
+            if (danhSachTinTuc == null)
             {
                 ViewBag.ThongBao = "Hiện chưa có tin tức nào.";
             }

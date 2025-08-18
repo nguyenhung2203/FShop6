@@ -890,7 +890,7 @@ main {
     justify-content: space-between; /* Phân bố đều */
 }
 .product__content-bottom {
-    margin-top: auto; /* Đẩy xuống dưới */
+    margin-top: 0; /* Đẩy xuống dưới */
 }
 
 .product__category {
