@@ -6396,3 +6396,6 @@ input[type="range"] {
     font-weight: bold;
     text-align: center;
 }
+.new__container .swiper-slide {
+    flex: 0 0 25% !important;
+}

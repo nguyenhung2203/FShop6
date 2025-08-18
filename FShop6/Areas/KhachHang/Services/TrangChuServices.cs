@@ -70,7 +70,7 @@ namespace FShop6.Areas.KhachHang.Services
             var sanPhamMoi = await _context.SanPham
             .Where(sp => sp.TrangThai == true)
             .OrderByDescending(sp => sp.NgayTao)
-            .Take(12)
+            .Take(4)
             .Select(sp => new SanPhamTrangChuViewModel
             {
                 MaSanPham = sp.MaSanPham,

@@ -176,10 +176,9 @@
                 <div class="tab__content" id="update-profile">
                     <h3 class="tab__header">Cập nhật hồ sơ</h3>
                     <div class="tab__body">
-                        <form action="@Url.Action("CapNhatHoSo", "TaiKhoan", new { area = "KhachHang" })"
+                        <form action="@Url.Action("CapNhatHoSo", "TaiKhoan", new { area = "KhachHang", tab = "update-profile" })"
                               method="post" class="form grid" id="profile-form">
 
-                            <!-- Gửi MaNguoiDung về server để EF biết bản ghi nào cần update -->
                             <input type="hidden"
                                    name="nguoiDungModels.MaNguoiDung"
                                    value="@Model.nguoiDungModels.MaNguoiDung" />
@@ -216,7 +215,7 @@
                 <div class="tab__content" id="change-password">
                     <h3 class="tab__header">Đổi mật khẩu</h3>
                     <div class="tab__body">
-                        <form action="@Url.Action("DoiMatKhau", "TaiKhoan", new { area = "KhachHang" })" method="post" class="form grid">
+                        <form action="@Url.Action("DoiMatKhau", "TaiKhoan", new { area = "KhachHang",tab = "change-password" })" method="post" class="form grid">
                             <input type="password"
                                    placeholder="Mật khẩu hiện tại"
                                    class="form__input"
@@ -310,7 +309,6 @@
 
 <script>
         function xemChiTiet(id) {
-			console.log("Xem chi tiết đơn hàng với ID:", id);
         const html = document.getElementById("chiTiet_" + id).innerHTML;
         document.getElementById("noiDungModal").innerHTML = html;
         document.getElementById("modalChiTietDon").style.display = "flex";
