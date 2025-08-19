@@ -75,26 +75,12 @@
                                         <span class="subtotal">@((item.GiaBan * item.SoLuong).ToString("N0"))</span>
                                     </td>
                                     <td>
-                                        @if(i == 0)
+                                        @using (Html.BeginForm("XoaGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
                                         {
-                                            <form></form>
-                                            @using (Html.BeginForm("XoaGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
-                                            {
-                                                @Html.Hidden("MaBienThe", Model.GioHang[i].MaBienThe)
-                                                <button type="submit" data-confirm="Bạn có chắc chắn muốn xóa sản phẩm này?">
-                                                    <i class="fi fi-rs-trash table__trash"></i>
-                                                </button>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            @using (Html.BeginForm("XoaGioHang", "GioHang", FormMethod.Post, new { area = "KhachHang", @class = "form-thong-bao" }))
-                                            {
-                                                @Html.Hidden("MaBienThe", Model.GioHang[i].MaBienThe)
-                                                <button type="submit" data-confirm="Bạn có chắc chắn muốn xóa sản phẩm này?">
-                                                    <i class="fi fi-rs-trash table__trash"></i>
-                                                </button>
-                                            }
+                                            @Html.Hidden("MaBienThe", Model.GioHang[i].MaBienThe)
+                                            <button type="submit" data-confirm="Bạn có chắc chắn muốn xóa sản phẩm này?">
+                                                <i class="fi fi-rs-trash table__trash"></i>
+                                            </button>
                                         }
                                     </td>
                                 </tr>
@@ -179,17 +165,6 @@
             </div>
         </section>
     }
-    <div id="confirmModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 id="modalTitle" class="modal-title">Xác nhận</h4>
-            </div>
-            <div class="modal-footer">
-                <button id="modalCancel" class="btn btn-secondary">Hủy</button>
-                <button id="modalConfirm" class="btn btn-primary">Xác nhận</button>
-            </div>
-        </div>
-    </div>
 </main>
 
 <script>

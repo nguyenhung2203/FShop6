@@ -33,10 +33,7 @@ namespace FShop6.Areas.KhachHang.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ThanhToan(GioHangViewModel model)
         {
-            if (maNguoiDung == 0)
-            {
-                maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
-            }
+            maNguoiDung = Convert.ToInt32(HttpContext.Session.GetInt32("MaNguoiDung"));
             var gioCanThanhToan = model.GioHang?.ToList();
             if (gioCanThanhToan == null || gioCanThanhToan.Count == 0)
             {

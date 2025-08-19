@@ -101,7 +101,7 @@
                                 <div class="product__actions">
                                 </div>
                                 <div class="product__badge light-green">
-                                    @(sanPham.GiamGia > 0 ? $"-{sanPham.GiamGia}%" : "Mua ngay")
+                                    @(sanPham.GiamGia.HasValue && sanPham.GiamGia > 0 ? $"-{sanPham.GiamGia}%" : "Mua ngay")
                                 </div>
 
                             </div>

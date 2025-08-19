@@ -107,10 +107,10 @@ namespace FShop6.Areas.KhachHang.Services
                     MaSanPham = sp.MaSanPham,
                     TenSanPham = sp.TenSanPham,
                     HinhAnhDaiDien = sp.HinhAnhDaiDien,
-                    GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
+                    GiaBan = sp.BienThes.OrderByDescending(bt => bt.GiaBan).FirstOrDefault().GiaBan,
                     MoTaNgan = sp.MoTa,
                     TenDanhMuc = sp.DanhMuc.TenDanhMuc,
-                    GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia,
+                    GiamGia = sp.BienThes.OrderByDescending(bt => bt.GiamGia).FirstOrDefault().GiamGia,
                 })
                 .ToListAsync();
             foreach (var sp in danhSachSanPham)

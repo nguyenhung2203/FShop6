@@ -37,18 +37,23 @@ namespace FShop6.Areas.KhachHang.Services
                 .Include(ct => ct.BienThe)
                     .ThenInclude(bt => bt.SanPham)
                         .ThenInclude(sp => sp.DanhMuc)
-                .GroupBy(ct => ct.BienThe.SanPham.DanhMuc.TenDanhMuc)
+                .Where(ct => ct.BienThe.SanPham.TrangThai == true)
+                .GroupBy(ct => new {
+                    DanhMucId = ct.BienThe.SanPham.DanhMuc.Id,
+                    TenDanhMuc = ct.BienThe.SanPham.DanhMuc.TenDanhMuc
+                })
                 .OrderByDescending(g => g.Sum(x => x.SoLuong))
                 .Take(6)
                 .Select(g => new DanhMucModel
                 {
-                    Id = g.First().BienThe.SanPham.DanhMuc.Id,
-                    TenDanhMuc = g.Key
-                }).ToListAsync();
+                    Id = g.Key.DanhMucId,
+                    TenDanhMuc = g.Key.TenDanhMuc
+                })
+                .ToListAsync();
 
             // Sản phẩm nổi bật
             var sanPhamNoiBat = await _context.SanPham
-                .Where(sp => sp.TrangThai == true && sp.NoiBat == true)
+                .Where(sp => sp.TrangThai == true && sp.NoiBat == true && sp.BienThes.Any())
                 .Take(12)
                 .Select(sp => new SanPhamTrangChuViewModel
                 {
@@ -56,8 +61,8 @@ namespace FShop6.Areas.KhachHang.Services
                     TenSanPham = sp.TenSanPham,
                     HinhAnhDaiDien = sp.HinhAnhDaiDien,
                     MoTaNgan = sp.MoTa,
-                    GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiaBan,
-                    GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia,
+                    GiaBan = sp.BienThes.OrderByDescending(bt => bt.GiaBan).First().GiaBan,
+                    GiamGia = sp.BienThes.OrderByDescending(bt => bt.GiamGia).First().GiamGia,
                 })
                 .ToListAsync();
             foreach (var sp in sanPhamNoiBat)
@@ -76,9 +81,9 @@ namespace FShop6.Areas.KhachHang.Services
                 MaSanPham = sp.MaSanPham,
                 TenSanPham = sp.TenSanPham,
                 HinhAnhDaiDien = sp.HinhAnhDaiDien,
-                GiaBan = sp.BienThes.OrderBy(bt => bt.GiaBan).Select(bt => bt.GiaBan).FirstOrDefault(),
+                GiaBan = sp.BienThes.OrderByDescending(bt => bt.GiaBan).Select(bt => bt.GiaBan).FirstOrDefault(),
                 MoTaNgan = sp.MoTa,
-                GiamGia = sp.BienThes.OrderBy(bt => bt.GiaBan).FirstOrDefault().GiamGia
+                GiamGia = sp.BienThes.OrderByDescending(bt => bt.GiamGia).FirstOrDefault().GiamGia
             })
             .ToListAsync();
             foreach (var sp in sanPhamMoi)
