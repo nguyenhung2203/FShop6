@@ -125,10 +125,7 @@
                                         <span class="new__price">
                                             @string.Format("{0:N0}₫", sanPham.GiaBan * (100 - (sanPham.GiamGia ?? 0)) / 100)
                                         </span>
-                                        @if (sanPham.GiamGia > 0)
-                                        {
-                                            <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                        }
+                                        <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
                                     </div>
 
                                     @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))
@@ -184,10 +181,7 @@
                                     <span class="new__price">
                                         @string.Format("{0:N0}₫", sanPham.GiaBan * (100 - (sanPham.GiamGia ?? 0)) / 100)
                                     </span>
-                                    @if (sanPham.GiamGia > 0)
-                                    {
-                                        <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
-                                    }
+                                    <span class="old__price">@string.Format("{0:N0}₫", sanPham.GiaBan)</span>
                                 </div>
 
                                 @using (Html.BeginForm("ThemYeuThich", "TaiKhoan", new { area = "KhachHang" }, FormMethod.Post))

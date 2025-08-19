@@ -74,7 +74,7 @@ namespace FShop6.Areas.Admin.Services
             int tongSoDonHangNgay = await _context.DonHang
                 .CountAsync(dh => dh.ThoiGianDatHang.Date == homNay.Date);
             int tongSoKhachHangNgay = await _context.NguoiDung
-                .Where(nd => nd.ThoiGianTao.Date == homNay.Date)
+                .Where(nd => nd.ThoiGianTao.Date == homNay.Date && nd.TenVaiTro == "Khách hàng")
                 .Distinct()
                 .CountAsync();
             var trangThaiDonHangNgay = new int[]
@@ -135,7 +135,7 @@ namespace FShop6.Areas.Admin.Services
             int tongSoDonHangTuan = await _context.DonHang
                 .CountAsync(dh => dh.ThoiGianDatHang >= dauTuan && dh.ThoiGianDatHang < dauTuan.AddDays(7) );
             int tongSoKhachHangTuan = await _context.NguoiDung
-                .Where(nd => nd.ThoiGianTao >= dauTuan && nd.ThoiGianTao < dauTuan.AddDays(7))
+                .Where(nd => nd.ThoiGianTao >= dauTuan && nd.ThoiGianTao < dauTuan.AddDays(7) && nd.TenVaiTro == "Khách hàng")
                 .Distinct()
                 .CountAsync();
             var trangThaiDonHangTuan = new int[]
@@ -186,7 +186,7 @@ namespace FShop6.Areas.Admin.Services
             int tongSoDonHangThang = await _context.DonHang
                 .CountAsync(dh => dh.ThoiGianDatHang >= dauThang && dh.ThoiGianDatHang < dauThang.AddMonths(1));
             int tongSoKhachHangThang = await _context.NguoiDung
-                .Where(nd => nd.ThoiGianTao >= dauThang && nd.ThoiGianTao < dauThang.AddMonths(1))
+                .Where(nd => nd.ThoiGianTao >= dauThang && nd.ThoiGianTao < dauThang.AddMonths(1) && nd.TenVaiTro == "Khách hàng")
                 .Distinct()
                 .CountAsync();
             var trangThaiDonHangThang = new int[]
@@ -236,7 +236,7 @@ namespace FShop6.Areas.Admin.Services
             int tongSoDonHangNam = await _context.DonHang
                 .CountAsync(dh => dh.ThoiGianDatHang.Year == homNay.Year);
             int tongSoKhachHangNam = await _context.NguoiDung
-                .Where(nd => nd.ThoiGianTao.Year == homNay.Year)
+                .Where(nd => nd.ThoiGianTao.Year == homNay.Year && nd.TenVaiTro == "Khách hàng")
                 .Distinct()
                 .CountAsync();
             var trangThaiDonHangNam = new int[]
